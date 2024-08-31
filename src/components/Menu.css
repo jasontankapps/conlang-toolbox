@@ -1,0 +1,107 @@
+ion-menu#mainMenu ion-content {
+	--background: var(--ion-item-background, var(--ion-background-color, #000));
+}
+
+ion-menu#mainMenu ion-content {
+	padding: 1.25rem 0.5rem;
+}
+
+ion-menu#mainMenu ion-list {
+	padding: 1.25rem 0;
+}
+
+ion-menu#mainMenu ion-note {
+	margin-block-end: 1.875rem;
+}
+
+ion-menu#mainMenu ion-list-header,
+ion-menu#mainMenu ion-note {
+	padding-inline-start: 0.625rem;
+}
+
+ion-menu#mainMenu ion-list:first-child {
+	border-block-end: 0.0625rem solid var(--ion-color-step-150, #d7d8da);
+}
+
+ion-menu#mainMenu ion-list:first-child ion-list-header {
+	font-size: 1.375rem;
+	font-weight: 600;
+	min-height: 1.25rem;
+}
+
+ion-menu#mainMenu ion-item {
+	--padding-start: 0.625rem;
+	--padding-end: 0.625rem;
+	border-radius: 0.25rem;
+	cursor: pointer;
+}
+
+ion-menu#mainMenu ion-item.mainHeading.selected {
+	--background: rgba(var(--ion-color-primary-rgb), 0.14);
+}
+ion-menu#mainMenu ion-item.mainHeading.toggled ion-icon.caret {
+	transform: rotate(90deg);
+	transition: transform var(--transition-duration) ease-in;
+}
+ion-menu#mainMenu ion-item.mainHeading ion-icon.caret {
+	transition: transform var(--transition-duration) ease-out;
+}
+
+ion-menu#mainMenu ion-item.selected ion-icon {
+	color: var(--ion-color-primary);
+}
+
+ion-menu#mainMenu ion-item ion-icon {
+	color: var(--ion-color-step-350);
+}
+
+ion-menu#mainMenu ion-item ion-label {
+	font-weight: 500;
+}
+
+ion-menu#mainMenu ion-item.subHeading {
+	font-size: 0.8em;
+	min-height: 3rem;
+	height: 3rem;
+	transition: all var(--transition-duration) ease-in;
+	--background: var(--ion-background-color, #000);
+}
+ion-menu#mainMenu ion-item.subHeading.hidden {
+	min-height: 0;
+	height: 0;
+	transition: all var(--transition-duration) ease-out;
+}
+ion-menu#mainMenu ion-item.subHeading ion-icon {
+	visibility: hidden;
+	margin: 0.5rem 0.21rem 0.5rem 1rem;
+}
+ion-menu#mainMenu ion-item.subHeading ion-label {
+	text-align: end;
+	margin: 0.5rem 0;
+}
+ion-menu#mainMenu ion-item.subHeading.selected ion-icon {
+	visibility: visible;
+}
+
+ion-menu#mainMenu #menuCredits ion-item::part(native) {
+	font-size: 0.8rem;
+	text-align: end;
+	font-family: var(--font-mono);
+	letter-spacing: 0.1rem;
+}
+
+ion-note {
+	display: inline-block;
+	font-size: 1rem;
+	color: var(--ion-color-medium-shade);
+}
+
+ion-item.selected {
+	--color: var(--ion-color-primary);
+}
+
+ion-app ion-menu#mainMenu {
+	--side-min-width: 15.625rem;
+	--side-max-width: 20rem;
+	--transition-duration: 0.2s;
+}

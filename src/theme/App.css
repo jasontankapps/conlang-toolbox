@@ -1,0 +1,1500 @@
+ion-app {
+	overflow-wrap: anywhere;
+}
+.ion-flex-row-wrap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+ion-app p {
+	text-indent: 2rem;
+	padding: 1rem;
+	margin: 0 auto !important;
+}
+ion-app p + p {
+	padding-block-start: 0;
+}
+ion-app .overrideMarkdown.ion-text-center p {
+	text-indent: 0;
+	text-align: center;
+	padding: 0;
+}
+ion-app .overrideMarkdown.ion-text-wrap p {
+	white-space: normal;
+}
+ion-app .clickToExpand {
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 0.1s ease-in;
+}
+ion-app .clickToExpand.expanded {
+	max-height: 10rem;
+	transition: max-height 0.1s ease-out;
+}
+ion-app ion-button.helpy {
+	opacity: 0.5;
+}
+ion-app .possiblyLargeLabel p,
+ion-app .possiblyLargeLabel h2 {
+	padding: 0;
+	text-indent: 0;
+	white-space: normal;
+}
+ion-app .important {
+	color: var(--ion-text-color);
+}
+ion-app .hide {
+	display: none !important;
+	overflow: hidden;
+}
+
+.flex-basic {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+.flex-shrinker {
+	flex-grow: 0;
+	flex-shrink: 1;
+}
+.flex-grower {
+	flex-grow: 1;
+	flex-shrink: 0;
+}
+.unflexable {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+.align-middle {
+	vertical-align: middle;
+}
+.pad-horizontal-rem {
+	padding-inline: 1rem;
+}
+.margin-top-quarter {
+	margin-block-start: 0.25rem;
+}
+.pad-top-rem {
+	padding-block-start: 1rem;
+}
+.no-pad-bottom {
+	padding-block-end: 0;
+}
+.ital {
+	font-style: italic;
+}
+.bold {
+	font-weight: bold;
+}
+.center {
+	text-align: center;
+	text-indent: 0;
+}
+
+
+.blankContents p {
+	display: contents;
+}
+
+
+.emphasizedSection {
+	display: block;
+	text-align: center;
+	margin-inline-start: auto;
+	margin-inline-end: auto;
+	text-indent: 0;
+}
+.emphasizedSection br {
+	display: block;
+	height: 0.25rem;
+	content: '';
+}
+
+ion-card-content ul li {
+	margin: 1rem 0;
+}
+ion-card-content .changelog li {
+	margin: 0.25em 1em 0.75em 0;
+}
+#coffee {
+	padding-block-end: 1em;
+	padding-block-start: 10em;
+}
+#changelog #changelogButtonContainer {
+	margin-block-start: 3em;
+	margin-block-end: 1em;
+}
+#bugReport {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	padding-block: 1em;
+	padding-inline: 2em;
+	gap: 2em;
+}
+ion-card-title {
+	font-size: 1.25rem;
+    font-weight: bold;
+}
+ion-card {
+	--ion-border-color: var(--ion-color-step-150);
+	border-radius: 1.5rem;
+}
+ion-card-content {
+	color: var(--ion-color-step-850);
+}
+ion-card-content ol,
+ion-card-content .example {
+	background: var(--ion-background-tinter);
+	margin: 0;
+	padding-block: 1em;
+	border-radius: 1rem;
+}
+ion-card-content ol,
+ion-card-content .example ul {
+	padding-inline-start: 2.5em;
+	padding-inline-end: 1em;
+}
+ion-card-content .example .title {
+	font-weight: bold;
+	text-align: center;
+	margin-inline: auto;
+	margin-block-start: 1em;
+	margin-block-end: 0.5em;
+}
+ion-card-content .example .title:first-child {
+	margin-block-start: 0;
+}
+ion-card-content .example ul li,
+ion-card-content .example ul,
+ion-card-content ol ul,
+ion-card-content ol ul li {
+	margin: 0;
+}
+ion-card-content ol ul {
+	padding-inline-start: 1.5em;
+	list-style-type: disc;
+}
+ion-card-content ol ol {
+	margin-block: 0.25em;
+	padding-block: 0.25em;
+	list-style-type: lower-roman;
+}
+ion-card-content h2 {
+	color: var(--ion-text-color);
+	font-size: 1.5em !important;
+}
+ion-card-content hr {
+	border: 0;
+	border-color: var(--ion-color-step-150);
+	border-block-start-width: 1px;
+	border-style: solid;
+	margin: 1em 0 2em 0;
+}
+
+.charGroups .charGroupLongName,
+.transforms .description,
+.transforms .description {
+	font-size: smaller;
+	font-style: italic;
+}
+ion-app .serifChars {
+	letter-spacing: 0.025rem;
+	font-family: var(--font-serif), var(--font-international), serif;
+}
+ion-app .importantElement {
+	font-weight: bold;
+}
+.charGroups .charGroupRun .label::after {
+	font-weight: bold;
+	content: "=";
+}
+ion-app .importantUnit {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	font-weight: bold;
+	border: 1px solid var(--ion-color-input-border);
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+ion-app .unimportantUnit {
+	display: inline-block;
+	padding: 0 0.5rem;
+	letter-spacing: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+ion-app .arrow {
+	font-weight: bold;
+}
+.transforms .dragHandle,
+.transforms .dragHandle {
+	width: 2rem;
+	text-align: center;
+}
+.transforms .dragHandle ion-icon,
+.transforms .dragHandle ion-icon,
+.soundChanges .dragHandle ion-icon {
+	font-size: 32px;
+	color: var(--ion-color-tertiary-shade);
+}
+
+
+ion-app ion-list.syllables > ion-item {
+	margin: 0 0 1rem;
+	display: flex;
+	width: 100%;
+	align-items: flex-start;
+	justify-content: stretch;
+}
+ion-app ion-list.syllables > ion-item::part(native) {
+	width: 100%;
+}
+ion-app ion-list.syllables ion-item {
+	pointer-events: auto;
+}
+ion-app ion-list.syllables > ion-item div {
+	flex: 1;
+	flex-grow: 5;
+	flex-shrink: 1;
+	flex-basis: calc((100% - 2em) * 0.3);
+}
+ion-app ion-list.syllables > ion-item div:last-of-type {
+	flex: 1;
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: 2em;
+}
+ion-app ion-list.syllables > ion-item ion-textarea {
+	margin: 0;
+	flex: 1;
+	flex-grow: 5;
+	flex-shrink: 5;
+	flex-basis: calc((100% - 2em) * 0.6);
+}
+ion-app ion-list.syllables div.header {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0.5rem 1rem 1rem;
+}
+ion-app ion-list.syllables div.header div.title {
+	display: block;
+	font-weight: bold;
+	font-size: larger;
+	text-align: start;
+}
+ion-app ion-list.syllables div.header div.percentage {
+	display: block;
+	align-self: flex-end;
+	font-size: smaller;
+	font-style: italic;
+	padding: 0.25rem 0.5rem;
+	margin-block-start: 1rem;
+	border-radius: 1rem;
+	background-color: var(--ion-background-shader);
+	opacity: 0.75;
+}
+ion-app ion-list.syllables div.button {
+	align-self: center;
+	margin-block: 0;
+	margin-inline-start: 1rem;
+	margin-inline-end: 0;
+}
+ion-app ion-list.syllables ion-list.sublist {
+	width: 100%;
+}
+ion-app ion-list.syllables .toggleable {
+	overflow: hidden;
+	display: none;
+}
+ion-app ion-list.syllables .toggleable.toggled {
+	display: flex;
+}
+
+ion-app ion-content.disappearingHeaderKludgeFix > :last-child {
+	margin-block-end: 50vh;
+}
+
+ion-item-option {
+	min-width: 5rem;
+}
+ion-list.units {
+	background: transparent;
+	padding: 0;
+}
+ion-list.units > ion-item,
+ion-list.units > ion-item-option,
+ion-list.units > ion-item-option button {
+	border-block-end: 0.1rem solid var(--ion-background-color);
+}
+ion-list.units > ion-item-sliding:first-of-type > ion-item,
+ion-list.units > ion-item-sliding:first-of-type > ion-item-option,
+ion-list.units > ion-item-sliding:first-of-type > ion-item-option button {
+	border-block-start: 0.1rem solid var(--ion-background-color);
+}
+ion-list.units > ion-item.nonUnit {
+	border-block-end: 0;
+	border-block-start: 0;
+}
+.hasFabButton ion-list.units {
+	padding-block-end: 5em;
+}
+ion-list.dragArea {
+	min-height: 100%;
+}
+.belongsToBelow {
+	margin-block-end: 0;
+	padding-block-end: 0;
+}
+.minor {
+	font-size: 0.8em;
+}
+
+ion-app .fullScreen {
+	display: flex;
+	flex-flow: column nowrap;
+	min-height: 100%;
+}
+ion-app .fullScreen .collapse {
+	flex: 0 1 auto;
+}
+ion-app .fullScreen .largePane {
+	flex: 1 1 auto;
+}
+ion-app .fullScreen .collapse div {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	margin-inline-end: 1rem;
+}
+ion-app .fullScreen .collapse div ion-button {
+	white-space: normal;
+}
+
+#importData ion-item,
+#importData ion-item-divider {
+	transition: all 0.2s ease-out;
+	max-height: 10vh;
+}
+#importData ion-item.permanent {
+	max-height: max-content;
+}
+#importData.waitingForInput ion-item:not(.permanent),
+#importData.waitingForInput ion-item-divider,
+#importData ion-item.notSelectable {
+	--border-width: 0;
+	--padding-top: 0;
+	--padding-bottom: 0;
+	transition: all 0.2s ease-in;
+	max-height: 0;
+	min-height: 0;
+}
+#importData ion-button.showing {
+	max-width: 25vw;
+	overflow: hidden;
+	transition: all 0.2s ease-out;
+}
+#importData ion-button.hiding {
+	max-width: 0;
+	overflow: hidden;
+	transition: all 0.2s ease-in;
+}
+
+#WGoutput {
+	display: flex;
+	align-items: flex-start;
+	justify-content: stretch;
+	margin: 0.5rem 0.5rem 0;
+}
+#WGoutput .leftHandSide {
+	flex: 1;
+}
+#WGoutput .leftHandSide ion-button {
+	width: max-content;
+	font-size: 1.35rem;
+	min-height: 3.25rem;
+	padding-block: 0.5rem;
+	padding-inline: 0;
+}
+#WGoutput .leftHandSide ion-button ion-icon {
+	margin-inline-start: 0.25rem;
+}
+#WGoutput .rightHandSide {
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+.dropoff {
+	background: var(--ion-background-shader);
+	padding: 0.5em;
+	border-radius: 1em;
+	font-style: italic;
+	font-size: smaller;
+	margin-inline-start: 1em;
+	opacity: 0.75;
+}
+#presetsSection {
+	padding: 0.5rem;
+}
+#presetsSection div {
+	display: flex;
+	justify-content: center;
+	align-content: flex-start;
+	align-items: center;
+	flex-flow: row wrap;
+	width: 100%;
+}
+#presetsSection div ion-button {
+	margin-block: 0.25em;
+	margin-inline: 0.5em;
+}
+
+#WEoutput {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin: 0.5rem 0.5rem 0;
+	gap: 0.25rem;
+}
+#WEoutput div {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 0.25rem;
+}
+#WEoutput div.topBar {
+	flex-flow: row wrap;
+}
+#WEoutput div.buttons {
+	justify-content: flex-end;
+	gap: 0;
+}
+#WEoutput div.evolving div {
+	display: block;
+}
+#WEoutput div.evolving div.rulesApplied {
+	margin: 0 0 1rem;
+}
+#WEoutput div.evolving div.rules {
+	margin-inline-start: 2rem;
+}
+#WEoutput div.evolving ion-button {
+	font-size: 1.35rem;
+	padding-inline: 0;
+	padding-block: 0.5rem;
+	min-height: 3.25rem;
+}
+#WEoutput div.evolving ion-button ion-icon {
+	margin-inline-start: 0.25em;
+}
+
+.weCustomButton {
+	margin-block: 0;
+	margin-inline: 1em;
+}
+
+#outputPaneWE,
+#outputPane {
+	margin: 1rem 0.5rem;
+}
+#outputPane.pickAndSave .word,
+#outputPaneConcepts.pickAndSave .word,
+#outputPaneWE.pickAndSave .word {
+	background: var(--ion-color-primary);
+	color: var(--ion-color-primary-contrast);
+	cursor: copy;
+}
+#outputPane.pickAndSave div.word,
+#outputPaneConcepts.pickAndSave div.word,
+#outputPaneWE.pickAndSave div.word,
+#outputPaneConcepts.removingCombos div.word {
+	padding: 0.25em 0.5em;
+	border: 1px solid var(--ion-color-primary-shade);
+}
+#outputPane.pickAndSave .word.saved,
+#outputPaneConcepts.pickAndSave .word.saved,
+#outputPaneWE.pickAndSave .word.saved {
+	background: var(--ion-color-success);
+	color: var(--ion-color-success-contrast);
+	border-color: 1px solid var(--ion-color-success-shade);
+}
+#outputPaneConcepts .word {
+	text-align: start;
+}
+#outputPaneConcepts.centering .word {
+	text-align: center;
+}
+#outputPaneConcepts.removingCombos div.word {
+	border: 1px solid transparent;
+}
+#outputPaneConcepts.removingCombos .word.combo {
+	background: var(--ion-color-warning);
+	color: var(--ion-color-warning-contrast);
+	border: 1px solid var(--ion-color-warning-shade);
+}
+#outputPaneConcepts.removingCombos .word.combo.saved {
+	background: var(--ion-color-danger);
+	color: var(--ion-color-danger-contrast);
+	border: 1px solid var(--ion-color-danger-shade);
+}
+#outputPaneWE {
+	display: grid;
+	grid-auto-flow: row;
+	grid-template-columns: 1fr 2em 1fr;
+	grid-template-rows: auto;
+	grid-auto-rows: auto;
+	place-items: start start;
+	place-content: start start;
+}
+#outputPaneWE .arrow {
+	justify-self: center;
+}
+#outputPaneWE .leadingWord {
+	justify-self: end;
+}
+#outputPaneWE .ruleExplanation {
+	padding-inline-start: 10vw;
+}
+
+ion-app .presetPopup .action-sheet-group-cancel,
+ion-app .presetPopup .action-sheet-cancel {
+	background: var(--ion-color-danger-shade);
+	color: var(--ion-color-danger-contrast);
+}
+
+i.ipa {
+	font-style: normal;
+	color: var(--ion-color-primary-contrast);
+	background-color: var(--ion-color-primary-shade);
+	padding: 0 0.1rem;
+}
+
+ion-app .hasMaxTextArea {
+	height: calc(100% - 4rem);
+	width: calc(100% - 2rem);
+	padding: 0;
+	margin: 0.25rem 1rem 0;
+	display: flex;
+}
+ion-app .hasMaxTextArea textarea {
+	height: 100%;
+	width: 100%;
+}
+.hasSpecialLabels ion-label {
+	font-size: 1.25rem;
+	padding: 0;
+	margin: 0;
+}
+.hasSpecialLabels ion-item.labelled,
+.hasSpecialLabels ion-item.sublabelled {
+	padding: 0;
+	margin: 0;
+	margin-block-start: 1rem;
+	--border-color: transparent;
+}
+.hasSpecialLabels ion-item.sublabel,
+.hasSpecialLabels ion-item.sublabel::part(native) {
+	padding: 0;
+	margin: 0;
+}
+.hasSpecialLabels ion-item.labelled::part(native) {
+	min-height: 0;
+}
+.hasSpecialLabels ion-item.labelled.toggleable::part(native) {
+	--toggle-min-height: 0;
+}
+.hasSpecialLabels ion-item.labelled.toggleable.toggled {
+	margin-block-start: 0;
+}
+
+.selectable,
+.selectable *,
+.selectable::part(native),
+.selectable *::part(native) {
+	-moz-user-select: text !important;
+	-webkit-user-select: text !important;
+	-ms-user-select: text !important;
+	user-select: text !important;
+}
+
+ion-loading.loadingPage,
+ion-loading.loadingPage * {
+	background: var(--ion-background-color) !important;
+	color: var(--ion-text-color);
+}
+ion-loading.pageSwitchBackground {
+	--background-opacity: 1.0;
+}
+
+#about ion-grid {
+	margin: 0 auto;
+	max-width: 31rem;
+	padding-block-end: 0;
+}
+#about ion-grid ion-col {
+	max-width: 30rem;
+	margin: 0 2rem;
+	padding: 0;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: center;
+	align-content: center;
+}
+#about ion-row,
+#about ion-row.major.solo {
+	padding: 0 0 1.5rem 0;
+}
+#about ion-row.major {
+	padding: 0 0 0 0;
+}
+#about ion-row.major:nth-child(1) {
+	padding: 1rem 0 0 0;
+}
+#about ion-col ion-button {
+	text-transform: none;
+	margin: 0.25rem 0.25rem;
+}
+#about ion-col ion-button::part(native) {
+	background: var(--subtle-background);
+	color: var(--ion-color-secondary);
+	padding: 0.25rem 1rem;
+}
+#about ion-row.major ion-button {
+	border-radius: 2rem;
+	width: 100%;
+	max-width: 30rem;
+	text-transform: none;
+}
+#about ion-row.major ion-button::part(native) {
+	border-radius: 2rem;
+	background: var(--subtle-highlight);
+	color: var(--ion-color-primary);
+	font-weight: bold;
+	letter-spacing: 0;
+}
+#about ion-row ion-button.help::part(native) {
+	color: var(--ion-color-tertiary);
+}
+#about ion-row.final {
+	padding: 6rem 0 0 0;
+}
+#about ion-card {
+	max-width: 30rem;
+	margin: 0.5rem 2rem;
+}
+#about ion-card * {
+	--inner-border-width: 0;
+}
+#about ion-card ion-card-header {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+}
+#about ion-card ion-card-header * {
+	font-size: 1.25rem;
+	font-weight: bold;
+	color: var(--ion-color-primary);
+	margin-top: 0;
+}
+#about ion-row.final ion-card {
+	border-radius: 50% 50% 0px 0px / 100% 100% 0px 0px;
+	width: 100%;
+	margin-bottom: 0;
+}
+
+ion-modal::part(content) ion-item-group.buttonFilled ion-item:nth-of-type(even)::part(native),
+ion-modal::part(content) ion-list.buttonFilled ion-item:nth-of-type(even)::part(native) {
+	background: var(--ion-background-shader);
+}
+.buttonFilled h1 {
+	margin-block: 2rem;
+	margin-inline: auto;
+	text-align: center;
+}
+.buttonFilled ion-button.loadButton {
+	margin-block: 0;
+	margin-inline: 1em;
+}
+
+ion-modal ion-footer.modalBorderTop {
+	border-block-start: 2px solid var(--ion-background-shader);
+}
+
+ion-list.multiLinePossible ion-item {
+	white-space: normal;
+}
+
+.ion-text-wrap::part(native) {
+	white-space: normal !important;
+}
+
+ion-chip {
+	color: var(--ion-color-step-650);
+	border-color: var(--ion-color-step-350);
+	line-height: 1.25;
+}
+ion-chip.active {
+	color: var(--ion-color-primary-contrast);
+	background: var(--ion-color-primary);
+}
+ion-item div.twoColumnsEC > div {
+	display: grid;
+	grid-template-columns: 3.5em 1fr;
+	column-gap: 0.25rem;
+	justify-items: end;
+	text-align: end;
+	align-items: center;
+	justify-content: start;
+	align-content: start;
+	margin: 0.25rem 0;
+	padding: 0.25rem 0.75rem 0.25rem 0;
+}
+ion-item div.twoColumnsEC > div:nth-child(even) {
+	background: var(--ion-background-shader);
+}
+ion-item div.twoColumnsEC h2,
+ion-item div.multiColumnEC h2 {
+	text-align: center;
+}
+ion-item div.twoColumnsEC > div div:last-child {
+	justify-self: start;
+	text-align: start;
+}
+ion-item div.centralized {
+	margin: 0 auto;
+}
+ion-item div.multiColumnEC > div {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: flex-start;
+}
+ion-item div.multiColumnEC div.char {
+	text-align: center;
+}
+ion-item div.multiColumnEC div.char,
+ion-item div.twoColumnsEC div.char {
+	font-family: var(--font-serif), var(--font-international), var(--font-sans), serif;
+	font-size: 1.1rem;
+	margin: 0.5rem;
+	padding: calc(0.5rem - 2px);
+	width: 2rem;
+	text-align: center;
+	border: 1px solid var(--ion-color-step-700);
+	background: var(--ion-color-step-100);
+}
+ion-item div.multiColumnEC div.favorite,
+ion-item div.twoColumnsEC div.favorite {
+	border: 1px solid var(--ion-color-tertiary-contrast);
+	background: var(--ion-color-tertiary-shade);
+	color: var(--ion-color-tertiary-contrast);
+}
+/*#ExtraCharactersModalList ion-item:nth-child(odd)::part(native) {
+	background: var(--ion-background-shader);
+}*/
+#ExtraCharactersModalList {
+	position: relative;
+	min-height: 100%;
+}
+#ExtraCharactersModalList .sticky {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	border-block-end: 2px solid var(--ion-border-color);
+}
+#ExtraCharactersModalList .central {
+	text-align: center;
+	font-size: 2em;
+	text-indent: 0;
+}
+#ExtraCharactersModalFooter {
+	border-block-start: 2px solid var(--ion-border-color);
+}
+#ExtraCharactersModalList .displayChips {
+	border-radius: 1em;
+	margin: 0.5em;
+	background-color: var(--ion-background-shader);
+	padding-inline: 0.5em;
+	padding-block: 0.25em;
+}
+#ExtraCharactersModalList ion-item.inputItem ion-input {
+	background-color: var(--ion-background-shader);
+	--padding-start: 8px;
+	--padding-end: 8px;
+}
+#ExtraCharactersModalList ion-item.inputItem ion-button {
+	--margin-start: 0;
+	--margin-end: 0;
+}
+#ExtraCharactersModalList ion-item.inputItem ion-button[slot="start"] {
+	margin-inline-end: 8px;
+}
+#ExtraCharactersModalList ion-item.inputItem ion-button[slot="end"] {
+	margin-inline-start: 8px;
+}
+ion-item.extraHelp {
+	display: none;
+}
+ion-list.showingHelp ion-item.extraHelp,
+ion-list.showingHelp ion-item.extraHelp::part(native) {
+	display: block;
+	background: var(--ion-color-secondary);
+	color: var(--ion-color-secondary-contrast);
+}
+ion-list.showingHelp ion-item.extraHelp div {
+	text-indent: 2em;
+	margin: 0.25em 0;
+}
+
+ion-item.wrappableInnards p,
+ion-item.wrappableInnards h2 {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+ion-item.wrappableInnards p {
+	font-size: 0.8rem;
+	padding: 0;
+	text-indent: 0;
+	color: var(--ion-color-step-500);
+	width: 100%;
+}
+ion-item.wrappableInnards h2 {
+	font-size: 1.1rem;
+	margin: 0.25em 0;
+}
+
+.concepts {
+	column-width: 20em;
+	margin: 0.5em 0.25em;
+}
+.concepts div {
+	padding: 0.25em 0.5em;
+	text-align: center;
+}
+.concepts div:nth-child(odd) {
+	background: var(--ion-background-shader);
+}
+.conceptsChips::part(native) {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin: 0 auto;
+}
+.conceptsChips .chips {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	margin: 0 auto;
+}
+.conceptsChips .controls {
+	display: flex;
+	flex-flow: column nowrap;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin: 0 auto 0 0.25rem
+}
+.conceptIcons {
+	margin-inline-end: 0.5em;
+}
+
+.ion-text-wrap {
+	overflow-wrap: anywhere;
+}
+
+@media screen and (max-width: 390px) {
+	ion-tab-bar:not(.iconsOnly) ion-label {
+		display: none;
+	}
+}
+ion-tab-bar.iconsOnly ion-tab-button.moreIndicators {
+	display: none;
+}
+@media screen and (max-width: 500px) {
+	ion-tab-bar.iconsOnly ion-tab-button.possiblyTooFar {
+		display: none;
+	}
+	ion-tab-bar.iconsOnly ion-tab-button.moreIndicators {
+		display: flex;
+	}
+}
+ion-tab-bar.iconsOnly ion-tab-button:not(.moreIndicators) ion-label {
+	white-space: nowrap;
+	font-size: 1.4em;
+}
+
+ion-select.settings::part(container) {
+	justify-content: end;
+	align-items: center;
+	text-align: end;
+	color: var(--ion-color-primary);
+}
+ion-select.syntaxSelect {
+	max-width: min-content;
+	padding-inline: 1rem;
+	padding-block-start: 0.25rem;
+	padding-block-end: 0.5rem;
+	border: 2px solid var(--ion-background-tinter);
+	background: var(--ion-background-tinter);
+}
+ion-select.syntaxSelect::part(text) {
+	max-width: max-content;
+}
+ion-select.syntaxSelect::part(icon) {
+	margin-inline-start: 1rem;
+}
+.alertSelect {
+	--min-height: 90vh;
+	--min-width: 50vw;
+	--max-width: 90vw;
+	--backdrop-opacity: 0.9;
+	--background: var(--ion-color-medium-shade);
+}
+.alertSelect .alert-radio-group {
+	max-height: max-content;
+	max-width: 90vw;
+}
+ion-app .alertSelect .alert-radio-group button {
+	border-color: var(--ion-background-shader);
+	border-style: solid;
+	border-width: 2px 4px;
+	min-width: max-content;
+}
+.alertSelect .alert-head {
+	background: var(--ion-background-shader);
+}
+
+/* Known bug where the keyboard will push the header off the screen */
+
+.scroll-content {
+	padding-block-end: 0 !important;
+}
+
+ion-alert {
+	--backdrop-opacity: 0.75;
+	--background: var(--ion-color-step-100);
+	--color: var(--ion-color-step-900);
+	--dim-color: var(--ion-color-medium);
+	--btn-background: var(--ion-color-primary-shade);
+	--btn-color: var(--ion-color-primary-contrast);
+	--btn-background-cancel: #00000033;
+	--btn-color-cancel: var(--ion-color-primary-shade);
+}
+ion-alert.danger {
+	--background: var(--ion-color-danger-shade);
+	--color: var(--ion-color-danger-contrast);
+	--dim-color: rgba(var(--ion-color-danger-contrast-rgb), 0.65);
+	--btn-color-cancel: var(--ion-color-danger-contrast);
+	--btn-background-cancel: #00000033;
+	--btn-color: var(--ion-color-danger-contrast);
+	--btn-background: #ffffff33;
+}
+ion-alert.warning {
+	--background: var(--ion-color-warning-shade);
+	--color: var(--ion-color-warning-contrast);
+	--dim-color: rgba(var(--ion-color-warning-contrast-rgb), 0.65);
+	--btn-color-cancel: var(--ion-color-warning-contrast);
+	--btn-background-cancel: #00000033;
+	--btn-color: var(--ion-color-warning-contrast);
+	--btn-background: #ffffff33;
+}
+ion-alert .alert-wrapper {
+	border: 1px solid var(--color);
+	border-radius: 2em;
+	color: var(--color);
+}
+ion-alert .alert-head .alert-title {
+	color: var(--color);
+}
+ion-alert .alert-wrapper .alert-message {
+	color: var(--dim-color);
+}
+ion-alert button.alert-button {
+	background: var(--btn-background) !important;
+	color: var(--btn-color) !important;
+}
+ion-alert button.alert-button.cancel {
+	background: var(--btn-background-cancel) !important;
+	color: var(--btn-color-cancel) !important;
+}
+ion-alert button.alert-button.danger {
+	background: var(--ion-color-danger) !important;
+	color: var(--ion-color-danger-contrast) !important;
+}
+ion-alert button.alert-button.warning {
+	background: var(--ion-color-warning) !important;
+	color: var(--ion-color-warning-contrast) !important;
+}
+
+ion-toast {
+	--border-radius: 1em;
+	--box-shadow: 0.25em 0.25em 0.5em #00000066;
+	--white-space: wrap;
+}
+ion-toast::part(button) {
+	background: #00000033;
+	border-radius: 1em;
+}
+ion-toast::part(message) {
+	text-align: center;
+}
+
+ion-list.sortSettings ion-item-sliding.customSorts ion-label.customSortDescription {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: flex-start;
+}
+ion-label.customSortDescription h2 {
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin: 0;
+}
+ion-label.customSortDescription p {
+	flex: 1;
+	text-indent: 0;
+	font-size: smaller;
+	padding: 0 0 0 1rem;
+}
+ion-item-sliding ion-item.customization {
+	--background: var(--ion-color-step-100);
+}
+ion-item-sliding:nth-child(even) ion-item.customization {
+	--background: var(--ion-color-step-50);
+}
+ion-item.customization > div {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+ion-item.customization > div.base,
+ion-item.customization > div.equals,
+ion-item.customization > div.lessthan,
+ion-item.customization > div.icon,
+ion-item.customization > ion-reorder {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+ion-item.customization > div.hidden {
+	display: none;
+}
+ion-item.customization > div.lessthan,
+ion-item.customization > div.greaterthan,
+ion-item.customization > div.equals {
+	font-size: larger;
+	font-weight: bold;
+	margin-inline: 0.5rem;
+}
+ion-item.customization > div.equalities,
+ion-item.customization > div.post,
+ion-item.customization > div.pre {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: flex-start;
+}
+ion-item.customization > div.pre {
+	justify-content: flex-end;
+}
+ion-item.customization > div.base {
+	font-size: larger;
+	border: 1px solid var(--ion-text-color);
+	padding: 0.1rem 0.25rem;
+}
+
+ion-item.prefixSuffix ion-input {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+ion-item.prefixSuffix div.stem {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+/*
+*
+*
+* DECLENJUGATOR
+*
+*
+*/
+
+ion-list.djGroups,
+ion-list.djOutput,
+ion-list.lexiconImporter,
+ion-list.hasToggles {
+	--transition-duration: 0.2s;
+	--toggle-min-height: var(--min-height);
+	--toggle-max-height: 8em;
+}
+ion-list.djOutput .wrappableInnards {
+	--toggle-min-height: var(--min-height);
+	--toggle-max-height: 12em;
+}
+
+ion-item-sliding.importFromLexiconSlider ion-item::part(native) {
+	background: var(--ion-color-step-100);
+}
+
+ion-list.lexiconImporter ion-item.biggerToggle {
+	--toggle-min-height: 4em;
+	--toggle-max-height: 10em;
+}
+ion-item.columnListing::part(native) {
+	background: var(--ion-color-step-100);
+}
+
+ion-list.djOutput {
+	padding-block-end: 0;
+}
+
+ion-list.hasToggles ion-item.doubleable::part(native) {
+	transition: all 0s ease-in var(--transition-duration);
+}
+ion-list.hasToggles ion-item.doubleable.toggled::part(native) {
+	border-block-end-width: 0;
+	transition: all 0s ease-out;
+}
+ion-list.hasToggles ion-item.toggleable::part(native) {
+	min-height: var(--toggle-min-height);
+	max-height: var(--toggle-max-height);
+	transition: all var(--transition-duration) ease-in;
+}
+ion-list.hasToggles ion-item.toggleable.toggled::part(native) {
+	--toggle-min-height: 0;
+	--toggle-max-height: 0;
+	border-block-end-width: 0;
+	transition: all var(--transition-duration) ease-out;
+}
+ion-list.hasToggles ion-item.toggleable {
+	transition: all var(--transition-duration) ease-in;
+}
+ion-list.hasToggles ion-item.toggleable.toggled {
+	transition: all var(--transition-duration) ease-out;
+}
+#DJOutputButtons {
+	display: flex;
+	flex-flow: row-reverse wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	align-content: stretch;
+	width: 100%;
+	padding: 0 1rem;
+}
+#DJOutputButtons ion-button {
+	width: max-content;
+	font-size: 1.35rem;
+	padding-block: 0.25rem;
+	padding-inline: 0;
+}
+#DJOutputButtons ion-button ion-icon {
+	margin-inline-start: 0.25em;
+}
+#DJOutput {
+	display: block;
+	padding-block-end: 2em;
+}
+#DJOutput .djTypeTitle,
+#DJOutput .unmatchedWords .title {
+	background: var(--ion-color-secondary);
+	font-variant: small-caps;
+	border-width: 0.1em 0;
+	border-color: var(--ion-color-secondary-tint);
+	border-style: solid;
+	font-size: 1.5em;
+	padding: 0 2em;
+	color: var(--ion-color-secondary-contrast);
+}
+#DJOutput .unmatchedWords .contents {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+	justify-content: center;
+	padding: 0.5em;
+}
+#DJOutput .unmatchedWords .contents span {
+	display: inline-block;
+	background: var(--ion-background-shader);
+	padding: 0.25em 0.5em;
+	margin: 0.5em;
+}
+#DJOutput .djTypeTitle::first-letter {
+	text-transform: capitalize;
+}
+#DJOutput .djOutputGroup {
+	margin: 0 0.5em 2em 0.5em;
+	padding: 0 0.25em;
+	max-width: 100%;
+	overflow-x: auto;
+}
+#DJOutput .djOutputGroup .header {
+	background: var(--ion-color-step-150);
+	padding: 1em;
+	position: sticky;
+	inset-inline-start: 0;
+}
+#DJOutput .djOutputGroup .header .title {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+#DJOutput .djOutputGroup .header .description {
+	font-style: italic;
+	text-indent: -1em;
+	padding-inline-start: 1em;
+}
+#DJOutput .djOutputGroup.chart .declenjugations {
+	display: table;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row {
+	display: table-row;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row .cell {
+	padding: 0.25em 0.5em;
+	display: table-cell;
+	text-align: center;
+	border: 1px solid var(--ion-background-color);
+	background: var(--ion-color-step-50);
+	hyphens: manual;
+	overflow-wrap: break-word;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .headers,
+#DJOutput .djOutputGroup.chart.topHeaders .declenjugations .examples .cell:first-child,
+#DJOutput .djOutputGroup.chart.sideHeaders .declenjugations .row:first-child .examples {
+	font-weight: bold;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row.headers .cell,
+#DJOutput .djOutputGroup.chart .declenjugations .row .cell.headers {
+	background: var(--ion-color-step-100);
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row .cell:first-child {
+	border-inline-start-width: 0;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row.striped:not(.headers) .cell:not(.headers),
+#DJOutput .djOutputGroup.chart .declenjugations .row:not(.headers) .cell.striped:not(.headers) {
+	background: var(--ion-background-shader);
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row .cell.first {
+	text-align: end;
+}
+#DJOutput .djOutputGroup.chart .declenjugations .row .cell.mid {
+	text-align: start;
+}
+#DJOutput .djOutputGroup.chart.sideHeaders .declenjugations span {
+	display: none;
+}
+#DJOutput .djOutputGroup .unmatched {
+	margin: 0.25em 1em;
+	font-style: italic;
+}
+#DJOutput .djOutputGroup.text .declenjugations .row {
+	margin: 0.5em 0;
+	padding: 0 1em 0 2em;
+	text-indent: -1em;
+	text-align: start;
+}
+#DJOutput .djOutputGroup.text .declenjugations .headers {
+	margin-block: 1em;
+}
+#DJOutput .djOutputGroup.text .declenjugations .examples {
+	margin-block-end: 1em;
+}
+#DJOutput .djOutputGroup.text .declenjugations .row .word.first {
+	font-weight: bold;
+}
+
+ion-item.innerList {
+	justify-content: stretch;
+}
+ion-item.innerList::part(native) {
+	--inner-padding-end: 0;
+	padding: 0;
+}
+ion-item.innerList > ion-list {
+	padding: 0;
+	width: 100%;
+}
+ion-item.innerList > ion-list ion-item::part(native) {
+	--border-width: 0;
+}
+
+ion-item-sliding.djGroupMain ion-reorder {
+	margin-inline-end: 0.5em;
+}
+ion-item-sliding.djGroupMain ion-item ion-button {
+	margin: 0;
+	margin-inline-end: 1em;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable::part(native) {
+	--toggle-min-height: 2em;
+	--toggle-max-height: 2em;
+	font-size: 0.8em;
+	padding-inline: 2.5rem;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable::part(native),
+ion-item.groupedDeclenjugation::part(native) {
+	background: var(--ion-color-step-50);
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+}
+ion-item.groupedDeclenjugation::part(native) {
+	min-height: 2em;
+	max-height: 2em;
+}
+ion-item.groupedDeclenjugation::part(native) {
+	--inner-padding-end: 0;
+	padding-inline: 0.5em;
+}
+.djGroup-caret {
+	transition: transform var(--transition-duration) ease-out;
+}
+.djGroup-caret.toggled {
+	transform: rotate(-90deg);
+	transition: transform var(--transition-duration) ease-in;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable div.title,
+ion-item.groupedDeclenjugation div.title {
+	flex-grow: 2;
+	flex-shrink: 1;
+	text-align: start;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable div.description,
+ion-item.groupedDeclenjugation div.stem {
+	flex-grow: 1;
+	flex-shrink: 1;
+	text-align: end;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable div.description,
+ion-item.groupedDeclenjugation div.stem em.mini {
+	font-size: 0.5rem;
+}
+ion-item.groupedDeclenjugation div.icon,
+ion-item.groupedDeclenjugation ion-reorder {
+	flex-grow: 0;
+	flex-shrink: 0;
+	text-align: center;
+}
+ion-item.groupedDeclenjugation div.icon {
+	padding-inline-start: 1em;
+}
+ion-item-sliding.djGroupMain ion-item.toggleable div.ww {
+	font-size: 0.5em;
+	flex-grow: 0;
+	flex-shrink: 0;
+	text-align: end;
+	padding-inline-start: 1em;
+}
+
+#makingTitle #titleOutput {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+#makingTitle #titleOutput div,
+#makingTitle .caseObjects .options .option {
+	display: inline-block;
+	padding: 0.1rem 0.5rem 0.25rem;
+	margin: 0.5rem 0.5rem;
+	border-radius: 0.5rem;
+}
+#makingTitle #titleOutput div {
+	background: var(--ion-color-primary);
+	color: var(--ion-color-primary-contrast);
+}
+#makingTitle .caseObjects {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+#makingTitle .caseObjects .title {
+	background-color: var(--ion-background-tinter);
+	text-align: center;
+	font-weight: bold;
+	margin: 0.5em 0 0.25em;
+	padding: 0.25rem 0.5rem;
+	border-radius: 2rem;
+}
+#makingTitle .caseObjects .options {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+}
+#makingTitle ion-item .caseObjects .options .option {
+	border-color: var(--ion-color-secondary-tint);
+	border-radius: 0.25em;
+	padding-inline: 0.25em;
+	padding-block: 0;
+	background: var(--ion-color-secondary);
+	color: var(--ion-color-secondary-contrast);
+	white-space: nowrap;
+}
+#makingTitle ion-item:nth-child(even) .caseObjects .options .option {
+	border-color: var(--ion-color-tertiary-tint);
+	background: var(--ion-color-tertiary);
+	color: var(--ion-color-tertiary-contrast);
+}
+#makingTitle ion-item .caseObjects .options .option.toggleButton {
+	background: transparent;
+	border-width: 1px;
+	border-style: solid;
+	color: inherit;
+	font-style: italic;
+}
+#makingTitle ion-item .caseObjects .toggleGroup {
+	display: contents;
+	padding: 0;
+	margin: 0;
+}
+#makingTitle ion-item .caseObjects .options .toggleGroup.active .option {
+	max-width: 90vw;
+	overflow: hidden;
+	transition: all 0.5s linear;
+}
+#makingTitle ion-item .caseObjects .options .toggleGroup.inactive .option {
+	max-width: 0;
+	padding-inline: 0;
+	border-width: 0;
+	margin: 0;
+	overflow: hidden;
+	transition: all 0.2s linear;
+}
+
+#loadingPage {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: center;
+}
+#loadingPage div {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: center;
+}
+#loadingPage ion-spinner {
+	height: 2.5em;
+	width: 2.5em;
+}
+#loadingPage h1 {
+	padding-inline-end: 1em;
+}
