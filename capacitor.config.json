@@ -1,0 +1,13 @@
+{
+	"appId": "net.jasontank.conlangtoolbox",
+	"appName": "Conlang Toolbox",
+	"npmClient": "npm",
+	"webDir": "build",
+	"plugins": {
+		"SplashScreen": {
+			"launchAutoHide": false
+		}
+	},
+	"backgroundColor": "#333333",
+	"cordova": {}
+}

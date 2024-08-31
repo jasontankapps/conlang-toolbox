@@ -1,0 +1,8 @@
+{
+	"name": "Conlang Toolbox",
+	"integrations": {
+		"capacitor": {}
+	},
+	"type": "react",
+	"id": "net.jasontank.conlangtoolbox"
+}
