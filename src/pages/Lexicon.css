@@ -1,0 +1,257 @@
+#theLexiconHeader {
+	margin: 0 0.25rem;
+	padding: 0;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: space-between;
+}
+#theLexiconHeader > div {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: flex-start;
+	align-content: flex-end;
+}
+#theLexiconHeader ion-button {
+	padding: 0.25em;
+	padding-inline-start: 0.5em;
+}
+#theLexiconHeader ion-button::part(native) {
+	padding: 0.5em;
+}
+#theLexiconHeader ion-button.normalText {
+	text-transform: none;
+	font-size: larger;
+}
+#theLexiconHeader div.fakeButton {
+	background: var(--ion-color-secondary);
+	color: var(--ion-color-secondary-contrast);
+	max-width: 33vw;
+	text-overflow: ellipsis;
+	border-radius: 0.25em;
+	font-size: larger;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.25em;
+	padding: 0.25em;
+	margin-inline-start: 0.25em;
+	cursor: pointer;
+}
+#theLexiconHeader div.fakeButton div {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+#theLexiconHeader div.fakeButton + ion-button {
+	padding-inline-start: 0;
+}
+
+
+#theLexiconHolder {
+	--ion-grid-columns: 1;
+	padding: 0;
+}
+#theLexiconHolder ion-row {
+	margin: 0;
+}
+#theLexicon,
+#theLexicon::part(native) {
+	margin: 0 !important;
+	padding: 0;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	overflow: auto;
+	width: calc(100% - 1.5rem);
+}
+#theLexicon .lexInput {
+	--highlight-color-focused: transparent;
+}
+#theLexicon ion-button {
+	margin: 0;
+}
+#theLexicon ion-button::part(native) {
+	padding: 0 0.25rem;
+}
+#theLexicon .xs {
+	padding-inline-start: 0.25rem;
+	flex: 0 0 2.25rem;
+}
+#theLexicon .s {
+	flex: 1 1 5rem;
+}
+#theLexicon .m {
+	flex: 3 1 12rem;
+}
+#theLexicon .l {
+	flex: 5 1 25rem;
+}
+#theLexicon ion-input {
+	outline: none;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	border: 0;
+}
+#theLexicon ion-input.lexAddInput {
+	overflow-y: hidden;
+}
+#theLexicon .merging {
+	font-weight: bold;
+	background: var(--ion-color-tertiary);
+	color: var(--ion-color-tertiary-contrast);
+	flex: 0 0 1.1rem;
+	text-align: center;
+}
+.lexRow,
+.lexRow::part(native) {
+	--inner-padding-end: 0;
+	margin: 0;
+}
+.lexRow::part(native),
+.virtualLex .lexRow {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+.virtualLex .lexRow.even::part(native) {
+	background: var(--ion-color-step-100);
+}
+.virtualLex .lexRow.odd::part(native) {
+	background: var(--ion-color-step-50);
+}
+.virtualLex {
+	margin: 0;
+	overflow-y: scroll !important;
+	padding-block-end: 5em;
+}
+ion-fab {
+	margin-block-end: var(--ion-safe-area-bottom, 0);
+}
+#mergeLexiconItems ion-select::part(text),
+#mergeLexiconItems .value {
+	text-align: end;
+	justify-content: flex-end;
+}
+#mergeLexiconItems ion-select::part(label),
+#mergeLexiconItems .colLabel {
+	text-align: start;
+	justify-content: flex-start;
+}
+.lexHeader,
+.lexHeader::part(native) {
+	font-weight: bold;
+	min-height: 1.5rem;
+	align-items: flex-end;
+}
+.lexRow > * {
+	margin: 0 0.25rem;
+	padding: 0 0.25rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.lexRow > .xs {
+	margin: 0;
+}
+.lexInputs::part(native),
+.lexHeader::part(native) {
+	overflow-y: hidden !important;
+}
+.lexItem {
+	display: inline-block;
+	max-height: 48px;
+	padding: 0;
+}
+.lexItem.ion-text-wrap {
+	overflow: auto;
+}
+
+.lexiconDisplay {
+	border-block-start: 2px solid var(--ion-background-color);
+}
+.lexiconDisplay:last-child {
+	border-block-end: 2px solid var(--ion-background-color);
+}
+.lexiconDisplay ion-item-options {
+	border-block-start: 2px solid var(--ion-background-color);
+	border-block-end: 2px solid var(--ion-background-color);
+}
+.lexiconDeletingDisplay.deleting {
+	border-block-start: 2px solid var(--ion-color-danger-shade);
+	background: var(--ion-color-danger);
+	color: var(--ion-color-danger-contrast);
+}
+.lexiconDeletingDisplay.deleting:last-child {
+	border-block-end: 2px solid var(--ion-color-danger-shade);
+}
+
+.virtualLex .lexRow.lexiconDeletingDisplay.deleting.even::part(native) {
+	background: var(--ion-background-shader);
+}
+.virtualLex .lexRow.lexiconDeletingDisplay.deleting.odd::part(native) {
+	background: var(--ion-background-tinter);
+}
+
+#lexiconPage #lexiconSort::part(text)::before {
+	content: "Sort: ";
+	margin-inline-end: 0.5rem;
+}
+#lexiconPage #lexiconSort::part(text) {
+	min-width: 10rem;
+	overflow: visible;
+}
+#lexiconPage #lexiconSort {
+	background: var(--ion-background-tinter);
+	margin-inline-end: 0.5rem;
+}
+#lexiconPage h1,
+#lexiconPage h2 {
+	margin: 0;
+}
+#lexiconPage #revealFullElement {
+	border: 1px solid var(--ion-color-input-fg) !important;
+	background: var(--ion-color-input-bg) !important;
+	letter-spacing: 0.025rem !important;
+	font-size: 0.95rem !important;
+	font-family: var(--font-serif), var(--font-international), serif !important;
+	text-align: center !important;
+	text-transform: none;
+	margin: 0 !important;
+	padding: 0 8px !important;
+	box-sizing: border-box !important;
+	z-index: 10000 !important;
+	position: fixed !important;
+}
+#lexiconPage ion-list {
+	padding: 0;
+}
+
+#lexColumnInputs {
+	border-block-end: 2px solid var(--ion-background-shader);
+}
+#lexiconTitleAndDescription {
+	padding: 0.5rem 0 2.5rem;
+}
+
+#editLexiconItemOrder ion-row:nth-child(odd) {
+	margin: 0;
+}
+
+#lexColumnNames {
+	order: -2;
+	overflow-y: scroll
+}
+#lexColumnInputs {
+	order: -1;
+	overflow-y: scroll;
+}
+.overflow-none {
+	overflow-y: hidden;
+}
+.marginless {
+	margin: 0;
+}

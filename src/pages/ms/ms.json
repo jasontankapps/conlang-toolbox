@@ -1,0 +1,2104 @@
+{
+	"sections": [
+		"01",
+		"02",
+		"03",
+		"04",
+		"05",
+		"06",
+		"07",
+		"08",
+		"09",
+		"10"
+	],
+	"01": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "1-Morphological Typology",
+			"heads": [true]
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "1-1-Traditional Typology",
+			"heads": [true]
+		},
+		{
+			"tag": "Modal",
+			"title": "title11",
+			"label": "label11",
+			"content": "info11"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Synthesis",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_synthesis",
+			"start": "Isolating",
+			"end": "Polysynthetic",
+			"spectrum": true,
+			"max": 10
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Fusion",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_fusion",
+			"start": "Agglutinative",
+			"end": "Fusional",
+			"spectrum": true,
+			"max": 10
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_tradTypol",
+			"content": "text11"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "1-2-Morphological Processes",
+			"heads": [true]
+		},
+		{
+			"tag": "Modal",
+			"title": "title12",
+			"label": "label12",
+			"content": "info12"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Affixes",
+			"heads": [true]
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_prefixMost",
+				"BOOL_prefixLess",
+				"BOOL_suffixMost",
+				"BOOL_suffixLess",
+				"BOOL_circumfixMost",
+				"BOOL_circumfixLess",
+				"BOOL_infixMost",
+				"BOOL_infixLess"
+			],
+			"display": {
+				"i18": "checkboxAffixes",
+				"class": "cols3",
+				"boxesPerRow": 2,
+				"export": {
+					"i18": "checkboxAffixesExport",
+					"textOutputBooleans": [
+						["BOOL_prefixMost", "BOOL_suffixMost", "BOOL_circumfixMost", "BOOL_infixMost"],
+						["BOOL_prefixLess", "BOOL_suffixLess", "BOOL_circumfixLess", "BOOL_infixLess"]
+					]
+				}
+			}
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Stem Modification",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_stemMod",
+			"start": "Not Used",
+			"end": "Used Often"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Suppletion",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_suppletion",
+			"start": "Not Used",
+			"end": "Used Often"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Reduplication",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_redupe",
+			"start": "Not Used",
+			"end": "Used Often"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "Suprasegmental Modification",
+			"heads": [true]
+		},
+		{
+			"tag": "Range",
+			"prop": "NUM_supraMod",
+			"start": "Not Used",
+			"end": "Used Often"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_morphProcess",
+			"rows": 6,
+			"content": "text12"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "1-3-Head/Dependent Marking",
+			"heads": [true]
+		},
+			{
+			"tag": "Range",
+			"prop": "NUM_headDepMarked",
+			"start": "Head Marked",
+			"end": "Dependent Marked",
+			"spectrum": true,
+			"max": 4
+		},
+		{
+			"tag": "Modal",
+			"title": "title13",
+			"label": "label13",
+			"content": "info13"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_headDepMark",
+			"content": "text13"
+		}
+	],
+	"02": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "2-Grammatical Categories",
+			"heads": [
+				"TEXT_propNames",
+				"TEXT_possessable",
+				"TEXT_countMass",
+				"TEXT_pronounAnaphClitic",
+				"TEXT_semanticRole",
+				"BOOL_actions",
+				"BOOL_actionProcesses",
+				"BOOL_weather",
+				"BOOL_states",
+				"BOOL_involuntaryProcesses",
+				"BOOL_bodyFunctions",
+				"BOOL_motion",
+				"BOOL_position",
+				"BOOL_factive",
+				"BOOL_cognition",
+				"BOOL_sensation",
+				"BOOL_emotion",
+				"BOOL_utterance",
+				"BOOL_manipulation",
+				"BOOL_otherVerbClass",
+				"TEXT_verbClass",
+				"TEXT_verbStructure",
+				"BOOL_lexVerb",
+				"BOOL_lexNoun",
+				"BOOL_lexVN",
+				"BOOL_lexVorN",
+				"BOOL_adjectives",
+				"TEXT_propClass",
+				"TEXT_quantifier",
+				"BOOL_baseFive",
+				"BOOL_baseTen",
+				"BOOL_baseTwenty",
+				"BOOL_baseOther",
+				"BOOL_numGL",
+				"BOOL_numLG",
+				"BOOL_numNone",
+				"BOOL_multiNumSets",
+				"BOOL_inflectNum",
+				"TEXT_numeral",
+				"TEXT_adverb"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "2-1-Nouns (the most time-stable concepts)",
+			"heads": [
+				"TEXT_propNames",
+				"TEXT_possessable",
+				"TEXT_countMass",
+				"TEXT_pronounAnaphClitic"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-1-1-Types of Nouns",
+			"heads": ["TEXT_propNames", "TEXT_possessable", "TEXT_countMass"]
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "2-1-1-1-Proper Names",
+			"heads": ["TEXT_propNames"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title2111",
+			"label": "label2111",
+			"content": "info2111"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_propNames",
+			"content": "text2111"
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "2-1-1-2-Possessability",
+			"heads": ["TEXT_possessable"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title2112",
+			"label": "label2112",
+			"content": "info2112"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_possessable",
+			"rows": 4,
+			"content": "text2112"
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "2-1-1-3-Count vs Mass",
+			"heads": ["TEXT_countMass"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title2113",
+			"label": "label2113",
+			"content": "info2113"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_countMass",
+			"content": "text2113"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-1-2-Pronouns and Anaphoric Clitics",
+			"heads": ["TEXT_pronounAnaphClitic"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title212",
+			"label": "label212",
+			"content": "info212"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_pronounAnaphClitic",
+			"rows": 4,
+			"content": "text212"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "2-2-Verbs (the least time-stable concepts)",
+			"heads": [
+				"TEXT_semanticRole",
+				"BOOL_actions",
+				"BOOL_actionProcesses",
+				"BOOL_weather",
+				"BOOL_states",
+				"BOOL_involuntaryProcesses",
+				"BOOL_bodyFunctions",
+				"BOOL_motion",
+				"BOOL_position",
+				"BOOL_factive",
+				"BOOL_cognition",
+				"BOOL_sensation",
+				"BOOL_emotion",
+				"BOOL_utterance",
+				"BOOL_manipulation",
+				"BOOL_otherVerbClass",
+				"TEXT_verbClass",
+				"TEXT_verbStructure"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-2-1-Semantic Roles",
+			"heads": ["TEXT_semanticRole"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title221",
+			"label": "label221",
+			"content": "info221"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_semanticRole",
+			"rows": 6,
+			"content": "text221"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-2-2-Verb Classes",
+			"heads": [
+				"BOOL_actions",
+				"BOOL_actionProcesses",
+				"BOOL_weather",
+				"BOOL_states",
+				"BOOL_involuntaryProcesses",
+				"BOOL_bodyFunctions",
+				"BOOL_motion",
+				"BOOL_position",
+				"BOOL_factive",
+				"BOOL_cognition",
+				"BOOL_sensation",
+				"BOOL_emotion",
+				"BOOL_utterance",
+				"BOOL_manipulation",
+				"BOOL_otherVerbClass",
+				"TEXT_verbClass"
+			]
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_actions",
+				"BOOL_actionProcesses",
+				"BOOL_weather",
+				"BOOL_states",
+				"BOOL_involuntaryProcesses",
+				"BOOL_bodyFunctions",
+				"BOOL_motion",
+				"BOOL_position",
+				"BOOL_factive",
+				"BOOL_cognition",
+				"BOOL_sensation",
+				"BOOL_emotion",
+				"BOOL_utterance",
+				"BOOL_manipulation",
+				"BOOL_otherVerbClass"
+			],
+			"display": {
+				"i18": "checkboxVerbClasses",
+				"class": "striped",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxVerbClassesExport",
+					"labels": [
+						"Actions (Agent affects Patient)",
+						"Action-Processes (Agent only)",
+						"Weather Verbs (in English, these require a dummy Agent (\"_It_ is raining\"); this is not the case in many other languages!)",
+						"States (be hot, be broken, be frozen, etc; may be predicate-bound)",
+						"Involuntary Processes (he grew; it broke; they died; etc.)",
+						"Bodily Functions (cough, sweat, bleed, cry, etc.)",
+						"Motion (go, float, proceed, etc.)",
+						"Position (sit, stand, hang, etc.)",
+						"Factive (something comes into being: e.g. build, form, ignite, create; rarely treated differently than Actions)",
+						"Cognition (know, suspect, forget etc.)",
+						"Sensation (hear, see, taste, etc.)",
+						"Emotion (be happy, be afraid, be mellow, etc.)",
+						"Utterance (say, yell, murmur, declare, chat, etc.)",
+						"Manipulation (force, urge, cause, let, permit, allow, compel, etc.)",
+						"Other Verb Class(es) (a distinction different from those already listed)"
+					]
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_verbClass",
+			"rows": 8,
+			"content": "text222"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-2-3-Verb Structure",
+			"heads": ["TEXT_verbStructure"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title223",
+			"label": "label223",
+			"content": "info223"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_verbStructure",
+			"rows": 6,
+			"content": "text223"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "2-3-Modifiers",
+			"heads": [
+				"BOOL_lexVerb",
+				"BOOL_lexNoun",
+				"BOOL_lexVN",
+				"BOOL_lexVorN",
+				"BOOL_adjectives",
+				"TEXT_propClass",
+				"TEXT_quantifier",
+				"BOOL_baseFive",
+				"BOOL_baseTen",
+				"BOOL_baseTwenty",
+				"BOOL_baseOther",
+				"BOOL_numGL",
+				"BOOL_numLG",
+				"BOOL_numNone",
+				"BOOL_multiNumSets",
+				"BOOL_inflectNum",
+				"TEXT_numeral"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-3-1-Property Concepts (Descriptive Adjectives)",
+			"heads": [
+				"BOOL_lexVerb",
+				"BOOL_lexNoun",
+				"BOOL_lexVN",
+				"BOOL_lexVorN",
+				"BOOL_adjectives",
+				"TEXT_propClass"
+			]
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_lexVerb",
+				"BOOL_lexNoun",
+				"BOOL_lexVN",
+				"BOOL_lexVorN",
+				"BOOL_adjectives"
+			],
+			"display": {
+				"i18": "checkboxVerbPropConcepts",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxVerbPropConceptsExport"
+				}
+			}
+		},
+		{
+			"tag": "Modal",
+			"title": "title231",
+			"label": "label231",
+			"content": "info231"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_propClass",
+			"content": "text231"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-3-2-Non-Numeral Quantifiers (e.g. few, many, some)",
+			"heads": ["TEXT_quantifier"]
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_quantifier",
+			"content": "text232"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "2-3-3-Numerals",
+			"heads": [
+				"BOOL_baseFive",
+				"BOOL_baseTen",
+				"BOOL_baseTwenty",
+				"BOOL_baseOther",
+				"BOOL_numGL",
+				"BOOL_numLG",
+				"BOOL_numNone",
+				"BOOL_multiNumSets",
+				"BOOL_inflectNum",
+				"TEXT_numeral"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title233",
+			"label": "label233",
+			"content": "info233"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_baseFive",
+				"BOOL_baseTen",
+				"BOOL_baseTwenty",
+				"BOOL_baseOther"
+			],
+			"display": {
+				"i18": "checkboxNumberBase",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxNumberBaseExport"
+				}
+			}
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_numGL",
+				"BOOL_numLG",
+				"BOOL_numNone"
+			],
+			"display": {
+				"i18": "checkboxNumberFormat",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxNumberFormatExport"
+				}
+			}
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_multiNumSets",
+				"BOOL_inflectNum"
+			],
+			"display": {
+				"i18": "checkboxNumberOtherProps",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxNumberOtherPropsExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_numeral",
+			"rows": 6,
+			"content": "text233"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "2-4-Adverbs",
+			"heads": ["TEXT_adverb"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title24",
+			"label": "label24",
+			"content": "info24"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_adverb",
+			"rows": 4,
+			"content": "text24"
+		}
+	],
+	"03": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "3-Constituent Order Typology",
+			"heads": [
+				"BOOL_APV",
+				"BOOL_AVP",
+				"BOOL_VAP",
+				"BOOL_VPA",
+				"BOOL_PAV",
+				"BOOL_PVA",
+				"TEXT_mainClause",
+				"TEXT_verbPhrase",
+				"TEXT_nounPhrase",
+				"BOOL_preP",
+				"BOOL_postP",
+				"BOOL_circumP",
+				"TEXT_adPhrase",
+				"TEXT_compare",
+				"TEXT_questions",
+				"TEXT_COType"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-1-In Main Clauses",
+			"heads": [
+				"BOOL_APV",
+				"BOOL_AVP",
+				"BOOL_VAP",
+				"BOOL_VPA",
+				"BOOL_PAV",
+				"BOOL_PVA",
+				"TEXT_mainClause"
+			]
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_APV",
+				"BOOL_AVP",
+				"BOOL_VAP",
+				"BOOL_VPA",
+				"BOOL_PAV",
+				"BOOL_PVA"
+			],
+			"display": {
+				"i18": "checkboxMainClauses",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"labelClass": "cbox leftA",
+				"export": {
+					"i18": "checkboxMainClausesExport"
+				}
+			}
+		},
+		{
+			"tag": "Modal",
+			"title": "title31",
+			"label": "label31",
+			"content": "info31"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_mainClause",
+			"content": "text31"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-2-Verb Phrases",
+			"heads": ["TEXT_verbPhrase"]
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_verbPhrase",
+			"rows": 4,
+			"content": "text32"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-3-Noun Phrases",
+			"heads": ["TEXT_nounPhrase"]
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_nounPhrase",
+			"rows": 4,
+			"content": "text33"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-4-Adpositional Phrases",
+			"heads": [
+				"BOOL_preP",
+				"BOOL_postP",
+				"BOOL_circumP",
+				"TEXT_adPhrase"
+			]
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_preP",
+				"BOOL_postP",
+				"BOOL_circumP"
+			],
+			"display": {
+				"i18": "checkboxAdpositionalPhrases",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxAdpositionalPhrasesExport",
+					"labelOverrideDocx": true
+				}
+			}
+		},
+		{
+			"tag": "Modal",
+			"title": "title34",
+			"label": "label34",
+			"content": "info34"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_adPhrase",
+			"rows": 4,
+			"content": "text34"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-5-Comparatives",
+			"heads": ["TEXT_compare"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title35",
+			"label": "label35",
+			"content": "info35"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_compare",
+			"content": "text35"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-6-Question Particles and Words",
+			"heads": ["TEXT_questions"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title36",
+			"label": "label36",
+			"content": "info36"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_questions",
+			"content": "text36"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "3-7-Summary",
+			"heads": ["TEXT_COType"]
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_COType",
+			"content": "text37"
+		}
+	],
+	"04": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "4-Noun and Noun Phrase Operations",
+			"heads": [
+				"TEXT_compounding",
+				"TEXT_denoms",
+				"BOOL_numSing",
+				"BOOL_numDual",
+				"BOOL_numTrial",
+				"BOOL_numPaucal",
+				"BOOL_numPlural",
+				"TEXT_nNumberOpt",
+				"TEXT_nNumberObl",
+				"TEXT_nCase",
+				"TEXT_articles",
+				"TEXT_demonstratives",
+				"TEXT_possessors",
+				"BOOL_classGen",
+				"BOOL_classAnim",
+				"BOOL_classShape",
+				"BOOL_classFunction",
+				"BOOL_classOther",
+				"TEXT_classGender",
+				"BOOL_dimAugYes",
+				"BOOL_dimAugObligatory",
+				"BOOL_dimAugProductive",
+				"TEXT_dimAug"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-1-Compounding",
+			"heads": ["TEXT_compounding"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title41",
+			"label": "label41",
+			"content": "info41"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_compounding",
+			"rows": 4,
+			"content": "text41"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-2-Denominalization",
+			"heads": ["TEXT_denoms"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title42",
+			"label": "label42",
+			"content": "info42"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_denoms",
+			"rows": 4,
+			"content": "text42"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-3-Number Marking",
+			"heads": [
+				"BOOL_numSing",
+				"BOOL_numDual",
+				"BOOL_numTrial",
+				"BOOL_numPaucal",
+				"BOOL_numPlural",
+				"TEXT_nNumberOpt",
+				"TEXT_nNumberObl"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title43",
+			"label": "label43",
+			"content": "info43"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_numSing",
+				"BOOL_numDual",
+				"BOOL_numTrial",
+				"BOOL_numPaucal",
+				"BOOL_numPlural"
+			],
+			"display": {
+				"i18": "checkboxNumberMarking",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxNumberMarkingExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_nNumberOpt",
+			"rows": 3,
+			"content": "text43a"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_nNumberObl",
+			"rows": 6,
+			"content": "text43b"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-4-Case Marking",
+			"heads": ["TEXT_nCase"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title44",
+			"label": "label44",
+			"content": "info44"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_nCase",
+			"rows": 4,
+			"content": "text44"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-5-Articles and Demonstratives",
+			"heads": [
+				"TEXT_articles",
+				"TEXT_demonstratives"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title45",
+			"label": "label45",
+			"content": "info45"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_articles",
+			"rows": 6,
+			"content": "text45a"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_demonstratives",
+			"rows": 6,
+			"content": "text45b"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-6-Possessors",
+			"heads": ["TEXT_possessors"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title46",
+			"label": "label46",
+			"content": "info46"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_possessors",
+			"rows": 3,
+			"content": "text46"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-7-Class (Gender)",
+			"heads": [
+				"BOOL_classGen",
+				"BOOL_classAnim",
+				"BOOL_classShape",
+				"BOOL_classFunction",
+				"BOOL_classOther",
+				"TEXT_classGender"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title47",
+			"label": "label47",
+			"content": "info47"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_classGen",
+				"BOOL_classAnim",
+				"BOOL_classShape",
+				"BOOL_classFunction",
+				"BOOL_classOther"
+			],
+			"display": {
+				"i18": "checkboxNounClasses",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxNounClassesExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_classGender",
+			"rows": 8,
+			"content": "text47"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "4-8-Diminution/Augmentation",
+			"heads": [
+				"BOOL_dimAugYes",
+				"BOOL_dimAugObligatory",
+				"BOOL_dimAugProductive",
+				"TEXT_dimAug"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title48",
+			"label": "label48",
+			"content": "info48"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_dimAugYes",
+				"BOOL_dimAugObligatory",
+				"BOOL_dimAugProductive"
+			],
+			"display": {
+				"i18": "checkboxDimAugSystem",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxDimAugSystemExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_dimAug",
+			"rows": 8,
+			"content": "text48"
+		}
+	],
+	"05": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "5-Predicate Nominals and Related Constructions",
+			"heads": [
+				"TEXT_predNom",
+				"TEXT_predLoc",
+				"TEXT_predEx",
+				"TEXT_predPoss"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title5",
+			"label": "label5",
+			"content": "info5"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "5-1-Predicate Nominals and Adjectives",
+			"heads": ["TEXT_predNom"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title51",
+			"label": "label51",
+			"content": "info51"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_predNom",
+			"rows": 6,
+			"content": "text51"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "5-2-Predicate Locatives",
+			"heads": ["TEXT_predLoc"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title52",
+			"label": "label52",
+			"content": "info52"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_predLoc",
+			"rows": 6,
+			"content": "text52"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "5-3-Existentials",
+			"heads": ["TEXT_predEx"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title53",
+			"label": "label53",
+			"content": "info53"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_predEx",
+			"rows": 6,
+			"content": "text53"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "5-4-Possessive Clauses",
+			"heads": ["TEXT_predPoss"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title54",
+			"label": "label54",
+			"content": "info54"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_predPoss",
+			"rows": 3,
+			"content": "text54"
+		}
+	],
+	"06": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "6-Grammatical Relations",
+			"heads": [
+				"BOOL_nomAcc",
+				"BOOL_ergAbs",
+				"TEXT_ergative"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title6",
+			"label": "label6",
+			"content": "info6"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_nomAcc",
+				"BOOL_ergAbs"
+			],
+			"display": {
+				"i18": "checkboxAlignmentSystem",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxAlignmentSystemExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_ergative",
+			"rows": 8,
+			"content": "text6"
+		}
+	],
+	"07": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "7-Voice and Valence Adjusting Operations",
+			"heads": [
+				"TEXT_causation",
+				"TEXT_applicatives",
+				"TEXT_dativeShifts",
+				"TEXT_datOfInt",
+				"TEXT_possessRaising",
+				"TEXT_refls",
+				"TEXT_recips",
+				"TEXT_passives",
+				"BOOL_markInv",
+				"BOOL_markDirInv",
+				"BOOL_verbAgreeInv",
+				"BOOL_wordOrderChange",
+				"TEXT_inverses",
+				"TEXT_middleCon",
+				"TEXT_antiP",
+				"TEXT_objDemOmInc"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title7",
+			"label": "label7",
+			"content": "info7"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "7-1-Valence-Increasing Operations",
+			"heads": [
+				"TEXT_causation",
+				"TEXT_applicatives",
+				"TEXT_dativeShifts",
+				"TEXT_datOfInt",
+				"TEXT_possessRaising"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-1-1-Causatives",
+			"heads": ["TEXT_causation"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title711",
+			"label": "label711",
+			"content": "info711"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_causation",
+			"rows": 4,
+			"content": "text711"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-1-2-Applicatives",
+			"heads": []
+		},
+		{
+			"tag": "Modal",
+			"title": "title712",
+			"label": "label712",
+			"content": "info712"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_applicatives",
+			"rows": 4,
+			"content": "text712"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-1-3-Dative Shift",
+			"heads": ["TEXT_dativeShifts"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title713",
+			"label": "label713",
+			"content": "info713"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_dativeShifts",
+			"rows": 4,
+			"content": "text713"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-1-4-Dative of Interest",
+			"heads": ["TEXT_datOfInt"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title714",
+			"label": "label714",
+			"content": "info714"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_datOfInt",
+			"rows": 4,
+			"content": "text714"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-1-5-Possessor Raising (a.k.a. External Possession)",
+			"heads": ["TEXT_possessRaising"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title715",
+			"label": "label715",
+			"content": "info715"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_possessRaising",
+			"rows": 4,
+			"content": "text715"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "7-2-Valence-Decreasing Operations",
+			"heads": [
+				"TEXT_refls",
+				"TEXT_recips",
+				"TEXT_passives",
+				"BOOL_markInv",
+				"BOOL_markDirInv",
+				"BOOL_verbAgreeInv",
+				"BOOL_wordOrderChange",
+				"TEXT_inverses",
+				"TEXT_middleCon",
+				"TEXT_antiP",
+				"TEXT_objDemOmInc"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-1-Reflexives",
+			"heads": ["TEXT_refls"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title721",
+			"label": "label721",
+			"content": "info721"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_refls",
+			"rows": 4,
+			"content": "text721"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-2-Reciprocals",
+			"heads": ["TEXT_recips"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title722",
+			"label": "label722",
+			"content": "info722"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_recips",
+			"rows": 3,
+			"content": "text722"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-3-Passives",
+			"heads": ["TEXT_passives"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title723",
+			"label": "label723",
+			"content": "info723"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_passives",
+			"rows": 4,
+			"content": "text723"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-4-Inverses",
+			"heads": [
+				"BOOL_markInv",
+				"BOOL_markDirInv",
+				"BOOL_verbAgreeInv",
+				"BOOL_wordOrderChange",
+				"TEXT_inverses"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title724",
+			"label": "label724",
+			"content": "info724"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_markInv",
+				"BOOL_markDirInv",
+				"BOOL_verbAgreeInv",
+				"BOOL_wordOrderChange"
+			],
+			"display": {
+				"i18": "checkboxInverses",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxInversesExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_inverses",
+			"rows": 4,
+			"content": "text724"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-5-Middle Constructions",
+			"heads": ["TEXT_middleCon"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title725",
+			"label": "label725",
+			"content": "info725"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_middleCon",
+			"rows": 3,
+			"content": "text725"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-6-Antipassives",
+			"heads": ["TEXT_antiP"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title726",
+			"label": "label726",
+			"content": "info726"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_antiP",
+			"rows": 3,
+			"content": "text726"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "7-2-7-Object Demotion/Omission/Incorporation",
+			"heads": ["TEXT_objDemOmInc"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title727",
+			"label": "label727",
+			"content": "info727"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_objDemOmInc",
+			"rows": 5,
+			"content": "text727"
+		}
+	],
+	"08": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "8-Other Verb and Verb Phrase Operations",
+			"heads": [
+				"TEXT_verbNoms",
+				"TEXT_verbComp",
+				"BOOL_tenseMorph",
+				"BOOL_aspectMorph",
+				"BOOL_modeMorph",
+				"BOOL_otherMorph",
+				"BOOL_tenseMorph",
+				"BOOL_aspectMorph",
+				"BOOL_modeMorph",
+				"BOOL_otherMorph",
+				"TEXT_tense",
+				"TEXT_aspect",
+				"TEXT_mode",
+				"TEXT_locDirect",
+				"TEXT_evidence",
+				"TEXT_miscVerbFunc"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-1-Nominalization",
+			"heads": ["TEXT_verbNoms"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title81",
+			"label": "label81",
+			"content": "info81"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_verbNoms",
+			"rows": 8,
+			"content": "text81"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-2-Compounding",
+			"heads": ["TEXT_verbComp"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title82",
+			"label": "label82",
+			"content": "info82"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_verbComp",
+			"rows": 6,
+			"content": "text82"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-3-Tense/Aspect/Mode",
+			"heads": [
+				"BOOL_tenseMorph",
+				"BOOL_aspectMorph",
+				"BOOL_modeMorph",
+				"BOOL_otherMorph",
+				"TEXT_tense",
+				"TEXT_aspect",
+				"TEXT_mode"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title83",
+			"label": "label83",
+			"content": "info83"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_tenseMorph",
+				"BOOL_aspectMorph",
+				"BOOL_modeMorph",
+				"BOOL_otherMorph"
+			],
+			"display": {
+				"i18": "checkboxTAM",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxTAM"
+				}
+			}
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "8-3-1-Tense",
+			"heads": ["TEXT_tense"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title831",
+			"label": "label831",
+			"content": "info831"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_tense",
+			"rows": 6,
+			"content": "text831"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "8-3-2-Aspect",
+			"heads": ["TEXT_aspect"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title832",
+			"label": "label832",
+			"content": "info832"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_aspect",
+			"rows": 8,
+			"content": "text832"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "8-3-3-Mode",
+			"heads": ["TEXT_mode"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title833",
+			"label": "label833",
+			"content": "info833"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_mode",
+			"rows": 6,
+			"content": "text833"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-4-Location/Direction",
+			"heads": ["TEXT_locDirect"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title84",
+			"label": "label84",
+			"content": "info84"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_locDirect",
+			"rows": 8,
+			"content": "text84"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-5-Evidentiality, Validationality and Mirativity",
+			"heads": ["TEXT_evidence"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title85",
+			"label": "label85",
+			"content": "info85"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_evidence",
+			"rows": 6,
+			"content": "text85"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "8-6-Miscellaneous",
+			"heads": ["TEXT_miscVerbFunc"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title86",
+			"label": "label86",
+			"content": "info86"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_miscVerbFunc",
+			"rows": 4,
+			"content": "text86"
+		}
+	],
+	"09": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "9-Pragmatically Marked Structures",
+			"heads": [
+				"TEXT_pragFocusEtc",
+				"TEXT_negation",
+				"TEXT_declaratives",
+				"TEXT_YNQs",
+				"TEXT_QWQs",
+				"TEXT_imperatives"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title9",
+			"label": "label9",
+			"content": "info9"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "9-1-Focus, Contrast and Topicalization",
+			"heads": ["TEXT_pragFocusEtc"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title91",
+			"label": "label91",
+			"content": "info91"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_pragFocusEtc",
+			"rows": 8,
+			"content": "text91"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "9-2-Negation",
+			"heads": ["TEXT_negation"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title92",
+			"label": "label92",
+			"content": "info92"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_negation",
+			"rows": 8,
+			"content": "text92"
+		},
+		{
+			"tag": "Header",
+			"level": 2,
+			"content": "9-3-Non-Declarative Speech",
+			"heads": [
+				"TEXT_declaratives",
+				"TEXT_YNQs",
+				"TEXT_QWQs",
+				"TEXT_imperatives"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title93",
+			"label": "label93",
+			"content": "info93"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_declaratives",
+			"rows": 3,
+			"content": "text93"
+		},
+		{
+			"tag": "Header",
+			"level": 3,
+			"content": "9-3-1-Interrogatives",
+			"heads": [
+				"TEXT_YNQs",
+				"TEXT_QWQs"
+			]
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "9-3-1-1-Yes/No Questions",
+			"heads": ["TEXT_YNQs"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title9311",
+			"label": "label9311",
+			"content": "info9311"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_YNQs",
+			"rows": 4,
+			"content": "text9311"
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "9-3-1-2-Questions-Word Questions",
+			"heads": ["TEXT_QWQs"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title9312",
+			"label": "label9312",
+			"content": "info9312"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_QWQs",
+			"rows": 4,
+			"content": "text9312"
+		},
+		{
+			"tag": "Header",
+			"level": 4,
+			"content": "9-3-2-Imperatives",
+			"heads": ["TEXT_imperatives"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title932",
+			"label": "label932",
+			"content": "info932"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_imperatives",
+			"rows": 4,
+			"content": "text932"
+		}
+	],
+	"10": [
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-Clause Combinations",
+			"heads": [
+				"TEXT_serialVerbs",
+				"TEXT_complClauses",
+				"TEXT_advClauses",
+				"BOOL_chainFirst",
+				"BOOL_chainLast",
+				"BOOL_chainN",
+				"BOOL_chainV",
+				"BOOL_chainCj",
+				"BOOL_chainT",
+				"BOOL_chainA",
+				"BOOL_chainPer",
+				"BOOL_chainNum",
+				"BOOL_chainOther",
+				"TEXT_clauseChainEtc",
+				"BOOL_relPre",
+				"BOOL_relPost",
+				"BOOL_relInternal",
+				"BOOL_relHeadless",
+				"TEXT_relClauses",
+				"BOOL_coordMid",
+				"BOOL_coordTwo",
+				"BOOL_coordLast",
+				"TEXT_coords"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title10",
+			"label": "label10",
+			"content": "info10"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-1-Serial Verbs",
+			"heads": ["TEXT_serialVerbs"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title101",
+			"label": "label101",
+			"content": "info101"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_serialVerbs",
+			"rows": 4,
+			"content": "text101"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-2-Complement Clauses",
+			"heads": ["TEXT_complClauses"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title102",
+			"label": "label102",
+			"content": "info102"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_complClauses",
+			"rows": 6,
+			"content": "text102"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-3-Adverbial Clauses",
+			"heads": ["TEXT_advClauses"]
+		},
+		{
+			"tag": "Modal",
+			"title": "title103",
+			"label": "label103",
+			"content": "info103"
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_advClauses",
+			"rows": 6,
+			"content": "text103"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-4-Clause Chaining, Medial Clauses, and Switch References",
+			"heads": [
+				"BOOL_chainFirst",
+				"BOOL_chainLast",
+				"BOOL_chainN",
+				"BOOL_chainV",
+				"BOOL_chainCj",
+				"BOOL_chainT",
+				"BOOL_chainA",
+				"BOOL_chainPer",
+				"BOOL_chainNum",
+				"BOOL_chainOther",
+				"TEXT_clauseChainEtc"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title104",
+			"label": "label104",
+			"content": "info104"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_chainFirst",
+				"BOOL_chainLast"
+			],
+			"display": {
+				"i18": "checkboxInflectedClauses",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxInflectedClausesExport"
+				}
+			}
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_chainN",
+				"BOOL_chainV",
+				"BOOL_chainCj"
+			],
+			"display": {
+				"i18": "checkboxMarkedElement",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxMarkedElementExport"
+				}
+			}
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_chainT",
+				"BOOL_chainA",
+				"BOOL_chainPer",
+				"BOOL_chainNum",
+				"BOOL_chainOther"
+			],
+			"display": {
+				"i18": "checkboxMarkerInfo",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxMarkerInfoExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_clauseChainEtc",
+			"rows": 6,
+			"content": "text104"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-5-Relative Clauses",
+			"heads": [
+				"BOOL_relPre",
+				"BOOL_relPost",
+				"BOOL_relInternal",
+				"BOOL_relHeadless",
+				"TEXT_relClauses"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title105",
+			"label": "label105",
+			"content": "info105"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_relPre",
+				"BOOL_relPost",
+				"BOOL_relInternal",
+				"BOOL_relHeadless"
+			],
+			"display": {
+				"i18": "checkboxRelative",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxRelative"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_relClauses",
+			"rows": 6,
+			"content": "text105"
+		},
+		{
+			"tag": "Header",
+			"level": 1,
+			"content": "10-6-Coordinating Clauses",
+			"heads": [
+				"BOOL_coordMid",
+				"BOOL_coordTwo",
+				"BOOL_coordLast",
+				"TEXT_coords"
+			]
+		},
+		{
+			"tag": "Modal",
+			"title": "title106",
+			"label": "label106",
+			"content": "info106"
+		},
+		{
+			"tag": "Checkboxes",
+			"boxes": [
+				"BOOL_coordMid",
+				"BOOL_coordTwo",
+				"BOOL_coordLast"
+			],
+			"display": {
+				"i18": "checkboxCoord",
+				"class": "cols2",
+				"boxesPerRow": 1,
+				"export": {
+					"i18": "checkboxCoordExport"
+				}
+			}
+		},
+		{
+			"tag": "Text",
+			"prop": "TEXT_coords",
+			"rows": 6,
+			"content": "text106"
+		}
+	]
+}

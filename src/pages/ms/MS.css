@@ -1,0 +1,207 @@
+#morphoSyntaxPage ion-list ion-item.toggled {
+	display: none;
+}
+#morphoSyntaxPage ion-range.spectrum::part(bar-active) {
+	background: transparent;
+}
+#morphoSyntaxPage ion-list ion-grid {
+	--ion-grid-padding: 0;
+	margin: 0 0 1rem;
+	background: var(--ion-background-shader);
+}
+#morphoSyntaxPage ion-list ion-grid.cols3 {
+	--ion-grid-columns: 3;
+	max-width: 40rem;
+}
+#morphoSyntaxPage ion-list ion-grid.cols2 {
+	--ion-grid-columns: 2;
+	max-width: 50rem;
+}
+#morphoSyntaxPage ion-list ion-grid ion-row {
+	margin: 0;
+	padding: 0.25rem 0;
+}
+#morphoSyntaxPage ion-list ion-grid.striped ion-row:nth-child(even) {
+	background: var(--ion-background-shader)
+}
+#morphoSyntaxPage ion-list ion-item.h,
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row.header {
+	font-weight: bold;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col {
+	display: flex;
+	align-items: center;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col.cbox {
+	max-width: 6rem;
+	text-align: center;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col.header {
+	text-align: center;
+	font-weight: bold;
+	margin-block: 0.25rem;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col.leftA {
+	text-align: start;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col.label {
+	max-width: 10rem;
+}
+#morphoSyntaxPage ion-list ion-item ion-grid ion-row ion-col ion-checkbox {
+	margin: 0 auto;
+	width: var(--size);
+}
+#morphoSyntaxPage ion-list ion-item.h ion-button {
+	margin: 0.25rem 0.5rem 0.25rem 0;
+}
+#morphoSyntaxPage ion-list ion-item.h ion-button::part(native) {
+	padding: 0.5em 0.2em;
+}
+#morphoSyntaxPage ion-list ion-item.h1 {
+	font-size: 1.4rem;
+}
+#morphoSyntaxPage ion-list ion-item.h2 {
+	font-size: 1.25rem;
+}
+#morphoSyntaxPage ion-list ion-item.h3 {
+	font-size: 1.1rem;
+}
+#morphoSyntaxPage ion-list ion-item.content::part(native) {
+	margin: 0 1rem;
+	width: auto;
+}
+#morphoSyntaxPage ion-list ion-item.infoModal::part(native) {
+	margin-inline: 1rem;
+}
+#morphoSyntaxPage ion-list ion-item.leading::part(native),
+#morphoSyntaxPage ion-list ion-item.following::part(native) {
+	min-height: 0;
+}
+#morphoSyntaxPage ion-list ion-item.leading ion-label {
+	margin-block-end: 0;
+}
+#morphoSyntaxPage ion-list ion-item.following ul {
+	margin-block-start: 0;
+}
+#morphoSyntaxPage ion-list ion-item ion-label {
+	white-space: normal;
+}
+.morphoSyntaxModal .scrollable {
+	max-width: 100%;
+	overflow-x: auto;
+	margin: 0.5rem 1rem;
+}
+.morphoSyntaxModal ion-list {
+	min-height: 100%;
+	max-width: 100%;
+}
+#morphoSyntaxPage ion-list ion-item ul,
+.morphoSyntaxModal ul {
+	padding-inline-start: 0;
+	list-style-type: none;
+	list-style-position: inside;
+	width: 100%;
+}
+#morphoSyntaxPage ion-list ion-item ul li,
+.morphoSyntaxModal ul li {
+	text-indent: -1rem;
+	padding-inline-start: 1rem;
+	margin-block: 0.25rem;
+	position: relative;
+}
+#morphoSyntaxPage ion-list ion-item ul li.newSection,
+.morphoSyntaxModal ul li.newSection {
+	margin-block-start: 1rem;
+}
+#morphoSyntaxPage ion-list ion-item ul > li::marker,
+.morphoSyntaxModal ul > li::marker {
+	color: var(--ion-color-secondary);
+}
+.morphoSyntaxModal ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li ul > li ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li ul > li ul > li ul > li ul > li::before {
+	content: "\25cf";
+	color: var(--ion-color-secondary);
+	display: inline-block;
+	white-space: nowrap;
+	padding: 0 0 0 0.5rem;
+	width: 0.5rem;
+	position: relative;
+	left: 0.5rem;
+}
+.morphoSyntaxModal ul > li ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li ul > li ul > li ul > li::before,
+.morphoSyntaxModal ul > li ul > li ul > li ul > li ul > li ul > li ul > li ul > li::before {
+	color: var(--ion-color-tertiary);
+}
+.msModalHelpIcon {
+	margin-inline-start: 0;
+	margin-inline-end: 0.5rem;
+}
+#morphoSyntaxPage table,
+.morphoSyntaxModal table {
+	background: var(--ion-background-shader);
+	border: solid 0.25rem var(--ion-color-dark-tint);
+	margin: 0.5rem 1rem;
+}
+#morphoSyntaxPage table td,
+.morphoSyntaxModal table td,
+#morphoSyntaxPage table th,
+.morphoSyntaxModal table th {
+	padding-block: 0.5rem;
+	padding-inline: 1rem;
+	vertical-align: top;
+	text-align: start;
+	border: 0;
+}
+.morphoSyntaxModal table.informational th,
+.morphoSyntaxModal table.informational td + td {
+	text-align: center;
+	padding-inline: 0.25rem;
+}
+.morphoSyntaxModal table.translation {
+	border-width: 0.1rem;
+	margin: 0;
+}
+.morphoSyntaxModal table.translation td,
+.morphoSyntaxModal table.translation td + td {
+	padding-inline: 0.25rem;
+	hyphens: manual;
+	overflow-wrap: break-word;
+}
+#morphoSyntaxPage table td + td,
+.morphoSyntaxModal table td + td {
+	padding-inline-start: 0;
+}
+#morphoSyntaxPage table tr:nth-child(even),
+.morphoSyntaxModal table tr:nth-child(even),
+.morphoSyntaxModal table.informational thead tr {
+	background: var(--ion-background-shader);
+}
+#morphoSyntaxPage table ul,
+.morphoSyntaxModal table ul {
+	margin: 0;
+}
+#morphoSyntaxPage .morphoSyntaxTextItem::part(native) {
+	background: var(--ion-background-tinter);
+	/*border: 1px solid var(--ion-background-tinter);*/
+	padding-block-end: 0.75em;
+	padding-inline-start: 0.75em;
+}
+
+#morphoSyntaxPage ion-list.aside {
+	margin: 0.5rem 2rem;
+	background: transparent;
+}
+#morphoSyntaxPage ion-list.aside ion-item::part(native) {
+	background: var(--ion-background-tinter);
+}
+#morphoSyntaxPage ion-list.aside ion-item:nth-child(even)::part(native) {
+	background: var(--ion-background-shader);
+}
+
+#exportSyntaxModal ion-item.striped::part(native) {
+	background: var(--ion-background-shader);
+}
