@@ -21,24 +21,25 @@ const appinfo = {
 	BugReports: "Bug Reports",
 	bugReportMsg: [
 		"Please report bugs and errors to",
-		"[the Github repository](https://github.com/jasontankapps/conlang-toolbox/issues)",
-		"and incude an error log."
+		"[the Github repository](https://github.com/jasontankapps/conlang-toolbox/issues).",
+		"In order to diagnose errors, you need to include information from the",
+		"tool or tools that are causing you problems. **This will include the raw",
+		"data you've currently have loaded up in the app.** Choose the tools you",
+		"are having problems with, then copy the information that appears in the",
+		"box below and submit it to the GitHub."
 	],
-	GetErrLog: "Get Error Log",
 
 	EntireState: "Entire State",
-	DebugInfo: "Debug Info",
-
-	CopyLogs: "Copy Logs",
-	ClearLogs: "Clear Logs",
-	logDeletionMsg: "Logs normally delete themselves after 90 days. Deleting logs cannot be undone.",
-	DelThemNow: "Delete Them Now",
-	logsClearedMsg: "Logs have been cleared.",
 
 	Changelog: "Changelog",
 	HideOlderChanges: "Hide Older Changes",
 	ShowOlderChanges: "Show Older Changes",
 	changelog: {
+
+		v0130: [
+			"- Clarified how to make bug reports",
+			"- Other minor bugfixes and improvements"
+		],
 
 		v0120: [
 			"- Overhauled the inner workings of the app to allow for the",

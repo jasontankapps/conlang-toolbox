@@ -586,6 +586,20 @@ ion-app .hasMaxTextArea textarea {
 	height: 100%;
 	width: 100%;
 }
+ion-app .logTextArea {
+	height: calc(100% - 4rem);
+	width: calc(100% - 2rem);
+	padding: 0;
+	margin: 0.25rem 0 0;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+}
+ion-app .logTextArea ion-textarea {
+	height: 150px;
+	min-width: 200px;
+	width: 80%;
+}
 .hasSpecialLabels ion-label {
 	font-size: 1.25rem;
 	padding: 0;

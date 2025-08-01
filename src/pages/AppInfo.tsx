@@ -14,17 +14,16 @@ import {
 	IonCardTitle,
 	useIonAlert,
 	useIonToast,
-	IonButton
+	IonButton,
+	IonTextarea,
+	IonToggle
 } from '@ionic/react';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Markdown from 'react-markdown';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 
-import { InternalState, PageData, StateObject, ThemeNames } from '../store/types';
-import { clearLogs } from '../store/internalsSlice';
+import { PageData, StateObject, ThemeNames } from '../store/types';
 
-import yesNoAlert from '../components/yesNoAlert';
-import toaster from '../components/toaster';
 import Header from '../components/Header';
 import copyText from '../components/copyText';
 import useI18Memo from '../components/useI18Memo';
@@ -46,36 +45,58 @@ function getBannerDimensions (windowWidth: number) {
 }
 
 const translations =  [
-	"BugReports", "Changelog", "ClearLogs", "CopyLogs",
-	"CreditsAcknowledgements", "DebugInfo", "DelThemNow",
-	"EntireState", "GetErrLog", "HideOlderChanges",
-	"logsClearedMsg", "ShowOlderChanges",
-	"logDeletionMsg"
+	"BugReports", "Changelog",
+	"CreditsAcknowledgements",
+	"EntireState", "HideOlderChanges",
+	"ShowOlderChanges"
 ];
 const markdowns = [ "credit1", "credit2", "credit3", "bugReportMsg" ];
-const commons = [ "Close", "Copy", "Ok", "areYouSure", "AppInfo" ];
-const changelog = [ "changelog.v094", "changelog.v095", "changelog.v0101", "changelog.v0113", "changelog.v0120" ];
+const commons = [ "Copy", "Ok", "AppInfo", "CopyToClipboard" ];
+const changelog = [
+	"changelog.v094", "changelog.v095", "changelog.v0101",
+	"changelog.v0113", "changelog.v0120", "changelog.v0130"
+];
 const context = { joinArrays: "\n" };
 
 const AppInfo: FC<PageData> = (props) => {
 	const width = useWindowWidth();
 	const [
-		tBugRep, tCLog, tClearLogs, tCopyLogs, tCredits, tDebug, tDelNow,
-		tEntire, tGetLog, tHide, tLogsCleared, tShow, tLogs
+		tBugRep, tCLog, tCredits,
+		tEntire, tHide, tShow
 	] = useI18Memo(translations, 'appInfo');
-	const [ tClose, tCopy, tOk, tRUSure, tAppInfo ] = useI18Memo(commons);
-	const [ tCL94, tCL95, tCL101, tCL113, tCL120 ] = useI18Memo(changelog, 'appInfo', context);
+	const [ tCopy, tOk, tAppInfo, tCopyClipboard ] = useI18Memo(commons);
+	const [ tCL94, tCL95, tCL101, tCL113, tCL120, tCL130 ] = useI18Memo(changelog, 'appInfo', context);
 	const [ tCr1, tCr2, tCr3, tBugRepMsg ] = useI18Memo(markdowns, "appInfo", context);
 
-	const [originalTheme, internals, state]: [ThemeNames, InternalState, StateObject] = useSelector(
-		(state: StateObject) => [state.appSettings.theme, state.internals, state]
+	const state = useSelector(
+		(state: StateObject) => state
 	);
-	const dispatch = useDispatch();
+	const originalTheme: ThemeNames = state.appSettings.theme;
+	const { wg, we, ms, dj, lexicon, internals } = state;
 	const [debug, setDebug] = useState<number>(1);
 	const [showOlder, setShowOlder] = useState<boolean>(false);
-	const [doAlert, undoAlert] = useIonAlert();
+	const [showWG, setShowWG] = useState<boolean>(false);
+	const [showWE, setShowWE] = useState<boolean>(false);
+	const [showMS, setShowMS] = useState<boolean>(false);
+	const [showDJ, setShowDJ] = useState<boolean>(false);
+	const [showLex, setShowLex] = useState<boolean>(false);
+	const [errorLogInfo, setErrorLogInfo] = useState<string>(JSON.stringify({internals}));
+	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
 	const theme = originalTheme.replace(/ /g, "") + "Theme";
+
+	const modLog = (which: 0 | 1 | 2 | 3 | 4) => {
+		const log: Partial<StateObject> = { internals };
+		const array = [showWG, showWE, showMS, showDJ, showLex];
+		const setters = [setShowWG, setShowWE, setShowMS, setShowDJ, setShowLex];
+		setters[which](array[which] = !array[which]);
+		array[0] && (log.wg = wg);
+		array[1] && (log.we = we);
+		array[2] && (log.ms = ms);
+		array[3] && (log.dj = dj);
+		array[4] && (log.lexicon = lexicon);
+		setErrorLogInfo(JSON.stringify(log));
+	};
 
 	const maybeDebug = () => {
 		if(debug < 7) {
@@ -96,49 +117,6 @@ const AppInfo: FC<PageData> = (props) => {
 				},
 				{
 					text: tOk,
-					role: "cancel",
-					cssClass: "cancel"
-				}
-			]
-		});
-	};
-
-	const showLogs = () => {
-		const info = JSON.stringify(internals);
-		doAlert({
-			header: tDebug,
-			message: info,
-			cssClass: "warning",
-			buttons: [
-				{
-					text: tCopyLogs,
-					cssClass: "submit",
-					handler: () => copyText(info, toast)
-				},
-				{
-					text: tClearLogs,
-					cssClass: "danger",
-					handler: () => {
-						undoAlert().then(() => yesNoAlert({
-							header: tRUSure,
-							message: tLogs,
-							submit: tDelNow,
-							cssClass: "danger",
-							handler: () => {
-								dispatch(clearLogs());
-								toaster({
-									message: tLogsCleared,
-									duration: 3500,
-									color: "danger",
-									toast
-								});
-							},
-							doAlert
-						}))
-					}
-				},
-				{
-					text: tClose,
 					role: "cancel",
 					cssClass: "cancel"
 				}
@@ -191,8 +169,30 @@ const AppInfo: FC<PageData> = (props) => {
 									<div className="ion-text-center overrideMarkdown">
 										<Markdown>{tBugRepMsg}</Markdown>
 									</div>
+									<div>
+										<IonToggle checked={showWG} onIonChange={() => modLog(0)}>WordGen</IonToggle>
+									</div>
+									<div>
+										<IonToggle checked={showWE} onIonChange={() => modLog(1)}>WordEvolve</IonToggle>
+									</div>
+									<div>
+										<IonToggle checked={showMS} onIonChange={() => modLog(2)}>MorphoSyntax</IonToggle>
+									</div>
+									<div>
+										<IonToggle checked={showDJ} onIonChange={() => modLog(3)}>Declenjugator</IonToggle>
+									</div>
+									<div>
+										<IonToggle checked={showLex} onIonChange={() => modLog(4)}>Lexicon</IonToggle>
+									</div>
+									<div className="logTextArea">
+										<IonTextarea
+											disabled={true}
+											fill="outline"
+											value={errorLogInfo}
+										></IonTextarea>
+									</div>
 									<div className="ion-text-center">
-										<IonButton size="small" onClick={showLogs} color="warning" fill="outline">{tGetLog}</IonButton>
+										<IonButton size="small" onClick={() => copyText(errorLogInfo, toast)} color="warning" fill="outline">{tCopyClipboard}</IonButton>
 									</div>
 								</IonCardContent>
 							</IonCard>
@@ -205,7 +205,9 @@ const AppInfo: FC<PageData> = (props) => {
 									<IonCardTitle>{tCLog}</IonCardTitle>
 								</IonCardHeader>
 								<IonCardContent className="ion-padding-start changelog">
-									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.12.0</strong></h2>
+									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.0</strong></h2>
+									<Markdown>{tCL130}</Markdown>
+									<h2 className="ion-text-center"><strong>v.0.12.0</strong></h2>
 									<Markdown>{tCL120}</Markdown>
 									<div id="changelogButtonContainer" className="ion-text-center">
 										<IonButton
