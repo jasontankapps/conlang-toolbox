@@ -11,7 +11,8 @@ import {
 	IonInput,
 	IonTextarea,
 	useIonAlert,
-	useIonToast
+	useIonToast,
+	IonRippleEffect
 } from '@ionic/react';
 import {
 	addCircleOutline,
@@ -307,32 +308,38 @@ const Syntax: FC<PageData> = (props) => {
 						/>
 					</IonItem>
 				</IonList>
-				<IonList lines="none" className="ion-float-end aside">
-					<IonItem button={true} onClick={clearMS}>
+				<div className="aside">
+					<div onClick={clearMS} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={removeCircleOutline} className="ion-padding-end" />
 						<IonLabel>{tClearThings}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={openLoad}>
+					</div>
+					<div onClick={openLoad} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={addCircleOutline} className="ion-padding-end" />
 						<IonLabel>{tLoadThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={saveMSDocPlain}>
+					</div>
+					<div onClick={saveMSDocPlain} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={saveOutline} className="ion-padding-end" />
 						<IonLabel>{tSaveThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={saveMSNew}>
+					</div>
+					<div onClick={saveMSNew} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={saveOutline} className="ion-padding-end" />
 						<IonLabel>{tSaveNew}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={maybeExportMS}>
+					</div>
+					<div onClick={maybeExportMS} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={codeDownloadOutline} className="ion-padding-end" />
 						<IonLabel>{tExportThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={openDel}>
+					</div>
+					<div onClick={openDel} className="ion-activatable">
+						<IonRippleEffect />
 						<IonIcon icon={trashOutline} className="ion-padding-end" />
 						<IonLabel>{tDelSavedInfo}</IonLabel>
-					</IonItem>
-				</IonList>
+					</div>
+				</div>
 			</IonContent>
 		</IonPage>
 	);

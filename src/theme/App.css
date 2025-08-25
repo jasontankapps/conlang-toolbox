@@ -253,21 +253,18 @@ ion-app ion-list.syllables > ion-item::part(native) {
 ion-app ion-list.syllables ion-item {
 	pointer-events: auto;
 }
-ion-app ion-list.syllables > ion-item div {
-	flex: 1;
+ion-app ion-list.syllables > ion-item > div {
 	flex-grow: 5;
 	flex-shrink: 1;
 	flex-basis: calc((100% - 2em) * 0.3);
 }
-ion-app ion-list.syllables > ion-item div:last-of-type {
-	flex: 1;
+ion-app ion-list.syllables > ion-item > div:last-of-type {
 	flex-grow: 1;
 	flex-shrink: 0;
 	flex-basis: 2em;
 }
 ion-app ion-list.syllables > ion-item ion-textarea {
 	margin: 0;
-	flex: 1;
 	flex-grow: 5;
 	flex-shrink: 5;
 	flex-basis: calc((100% - 2em) * 0.6);
@@ -283,7 +280,7 @@ ion-app ion-list.syllables div.header div.title {
 	display: block;
 	font-weight: bold;
 	font-size: larger;
-	text-align: start;
+	text-align: end;
 }
 ion-app ion-list.syllables div.header div.percentage {
 	display: block;

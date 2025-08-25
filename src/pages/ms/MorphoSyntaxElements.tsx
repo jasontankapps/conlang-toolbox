@@ -85,11 +85,13 @@ const RadioBox = (props: {
 		[dispatch, prop]
 	);
 	return (
-		<IonCheckbox
-			aria-label={label}
-			onIonChange={onChange}
-			checked={checked}
-		/>
+		<div className="dummyBlock">
+			<IonCheckbox
+				aria-label={label}
+				onIonChange={onChange}
+				checked={checked}
+			/>
+		</div>
 	);
 };
 export const TextItem = (props: PropsWithChildren<{

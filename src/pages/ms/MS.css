@@ -51,6 +51,9 @@
 	margin: 0 auto;
 	width: var(--size);
 }
+#morphoSyntaxPage div.dummyBlock {
+	width: 100%;
+}
 #morphoSyntaxPage ion-list ion-item.h ion-button {
 	margin: 0.25rem 0.5rem 0.25rem 0;
 }
@@ -191,14 +194,23 @@
 	padding-inline-start: 0.75em;
 }
 
-#morphoSyntaxPage ion-list.aside {
+#morphoSyntaxPage div.aside {
+	position: relative;
 	margin: 0.5rem 2rem;
-	background: transparent;
+	float: inline-end;
 }
-#morphoSyntaxPage ion-list.aside ion-item::part(native) {
+#morphoSyntaxPage div.aside div.ion-activatable {
+	position: relative;
 	background: var(--ion-background-tinter);
+	min-height: 3em;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0 1em;
+	cursor: pointer;
 }
-#morphoSyntaxPage ion-list.aside ion-item:nth-child(even)::part(native) {
+#morphoSyntaxPage div.aside div.ion-activatable:nth-child(even) {
 	background: var(--ion-background-shader);
 }
 

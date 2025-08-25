@@ -11,6 +11,16 @@
 # production
 /build
 /resources
+/dist
+
+# android
+/android/.*
+/android/app/build
+/android/app/release
+/android/build
+/android/capacitor*
+/android/app/src/main/assets/public
+/android/local.properties
 
 # misc
 .DS_Store
