@@ -280,7 +280,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={declarativeSentencePre}
 							onIonChange={doSetDeclarativeSentencePre}
 						/>
@@ -294,7 +293,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={declarativeSentencePost}
 							onIonChange={doSetDeclarativeSentencePost}
 						/>
@@ -308,7 +306,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={interrogativeSentencePre}
 							onIonChange={doSetInterrogativeSentencePre}
 						/>
@@ -322,7 +319,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={interrogativeSentencePost}
 							onIonChange={doSetInterrogativeSentencePost}
 						/>
@@ -336,7 +332,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={exclamatorySentencePre}
 							onIonChange={doSetExclamatorySentencePre}
 						/>
@@ -350,7 +345,6 @@ const WGSet: FC<PageData> = (props) => {
 							inputmode="text"
 							maxlength={5}
 							minlength={0}
-							size={3}
 							value={exclamatorySentencePost}
 							onIonChange={doSetExclamatorySentencePost}
 						/>

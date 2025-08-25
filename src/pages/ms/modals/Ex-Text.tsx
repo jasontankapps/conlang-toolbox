@@ -59,7 +59,7 @@ const doText = (
 						lines.push(t(content));
 					}
 					break;
-				case "Range":
+				case "Range": {
 					// Range is always saved, as it always has some sort of info
 					const start = t(START);
 					const end = t(END);
@@ -89,7 +89,8 @@ const doText = (
 						lines.push(`${maybeMarkDown}${start}${maybeMarkDown}${range} ${maybeMarkDown}${end}${maybeMarkDown}`);
 					}
 					break;
-				case "Text":
+				}
+				case "Text": {
 					const textInfo = msInfo[prop as MSText];
 					// Continue only if we're showing everything, or if there is something to show
 					if(showUnused || textInfo) {
@@ -116,7 +117,8 @@ const doText = (
 						}
 					}
 					break;
-				case "Checkboxes":
+				}
+				case "Checkboxes": {
 					const { i18, export: expo} = display!;
 					const { textOutputBooleans, i18: expoI18 } = expo!;
 					const {
@@ -206,6 +208,7 @@ const doText = (
 						}
 						lines.push(`${expoHeader || header} ${result}`);
 					}
+				}
 			}
 		});
 	});

@@ -95,7 +95,7 @@ export const CharGroupCard: FC<CardProps> = (props) => {
 };
 
 const transComponents = {
-	code: (props: React.ClassAttributes<HTMLElement> & React.HTMLAttributes<HTMLElement> & ExtraProps) => {
+	code: (/*props: React.ClassAttributes<HTMLElement> & React.HTMLAttributes<HTMLElement> & ExtraProps*/) => {
 		return <IonIcon icon={reorderTwo} color="tertiary" size="small" />;
 	}
 };
@@ -182,7 +182,7 @@ export const OutCard: FC<CardProps> = (props) => {
 	);
 };
 
-const WEinfo: FC<PageData> = (props) => {
+const WEinfo: FC<PageData> = () => {
 	const [ t ] = useTranslator('we');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

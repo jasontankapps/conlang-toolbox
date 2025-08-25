@@ -137,7 +137,7 @@ const LexiconStorageModal: FC<StorageModalProps> = (props) => {
 			info.push([key, value]);
 			return; // Blank return keeps the loop going
 		}).then(() => {
-			info.length > 0 && setLexInfo(info);
+			if(info.length > 0) { setLexInfo(info); }
 			setLoading(false);
 			setIsOpen(false);
 			whichToOpen(true);

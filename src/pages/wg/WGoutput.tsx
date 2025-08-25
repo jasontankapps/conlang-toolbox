@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import React, { useCallback, useMemo, useState, FC } from 'react';
 import {
 	IonContent,
@@ -160,13 +161,13 @@ const WGOut: FC<PageData> = (props) => {
 				if(savedWordsObject[text]) {
 					setSavedWords(savedWords.filter(word => word !== text));
 					delete newObj[text];
-					const el = id && $i(id);
-					el && el.classList.remove("saved");
+					const el = id && $i<HTMLElement>(id);
+					if(el) { el.classList.remove("saved"); }
 				} else {
 					setSavedWords([...savedWords, text]);
 					newObj[text] = true;
-					const el = id && $i(id);
-					el && el.classList.add("saved");
+					const el = id && $i<HTMLElement>(id);
+					if(el) { el.classList.add("saved"); }
 				}
 				setSavedWordsObject(newObj);
 			}
@@ -549,18 +550,18 @@ const generator = async (
 			if(type < 9) {
 				// Declarative three-fourths the time
 				full = declarativeSentencePre + full + declarativeSentencePost;
-				declarativeSentencePre && words[0].unshift(declarativeSentencePre);
-				declarativeSentencePost && words[length].push(declarativeSentencePost);
+				if(declarativeSentencePre) { words[0].unshift(declarativeSentencePre); }
+				if(declarativeSentencePost) { words[length].push(declarativeSentencePost); }
 			} else if (type < 11) {
 				// Interrogative one-sixth the time
 				full = interrogativeSentencePre + full + interrogativeSentencePost;
-				interrogativeSentencePre && words[0].unshift(interrogativeSentencePre);
-				interrogativeSentencePost && words[length].push(interrogativeSentencePost);
+				if(interrogativeSentencePre) { words[0].unshift(interrogativeSentencePre); }
+				if(interrogativeSentencePost) { words[length].push(interrogativeSentencePost); }
 			} else {
 				// Exclamatory one-twelfth the time
 				full = exclamatorySentencePre + full + exclamatorySentencePost;
-				exclamatorySentencePre && words[0].unshift(exclamatorySentencePre);
-				exclamatorySentencePost && words[length].push(exclamatorySentencePost);
+				if(exclamatorySentencePre) { words[0].unshift(exclamatorySentencePre); }
+				if(exclamatorySentencePost) { words[length].push(exclamatorySentencePost); }
 			}
 			text.push(full);
 			textInfo.push(...words.map((word: string[], i: number) => {

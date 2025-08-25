@@ -157,9 +157,9 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		setSortSensitivity("default");
 		setUsingAlpha(false);
 		const addSortTitle = $i<HTMLInputElement>("addSortTitle");
-		addSortTitle && (addSortTitle.value = "");
+		if(addSortTitle) { addSortTitle.value = ""; }
 		const addCustomAlphabet = $i<HTMLInputElement>("addCustomAlphabet");
-		addCustomAlphabet && (addCustomAlphabet.value = "");
+		if(addCustomAlphabet) { addCustomAlphabet.value = ""; }
 	}, [setIsOpen]);
 	// Accept new relation from other modal
 	useEffect(() => {
@@ -380,7 +380,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							aria-label={tEdit}
 							onClick={() => {
 								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								el && el.closeSlidingItems();
+								if(el) { el.closeSlidingItems(); }
 								setIncomingEquality(obj);
 								editEqualityModalInfo.setIsOpen(true);
 							}}
@@ -395,7 +395,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							aria-label={tDelete}
 							onClick={() => {
 								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								el && el.closeSlidingItems();
+								if(el) { el.closeSlidingItems(); }
 								yesNoAlert({
 									header: tDelThing,
 									message: tYouSure,
@@ -463,7 +463,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							aria-label={tEdit}
 							onClick={() => {
 								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								el && el.closeSlidingItems();
+								if(el) { el.closeSlidingItems(); }
 								setIncomingRelation(obj);
 								editRelationModalInfo.setIsOpen(true);
 							}}
@@ -478,7 +478,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							aria-label={tDelete}
 							onClick={() => {
 								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								el && el.closeSlidingItems();
+								if(el) { el.closeSlidingItems(); }
 								yesNoAlert({
 									header: tDelThing,
 									message: tRUSure,

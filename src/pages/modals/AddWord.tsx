@@ -59,7 +59,7 @@ const AddLexiconItemModal: FC<LexItemProps> = (props) => {
 			const el = $i<HTMLInputElement>(`input_lexicon_modal_${id}`);
 			const info = (el && el.value) || "";
 			newInfo.push(info);
-			info && (foundFlag = true);
+			if(info) { foundFlag = true; }
 			newBlank[id] = "";
 		});
 		if(!foundFlag) {

@@ -30,7 +30,7 @@ function resetError() {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q(".seekLabel");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const wgweWords = [
@@ -66,7 +66,7 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const seek = (searchEl && searchEl.value) || "";
 		if(seek === "") {
 			const el = $q(".seekLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoSearch);
 		}
 		try {
@@ -95,7 +95,7 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const replaceEl = $i<HTMLInputElement>("replaceEx");
 		const replace = repairRegexErrors((replaceEl && replaceEl.value) || "");
 		const description = (descEl && descEl.value) || "";
-		close && setIsOpen(false);
+		if(close) { setIsOpen(false); }
 		dispatch(addTransformWG({
 			id: uuidv4(),
 			seek: repairRegexErrors(seek),

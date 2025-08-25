@@ -154,7 +154,7 @@ const ImportData: FC<ModalProperties> = (props) => {
 
 	const resetAnalysis = useCallback(() => {
 		const el = $i<HTMLInputElement>("importingData");
-		el && (el.value = "");
+		if(el) { el.value = ""; }
 		setReadyToImport(false);
 		setHasImported(false);
 		setPotential_import_wg(false);
@@ -188,7 +188,7 @@ const ImportData: FC<ModalProperties> = (props) => {
 
 	const onLoad = useCallback(() => {
 		const el = $i<HTMLInputElement>("importingData");
-		el && (el.value = "");
+		if(el) { el.value = ""; }
 		setDo_import_wg(true);
 		setDo_import_we(true);
 		setDo_import_dj(true);
@@ -283,7 +283,7 @@ const ImportData: FC<ModalProperties> = (props) => {
 			const el = $i<HTMLIonContentElement>("importDataContent");
 			if(el && readyToImport) {
 				const inner = $q("ion-item-divider", el);
-				inner && el.scrollToPoint(0, (inner.offsetTop || 50) - 50, 1500);
+				if(inner) { el.scrollToPoint(0, (inner.offsetTop || 50) - 50, 1500); }
 			} else if(el) {
 				el.scrollToTop(1500);
 			}
@@ -301,7 +301,7 @@ const ImportData: FC<ModalProperties> = (props) => {
 					VALIDATE_import(parsed);
 					parseInput(parsed);
 				} catch(e) {
-					let message = (e instanceof Error) ? e.message : `${e}`;
+					const message = (e instanceof Error) ? e.message : `${e}`;
 					log(dispatch, ["Error validating Import", message], parsed);
 					toaster({
 						message,
@@ -317,7 +317,7 @@ const ImportData: FC<ModalProperties> = (props) => {
 				toast
 			});
 		} catch (e) {
-			let message = (e instanceof Error) ? e.message : `${e}`;
+			const message = (e instanceof Error) ? e.message : `${e}`;
 			log(dispatch, ["Error parsing Import", message]);
 			return toaster({
 				message: `PARSE ERROR 101: ${message}`,
@@ -346,44 +346,39 @@ const ImportData: FC<ModalProperties> = (props) => {
 		// Get string list of data we're importing
 		const overwriting: string[] = [];
 		const storages: string[] = [];
-		do_import_wg && potential_import_wg && overwriting.push(tWG);
-		do_import_we && potential_import_we && overwriting.push(tWE);
-		do_import_ms && potential_import_ms && overwriting.push(tMS);
-		do_import_dj && potential_import_dj && overwriting.push(tDJ);
-		do_import_lex && potential_import_lex && overwriting.push(tLex);
-		do_import_con && potential_import_con && overwriting.push(tConcepts);
-		do_import_ec && potential_import_ec && overwriting.push(tExChar);
-		do_import_set && potential_import_set && overwriting.push(tAppSett);
-		do_import_wgStored && potential_import_wgStored && storages.push(tWG);
-		do_import_weStored && potential_import_weStored && storages.push(tWE);
-		do_import_msStored && potential_import_msStored && storages.push(tMS);
-		do_import_djStored && potential_import_djStored && storages.push(tDJ);
-		do_import_lexStored && potential_import_lexStored && storages.push(tLex);
+		if(do_import_wg && potential_import_wg) { overwriting.push(tWG); }
+		if(do_import_we && potential_import_we) { overwriting.push(tWE); }
+		if(do_import_ms && potential_import_ms) { overwriting.push(tMS); }
+		if(do_import_dj && potential_import_dj) { overwriting.push(tDJ); }
+		if(do_import_lex && potential_import_lex) { overwriting.push(tLex); }
+		if(do_import_con && potential_import_con) { overwriting.push(tConcepts); }
+		if(do_import_ec && potential_import_ec) { overwriting.push(tExChar); }
+		if(do_import_set && potential_import_set) { overwriting.push(tAppSett); }
+		if(do_import_wgStored && potential_import_wgStored) { storages.push(tWG); }
+		if(do_import_weStored && potential_import_weStored) { storages.push(tWE); }
+		if(do_import_msStored && potential_import_msStored) { storages.push(tMS); }
+		if(do_import_djStored && potential_import_djStored) { storages.push(tDJ); }
+		if(do_import_lexStored && potential_import_lexStored) { storages.push(tLex); }
 		// Create a handler that does the actual importing
 		const handler = () => {
 			// IMPORT!
-			do_import_wg && potential_import_wg && dispatch(loadStateWG(potential_import_wg));
-			do_import_we && potential_import_we && dispatch(loadStateWE(potential_import_we));
-			do_import_ms && potential_import_ms && dispatch(loadStateMS(potential_import_ms));
-			do_import_dj && potential_import_dj && dispatch(loadStateDJ(potential_import_dj));
-			do_import_lex && potential_import_lex && dispatch(loadStateLex(potential_import_lex));
-			do_import_con && potential_import_con && dispatch(loadStateConcepts(potential_import_con));
-			do_import_ec && potential_import_ec && dispatch(loadStateEC(potential_import_ec));
+			if(do_import_wg && potential_import_wg) { dispatch(loadStateWG(potential_import_wg)); }
+			if(do_import_we && potential_import_we) { dispatch(loadStateWE(potential_import_we)); }
+			if(do_import_ms && potential_import_ms) { dispatch(loadStateMS(potential_import_ms)); }
+			if(do_import_dj && potential_import_dj) { dispatch(loadStateDJ(potential_import_dj)); }
+			if(do_import_lex && potential_import_lex) { dispatch(loadStateLex(potential_import_lex)); }
+			if(do_import_con && potential_import_con) { dispatch(loadStateConcepts(potential_import_con)); }
+			if(do_import_ec && potential_import_ec) { dispatch(loadStateEC(potential_import_ec)); }
 			if(do_import_set && potential_import_set) {
 				const [settings, sorting] = potential_import_set;
-				settings && dispatch(loadStateSettings(settings));
-				sorting && dispatch(loadSortSettingsState(sorting));
+				if(settings) { dispatch(loadStateSettings(settings)); }
+				if(sorting) { dispatch(loadSortSettingsState(sorting)); }
 			}
-			do_import_wgStored && potential_import_wgStored
-				&& overwriteStorage(CustomStorageWG, potential_import_wgStored);
-			do_import_weStored && potential_import_weStored
-				&& overwriteStorage(CustomStorageWE, potential_import_weStored);
-			do_import_msStored && potential_import_msStored
-				&& overwriteStorage(MorphoSyntaxStorage, potential_import_msStored);
-			do_import_djStored && potential_import_djStored
-				&& overwriteStorage(DeclenjugatorStorage, potential_import_djStored);
-			do_import_lexStored && potential_import_lexStored
-				&& overwriteStorage(LexiconStorage, potential_import_lexStored);
+			if(do_import_wgStored && potential_import_wgStored) { overwriteStorage(CustomStorageWG, potential_import_wgStored); }
+			if(do_import_weStored && potential_import_weStored) { overwriteStorage(CustomStorageWE, potential_import_weStored); }
+			if(do_import_msStored && potential_import_msStored) { overwriteStorage(MorphoSyntaxStorage, potential_import_msStored); }
+			if(do_import_djStored && potential_import_djStored) { overwriteStorage(DeclenjugatorStorage, potential_import_djStored); }
+			if(do_import_lexStored && potential_import_lexStored) { overwriteStorage(LexiconStorage, potential_import_lexStored); }
 			// Create success message
 			let message = overwriting.length > 0 ? ts("successImport", { listing: $and(overwriting) }) : "";
 			if(storages.length > 0) {

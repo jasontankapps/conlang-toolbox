@@ -7,11 +7,13 @@ import {
 	MSModal,
 	MSCheckboxes,
 	MSTextbox,
-	MSSections,
+	MSSectionsType,
 	SpecificMSPageData
 } from './MorphoSyntaxElements';
 import msRawInfo from './ms.json';
 import { cleanerObject } from '../../store/blankAppState';
+
+const MSSections: MSSectionsType[] = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
 
 interface MSJson {
 	sections: string[]
@@ -32,7 +34,7 @@ function validateJson (object: MSJson): asserts object is MSJson {
 	if(sections.some((section, i) => section !== MSSections[i])) {
 		throw new TypeError("Sections property is invalid");
 	}
-	const pairs = Object.entries(etc) as [string, SpecificMSPageData[]][];
+	const pairs = Object.entries(etc) as [MSSectionsType, SpecificMSPageData[]][];
 	if(pairs.length !== MSSections.length || pairs.some((pair) => {
 		const [prop, value] = pair;
 		if(MSSections.indexOf(prop) > -1) {

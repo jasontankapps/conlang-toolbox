@@ -3,6 +3,6 @@
 	"integrations": {
 		"capacitor": {}
 	},
-	"type": "react",
+	"type": "react-vite",
 	"id": "net.jasontank.conlangtoolbox"
 }

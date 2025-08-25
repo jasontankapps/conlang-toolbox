@@ -58,7 +58,7 @@ const changelog = [
 ];
 const context = { joinArrays: "\n" };
 
-const AppInfo: FC<PageData> = (props) => {
+const AppInfo: FC<PageData> = () => {
 	const width = useWindowWidth();
 	const [
 		tBugRep, tCLog, tCredits,
@@ -90,11 +90,11 @@ const AppInfo: FC<PageData> = (props) => {
 		const array = [showWG, showWE, showMS, showDJ, showLex];
 		const setters = [setShowWG, setShowWE, setShowMS, setShowDJ, setShowLex];
 		setters[which](array[which] = !array[which]);
-		array[0] && (log.wg = wg);
-		array[1] && (log.we = we);
-		array[2] && (log.ms = ms);
-		array[3] && (log.dj = dj);
-		array[4] && (log.lexicon = lexicon);
+		if(array[0]) { log.wg = wg; }
+		if(array[1]) { log.we = we; }
+		if(array[2]) { log.ms = ms; }
+		if(array[3]) { log.dj = dj; }
+		if(array[4]) { log.lexicon = lexicon; }
 		setErrorLogInfo(JSON.stringify(log));
 	};
 
@@ -205,7 +205,7 @@ const AppInfo: FC<PageData> = (props) => {
 									<IonCardTitle>{tCLog}</IonCardTitle>
 								</IonCardHeader>
 								<IonCardContent className="ion-padding-start changelog">
-									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.0</strong></h2>
+									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.1</strong></h2>
 									<Markdown>{tCL130}</Markdown>
 									<h2 className="ion-text-center"><strong>v.0.12.0</strong></h2>
 									<Markdown>{tCL120}</Markdown>

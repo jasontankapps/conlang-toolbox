@@ -360,7 +360,7 @@ const ConceptsPage: FC<PageData> = (props) => {
 					delete newObject[id];
 				} else {
 					const inserting: SavedWord = { id, word: text };
-					isCombo && (inserting.parts = isCombo);
+					if(isCombo) { inserting.parts = isCombo; }
 					setSavedWords([...savedWords, inserting]);
 					newObject[id] = true;
 				}
@@ -383,13 +383,15 @@ const ConceptsPage: FC<PageData> = (props) => {
 			}
 		});
 		dispatch(addCustomHybridMeaning(final));
-		makeToast && toaster({
-			message: t("CombinationSaved"),
-			duration: 2500,
-			position: "top",
-			color: "success",
-			toast
-		});
+		if (makeToast) {
+			toaster({
+				message: t("CombinationSaved"),
+				duration: 2500,
+				position: "top",
+				color: "success",
+				toast
+			});
+		}
 	}, [dispatch, savedWords, t, toast]);
 	const toggleLinking = useCallback(() => {
 		if(linking) {

@@ -207,22 +207,22 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 		} = editingGroup || {};
 		setId(id);
 		setSeparator(separator);
-		editingType && setType(editingType);
+		if(editingType) { setType(editingType); }
 		setDeclenjugations(declenjugations);
 		const editTitle = $i<HTMLInputElement>("editTitle");
-		editTitle && (editTitle.value = title);
+		if(editTitle) { editTitle.value = title; }
 		const editAppliesTo = $i<HTMLInputElement>("editAppliesTo");
-		editAppliesTo && (editAppliesTo.value = appliesTo);
+		if(editAppliesTo) { editAppliesTo.value = appliesTo; }
 		const editStarts = $i<HTMLInputElement>("editStarts");
-		editStarts && (editStarts.value = startsWith.join(separator));
+		if(editStarts) { editStarts.value = startsWith.join(separator); }
 		const editEnds = $i<HTMLInputElement>("editEnds");
-		editEnds && (editEnds.value = endsWith.join(separator));
+		if(editEnds) { editEnds.value = endsWith.join(separator); }
 		if(regex) {
 			setUseAdvancedMethod(true);
 			const editRegex1 = $i<HTMLInputElement>("editRegex1");
-			editRegex1 && (editRegex1.value = regex[0]);
+			if(editRegex1) { editRegex1.value = regex[0]; }
 			const editRegex2 = $i<HTMLInputElement>("editRegex2");
-			editRegex2 && (editRegex2.value = regex[1]);
+			if(editRegex2) { editRegex2.value = regex[1]; }
 		} else {
 			setUseAdvancedMethod(false);
 		}
@@ -232,19 +232,19 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 		setIsOpen(false);
 		setId("");
 		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		editSortTitle && (editSortTitle.value = "");
+		if(editSortTitle) { editSortTitle.value = ""; }
 		const editAppliesTo = $i<HTMLInputElement>("editAppliesTo");
-		editAppliesTo && (editAppliesTo.value = "");
+		if(editAppliesTo) { editAppliesTo.value = ""; }
 		setSeparator(" ");
 		setDeclenjugations([]);
 		const editStarts = $i<HTMLInputElement>("editStarts");
-		editStarts && (editStarts.value = "");
+		if(editStarts) { editStarts.value = ""; }
 		const editEnds = $i<HTMLInputElement>("editEnds");
-		editEnds && (editEnds.value = "");
+		if(editEnds) { editEnds.value = ""; }
 		const editRegex1 = $i<HTMLInputElement>("editRegex1");
-		editRegex1 && (editRegex1.value = "");
+		if(editRegex1) { editRegex1.value = ""; }
 		const editRegex2 = $i<HTMLInputElement>("editRegex2");
-		editRegex2 && (editRegex2.value = "");
+		if(editRegex2) { editRegex2.value = ""; }
 	}, [setIsOpen]);
 
 	const grabInfo = useCallback(() => {
@@ -455,13 +455,13 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	}, [addDeclenjugationModalInfo, setSavedDeclenjugation]);
 	const editDeclenjugation = useCallback((declenjugation: Declenjugation) => {
 		const el = $i<HTMLIonListElement>("editingDJGroup");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		setIncomingDeclenjugation(declenjugation);
 		editDeclenjugationModalInfo.setIsOpen(true);
 	}, [editDeclenjugationModalInfo, setIncomingDeclenjugation]);
 	const maybeDeleteDeclenjugation = useCallback((id: string) => {
 		const el = $i<HTMLIonListElement>("editingDJGroup");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		const handler = () => {
 			setDeclenjugations(declenjugations.filter(obj => obj.id !== id));
 			toaster({
@@ -472,14 +472,18 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 				toast
 			});
 		};
-		disableConfirms ? handler() : yesNoAlert({
-			header: t("Delete" + typeString),
-			message: tRUSure,
-			submit: tc("confirmDel", { count: 1 }),
-			cssClass: "danger",
-			handler,
-			doAlert
-		});
+		if(disableConfirms) {
+			handler();
+		} else {
+			yesNoAlert({
+				header: t("Delete" + typeString),
+				message: tRUSure,
+				submit: tc("confirmDel", { count: 1 }),
+				cssClass: "danger",
+				handler,
+				doAlert
+			});
+		}
 	}, [typeString, t, declenjugations, disableConfirms, doAlert, tc, tDeleted, tRUSure, toast]);
 
 	const doReorder = useCallback((event: CustomEvent) => {
@@ -510,8 +514,8 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 			stem = `/${match}/ ${arrow} ${replace}`;
 		} else {
 			stem = "-";
-			prefix && (stem = prefix + stem);
-			suffix && (stem = stem + suffix);
+			if(prefix) { stem = prefix + stem; }
+			if(suffix) { stem = stem + suffix; }
 		}
 		return (
 			<IonItemSliding

@@ -89,14 +89,15 @@ function merge (items: string[]) {
 	return final;
 };
 function mergeAll (items: string[]) {
-	let [final = "", ...copy] = items;
+	let [final = ""] = items;
+	const [, ...copy] = items;
 	copy.forEach(s => {
 		final = final + glue + s;
 	});
 	return final;
 };
 
-function blank (items: string[]) {
+function blank () {
 	return "";
 }
 
@@ -157,7 +158,7 @@ const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 	useEffect(() => {
 		// init itemsByColumn, mergeMethods
 		const methodology: (keyof Method)[] = [];
-		const cols: string[][] = columns.map((c: LexiconColumn) => {
+		const cols: string[][] = columns.map(() => {
 			methodology.push("first");
 			return [];
 		});
@@ -174,7 +175,7 @@ const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 		setItemsByColumn(cols);
 		setItems(newItems);
 		// init mergedResult
-		merging.length > 0 && makeMergedItem(cols, methodology);
+		if(merging.length > 0) { makeMergedItem(cols, methodology); }
 	}, [merging, mergingObject, columns, makeMergedItem]);
 
 	const setMergingMethod = useCallback((value: string, i: number) => {
@@ -191,7 +192,7 @@ const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 		// clear merged items from Lexicon
 		clearInfo();
 		// dispatch info to store
-		mergedResult && dispatch(mergeLexiconItems([items, mergedResult, sorter]));
+		if(mergedResult) { dispatch(mergeLexiconItems([items, mergedResult, sorter])); }
 		// close this modal
 		setIsOpen(false);
 	}, [clearInfo, dispatch, items, mergedResult, setIsOpen, sorter]);

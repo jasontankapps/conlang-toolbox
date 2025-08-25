@@ -28,7 +28,7 @@ import { isPlatform } from "@ionic/react";
 
 type Child = (Paragraph | Table);
 interface Section {
-	properties: { type: SectionType }
+	properties: { type: (typeof SectionType)[keyof typeof SectionType] }
 	children: Child[]
 }
 
@@ -84,15 +84,17 @@ const topChart = (
 			heading: HeadingLevel.HEADING_3,
 			spacing: headerSpacing
 		}));
-		showGroupInfo && children.push(new Paragraph({
-			children: [
-				new TextRun({
-					text: description,
-					italics: true
-				})
-			],
-			spacing
-		}));
+		if(showGroupInfo) {
+			children.push(new Paragraph({
+				children: [
+					new TextRun({
+						text: description,
+						italics: true
+					})
+				],
+				spacing
+			}));
+		}
 		if(inputFlag && found.length === 0) {
 			children.push(new Paragraph({
 				children: [
@@ -170,15 +172,17 @@ const sideChart = (
 			heading: HeadingLevel.HEADING_3,
 			spacing: headerSpacing
 		}));
-		showGroupInfo && children.push(new Paragraph({
-			children: [
-				new TextRun({
-					text: description,
-					italics: true
-				})
-			],
-			spacing
-		}));
+		if(showGroupInfo) {
+			children.push(new Paragraph({
+				children: [
+					new TextRun({
+						text: description,
+						italics: true
+					})
+				],
+				spacing
+			}));
+		}
 		if(inputFlag && found.length === 0) {
 			children.push(new Paragraph({
 				children: [
@@ -252,15 +256,17 @@ const text = (
 			heading: HeadingLevel.HEADING_3,
 			spacing: headerSpacing
 		}));
-		showGroupInfo && children.push(new Paragraph({
-			children: [
-				new TextRun({
-					text: description,
-					italics: true
-				})
-			],
-			spacing
-		}));
+		if(showGroupInfo) {
+			children.push(new Paragraph({
+				children: [
+					new TextRun({
+						text: description,
+						italics: true
+					})
+				],
+				spacing
+			}));
+		}
 		if(inputFlag && found.length === 0) {
 			children.push(new Paragraph({
 				children: [

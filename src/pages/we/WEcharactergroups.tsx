@@ -125,13 +125,13 @@ const WECharGroup: FC<PageData> = (props) => {
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
 	const editCharGroup = useCallback((group: WECharGroupObject) => {
 		const groups = $q<HTMLIonListElement>(".charGroups");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setEditing(group);
 		setIsOpenEditCharGroupWE(true);
 	}, []);
 	const maybeDeleteCharGroup = useCallback((label: string, charGroup: WECharGroupObject) => {
 		const groups = $q<HTMLIonListElement>(".charGroups");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const { run } = charGroup;
 		const handler = () => {
 			dispatch(deleteCharacterGroupWE({...charGroup, label}));

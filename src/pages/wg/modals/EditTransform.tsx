@@ -40,7 +40,7 @@ function resetError() {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q(".seekLabel");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const commons = [
@@ -82,13 +82,13 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 		const _descEl = $i<HTMLInputElement>("editOptDescWG");
 		if(editing) {
 			const { seek, replace, description } = editing;
-			_searchEl && (_searchEl.value = seek);
-			_replaceEl && (_replaceEl.value = replace);
-			_descEl && (_descEl.value = description);
+			if(_searchEl) { _searchEl.value = seek; }
+			if(_replaceEl) { _replaceEl.value = replace; }
+			if(_descEl) { _descEl.value = description; }
 		} else {
-			_searchEl && (_searchEl.value = "");
-			_replaceEl && (_replaceEl.value = "");
-			_descEl && (_descEl.value = "");
+			if(_searchEl) { _searchEl.value = ""; }
+			if(_replaceEl) { _replaceEl.value = ""; }
+			if(_descEl) { _descEl.value = ""; }
 		}
 		setSearchEl(_searchEl);
 		setReplaceEl(_replaceEl);
@@ -105,7 +105,7 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 		const seek = (searchEl && searchEl.value) || "";
 		if(seek === "") {
 			const el = $q(".seekLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoSrch);
 		}
 		try {
@@ -149,7 +149,7 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 	}, [descEl, dispatch, doAlert, editing, replaceEl, searchEl, setIsOpen, tThingSaved, toast, tCancel, tError, tNoSrch]);
 	const maybeDeleteTransform = useCallback(() => {
 		const groups = $q<HTMLIonListElement>((".transforms"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			setIsOpen(false);
 			dispatch(deleteTransformWG(editing!.id));

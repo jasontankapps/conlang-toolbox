@@ -21,7 +21,7 @@ const notString = (input: unknown) => typeof (input) !== "string";
 const notNumber = (input: unknown) => typeof (input) !== "number" || isNaN(input) || Math.round(input) !== input;
 const notBoolean = (input: unknown) => typeof (input) !== "boolean";
 const notArray = (input: unknown) => !Array.isArray(input);
-const notArrayOf = <T extends unknown>(
+const notArrayOf = <T,>(
 	input: unknown,
 	func: ((x: T, flag?: boolean) => boolean)
 ) => notArray(input) || (input as T[]).some((item: T) => func(item));
@@ -272,7 +272,7 @@ const invalidWEState = (object: unknown, storedInfoFlag: boolean = false) => {
 	return error || false;
 };
 
-const invalidMSState = (object: unknown, storedInfoFlag: boolean = false) => {
+const invalidMSState = (object: unknown) => {
 	let error = "";
 	if(notObject(object)) {
 		error = "501: Invalid MorphoSyntax State object";
@@ -581,7 +581,7 @@ const invalidLexiconState = (object: unknown, v: string, storedInfoFlag: boolean
 						);
 					}
 					break;
-				case "lexicon":
+				case "lexicon": {
 					requiredProperties++;
 					if(notArray(value)) {
 						flag = true;
@@ -603,6 +603,7 @@ const invalidLexiconState = (object: unknown, v: string, storedInfoFlag: boolean
 					const cols = foundColumns as number;
 					flag = array.some(obj => checkLexObjectInvalidity(obj, cols));
 					break;
+				}
 				case "truncateColumns":
 				case "sortDir":
 					requiredProperties++;
@@ -645,7 +646,7 @@ const invalidLexiconState = (object: unknown, v: string, storedInfoFlag: boolean
 				error = `704: Lexicon State has invalid property "${key}"`;
 			}
 		}
-		beforeVersionTen && requiredProperties++;
+		if (beforeVersionTen) { requiredProperties++ }
 		if(!error && !storedInfoFlag && requiredProperties < 10) {
 			error = "702: Lexicon State object is missing"
 				+ ` ${10 - requiredProperties} propert${(requiredProperties - 10) === 1 ? "y" : "ies"}`;
@@ -697,13 +698,12 @@ const invalidWordListsState = (object: unknown) => {
 };
 
 const invalidConceptCombo = (object: unknown) => {
-	let error = "";
 	if(notObject(object)) {
 		return true;
 	}
 	let requiredProperties = 0;
 	const pairs = Object.entries(object as object);
-	while(!error && pairs.length > 0) {
+	while(pairs.length > 0) {
 		const [key, value] = pairs.shift()!
 		let flag = true;
 		switch (key) {
@@ -777,7 +777,7 @@ const invalidConceptsState = (object: unknown, v: string) => {
 								"ssl",
 								"l200",
 							] as unknown[]).includes(str);
-							result && (note = ` (${str})`);
+							if(result) { note = ` (${str})`; }
 							return result;
 						});
 					} else {
@@ -1030,7 +1030,7 @@ const invalidMSStorage = (object: unknown) => {
 		} else if (notObject(obj)) {
 			error = "912.3: invalid MorphoSyntax storage object";
 		} else {
-			const result = invalidMSState(obj, true);
+			const result = invalidMSState(obj/*, true*/);
 			error = result && result.replace(/^5([0-9][0-9]):(.+?)MorphoSyntax State/, "9$1.3$2item in MorphoSyntax storage");
 		}
 	}

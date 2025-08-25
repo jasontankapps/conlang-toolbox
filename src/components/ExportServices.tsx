@@ -26,7 +26,7 @@ const doExport = async (
 
 	// FOR BROWSER TESTING ONLY
 	if(!isPlatform("android")) {
-		var blob = new Blob([output], {type: "text/plain;charset=utf-8"});
+		const blob = new Blob([output], {type: "text/plain;charset=utf-8"});
 		saveAs(blob, filename);
 		toaster({
 			message: "File saved as " + filename + " (browser)",
@@ -44,6 +44,7 @@ const doExport = async (
 			directory: Docs
 		});
 //		console.log('Read dir', ret);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch(e) {
 		try {
 			/*const ret =*/ await Filesystem.mkdir({
@@ -54,12 +55,14 @@ const doExport = async (
 //			console.log('Made dir', ret);
 		} catch(e) {
 			log(dispatch, ['doExport: Unable to make directory', e]);
-			toast && toaster({
-				message: i18n.t("UnableToExport", { error: String(e).replace(/\n+/g, " ") }),
-				color: "danger",
-				duration: 10000,
-				toast
-			});
+			if(toast) {
+				toaster({
+					message: i18n.t("UnableToExport", { error: String(e).replace(/\n+/g, " ") }),
+					color: "danger",
+					duration: 10000,
+					toast
+				});
+			}
 		}
 	} finally {
 		try {
@@ -70,20 +73,24 @@ const doExport = async (
 				encoding: encodeUTF ? Encoding.UTF8 : undefined
 			});
 //			console.log('Wrote file', result);
-			toast && toaster({
-				message: i18n.t("FileExported", { filename }),
-				color: "success",
-				duration: 5000,
-				toast
-			});
+			if(toast) {
+				toaster({
+					message: i18n.t("FileExported", { filename }),
+					color: "success",
+					duration: 5000,
+					toast
+				});
+			}
 		} catch(e) {
 			log(dispatch, ['doExport: Unable to write file', e]);
-			toast && toaster({
-				message: i18n.t("UnableToExport", { error: String(e).replace(/\n+/g, " ") }),
-				color: "danger",
-				duration: 10000,
-				toast
-			});
+			if(toast) {
+				toaster({
+					message: i18n.t("UnableToExport", { error: String(e).replace(/\n+/g, " ") }),
+					color: "danger",
+					duration: 10000,
+					toast
+				});
+			}
 		}
 	}
 };

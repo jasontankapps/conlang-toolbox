@@ -82,12 +82,12 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 		const _equals = $i<HTMLInputElement>("editEqualsEquality");
 		setBase(_base);
 		setEquals(_equals);
-		_base && (_base.value = base);
-		_equals && (_equals.value = equals.join(separator));
+		if(_base) { _base.value = base; }
+		if(_equals) { _equals.value = equals.join(separator); }
 	}, [incomingEquality, tError]);
 	const close = useCallback(() => {
-		_base && (_base.value = "");
-		_equals && (_equals.value = "");
+		if(_base) { _base.value = ""; }
+		if(_equals) { _equals.value = ""; }
 		setIsOpen(false);
 	}, [setIsOpen, _base, _equals]);
 	const maybeSaveEquality = useCallback(() => {

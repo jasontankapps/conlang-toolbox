@@ -101,9 +101,9 @@ const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
 		}
 		const relation: RelationObject = { id: uuidv4(), base, pre, post, separator };
 		setSavedRelation(relation);
-		_base && (_base.value = "");
-		_pre && (_pre.value = "");
-		_post && (_post.value = "");
+		if(_base) { _base.value = ""; }
+		if(_pre) { _pre.value = ""; }
+		if(_post) { _post.value = ""; }
 		setIsOpen(false);
 		toaster({
 			message: tThingAdded,
@@ -124,17 +124,17 @@ const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
 				submit: tYesDisc,
 				cssClass: "warning",
 				handler: () => {
-					_base && (_base.value = "");
-					_pre && (_pre.value = "");
-					_post && (_post.value = "");
+					if(_base) { _base.value = ""; }
+					if(_pre) { _pre.value = ""; }
+					if(_post) { _post.value = ""; }
 					setIsOpen(false);
 				},
 				doAlert
 			});
 		}
-		_base && (_base.value = "");
-		_pre && (_pre.value = "");
-		_post && (_post.value = "");
+		if(_base) { _base.value = ""; }
+		if(_pre) { _pre.value = ""; }
+		if(_post) { _post.value = ""; }
 		setIsOpen(false);
 	}, [doAlert, setIsOpen, tUnsaved, tYesDisc, tYouSure]);
 	const opener = useCallback(() => openECM(true), [openECM]);

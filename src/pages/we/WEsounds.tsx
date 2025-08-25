@@ -148,14 +148,14 @@ const WESChange: FC<PageData> = (props) => {
 	const { soundChanges } = useSelector((state: StateObject) => state.we);
 	const editSoundChange = useCallback((change: WESoundChangeObject) => {
 		const groups = $q<HTMLIonListElement>(".soundChanges");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setEditing(change)
 		setIsOpenEditSoundChange(true);
 	}, []);
 	const arrow = (ltr() ? "⟶" : "⟵");
 	const maybeDeleteSoundChange = useCallback((change: WESoundChangeObject) => {
 		const groups = $q<HTMLIonListElement>(".soundChanges");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteSoundChangeWE(change.id));
 			toaster({

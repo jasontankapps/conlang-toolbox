@@ -25,7 +25,7 @@ const translations = [
 
 const joiner = { joinArrays: "\n" };
 
-const MSinfo: FC<PageData> = (props) => {
+const MSinfo: FC<PageData> = () => {
 	const [ t ] = useTranslator('ms');
 	const [ tc ] = useTranslator('common');
 	const tWhat = useMemo(() => t("WhatIsMS"), [t]);

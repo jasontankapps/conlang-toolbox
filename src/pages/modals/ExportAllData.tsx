@@ -146,7 +146,7 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 		const djS: storedDJ = [];
 		setOutputString(tLoading);
 		const where = $i<HTMLInputElement>("exportedData");
-		where && (where.value = tLoading);
+		if(where) { where.value = tLoading; }
 
 		const copyDJGroup = (input: DJGroup) => {
 			const {startsWith, endsWith, regex, declenjugations} = input;
@@ -313,7 +313,7 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 		const final = JSON.stringify(exportable);
 		setOutputString(final);
 		const where = $i<HTMLInputElement>("exportedData");
-		where && (where.value = final);
+		if(where) { where.value = final; }
 	}, [
 		output,
 		export_wg,

@@ -1,9 +1,9 @@
 const repairRegexErrors = (s: string) => {
-	var backslash = false,
+	let backslash = false,
 		curly = false,
 		square = false,
-		paren = 0,
-		output: string[] = [];
+		paren = 0;
+	const output: string[] = [];
 	s.split("").forEach(function(q) {
 		// If we previously had a backslash, add it to this element.
 		if (backslash) {

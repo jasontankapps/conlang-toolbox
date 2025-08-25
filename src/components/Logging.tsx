@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 import { saveToLog } from "../store/internalsSlice";
 
+// eslint-disable-next-line no-constant-binary-expression
 const flag = 0 && "debugging";
 
 const getType = (thing: any) => typeof thing;

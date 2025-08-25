@@ -7,13 +7,13 @@ const doXML = (
 	doDownload: (e: MouseEvent<HTMLIonItemElement, globalThis.MouseEvent>, x: string, y: string) => void
 ) => {
 	const {
-		id,
-		lastSave,
+		//id,
+		//lastSave,
 		title,
 		description,
 		...rest
 	} = msInfo;
-	let XML: string =
+	const XML: string =
 			'<?xml version="1.0" encoding="UTF-8"?>'
 			+ "\n<MorphoSyntaxObject>\n\t<Title>"
 			+ title

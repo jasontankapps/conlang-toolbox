@@ -6,6 +6,12 @@
 	"plugins": {
 		"SplashScreen": {
 			"launchAutoHide": false
+		},
+		"Keyboard": {
+			"resizeOnFullScreen": true
+		},
+		"EdgeToEdge": {
+			"backgroundColor": "#333333"
 		}
 	},
 	"backgroundColor": "#333333",

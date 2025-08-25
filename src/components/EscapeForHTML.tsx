@@ -16,7 +16,7 @@
 interface lookup {
   [key: string]: string
 }
-var ESCAPE_LOOKUP: lookup = {
+const ESCAPE_LOOKUP: lookup = {
   '&': '&amp;',
   '>': '&gt;',
   '<': '&lt;',
@@ -24,7 +24,7 @@ var ESCAPE_LOOKUP: lookup = {
   '\'': '&#x27;'
 };
 
-var ESCAPE_REGEX = /[&><"']/g;
+const ESCAPE_REGEX = /[&><"']/g;
 
 function escaper(match: string) {
   return ESCAPE_LOOKUP[match];

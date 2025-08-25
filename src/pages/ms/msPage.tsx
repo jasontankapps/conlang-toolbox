@@ -52,10 +52,11 @@ const MSPage: FC<MSData> = (props) => {
 		const { tag, prop, ...etc } = block;
 		const key = `${page}-${tag}-${i}`;
 		switch(tag) {
-			case "Header":
+			case "Header": {
 				const { level, content } = etc as BasicHeader
-				return <HeaderItem key={key} level={level}>{t(content)}</HeaderItem>
-			case "Range":
+				return <HeaderItem key={key} level={level}>{t(content)}</HeaderItem>;
+			}
+			case "Range": {
 				const { start: s, end: e, max = 4, spectrum } = etc as BasicRange;
 				const start = t(s);
 				const end = t(e);
@@ -80,7 +81,8 @@ const MSPage: FC<MSData> = (props) => {
 						</IonRange>
 					</IonItem>
 				);
-			case "Modal":
+			}
+			case "Modal": {
 				const { title, content: mContent, label } = etc as BasicModal;
 				const modalProps = {
 					modalPropsMaker,
@@ -91,18 +93,21 @@ const MSPage: FC<MSData> = (props) => {
 				return (
 					<InfoModal key={key} {...modalProps}><MSMarkdown>{info}</MSMarkdown></InfoModal>
 				);
-			case "Checkboxes":
+			}
+			case "Checkboxes": {
 				const { boxes, display } = etc as BasicCheckbox;
 				return (
 					<CheckboxItem key={key} display={display} boxes={boxes} />
 				);
-			case "Text":
+			}
+			case "Text": {
 				const tProp = prop as MSText;
 				const { rows = 6, content: tContent } = etc as BasicText;
 				const desc = t(tContent);
 				return (
 					<TextItem key={key} prop={tProp} value={ms[tProp]} rows={rows}>{desc}</TextItem>
 				);
+			}
 		}
 		// THIS SHOULDN'T HAPPEN
 		return <React.Fragment key={key}>{tc("emphasizedError")}</React.Fragment>;

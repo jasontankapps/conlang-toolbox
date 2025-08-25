@@ -36,7 +36,7 @@ import toaster from "../../../components/toaster";
 type heads = "HEADING_1" | "HEADING_2" | "HEADING_3" | "HEADING_4" | "HEADING_5" | "HEADING_6";
 type Child = (Paragraph | Table);
 interface Section {
-	properties: { type: SectionType }
+	properties: { type: (typeof SectionType)[keyof typeof SectionType] }
 	children: Child[]
 }
 
@@ -141,7 +141,7 @@ const doDocx = (
 				content = ""
 			} = item;
 			switch(tag) {
-				case "Header":
+				case "Header": {
 					if(!showUnused) {
 						// Check all properties under this header and continue
 						//   only if at least one has information
@@ -160,7 +160,8 @@ const doDocx = (
 					);
 					checksum.push("HEAD " + content);
 					break;
-				case "Range":
+				}
+				case "Range": {
 					// Range is always saved, as it always has some sort of info
 					const min = 0;
 					const value = msInfo[prop as MSNum] || min;
@@ -212,6 +213,7 @@ const doDocx = (
 						spacing
 					}));
 					break;
+				}
 				case "Text":
 					if(showUnused || msInfo[prop as MSText]) {
 						// Save
@@ -225,7 +227,7 @@ const doDocx = (
 							spacing
 						}));
 						const tArr: string[] = (msInfo[prop as MSText] || t("noTextExportMsg")).split(/\n\n+/);
-						tArr.forEach((txt: string, i: number) => {
+						tArr.forEach((txt: string) => {
 							const run: TextRun[] = [];
 							txt.split(/\n/).forEach((x: string, j: number) => {
 								run.push(new TextRun(
@@ -245,7 +247,7 @@ const doDocx = (
 						});
 					}
 					break;
-				case "Checkboxes":
+				case "Checkboxes": {
 					if(!display) {
 						children.push(new Paragraph(
 							{ text: "[ERROR, CHECKBOX MISSING DISPLAY INFO]", spacing }
@@ -332,7 +334,7 @@ const doDocx = (
 						const cols = colWidths.slice();
 						const cells: TableCell[] = [];
 						const checkingCells: string[] = [];
-						row.forEach(([propertyName, bool]) => {
+						row.forEach(([, bool]) => {
 							const percent = Math.floor(cols.shift()! * portion);
 							cells.push(new TableCell({
 								borders: border,
@@ -438,13 +440,16 @@ const doDocx = (
 						}
 					}));
 					checksum.push("CHECKBOXES: " + checkingOutput.join(" "));
+				}
 			}
 		});
 		// Only save section if there's something to save.
-		children.length > 0 && sections.push({
-			properties: { type: SectionType.CONTINUOUS },
-			children
-		});
+		if (children.length > 0) {
+			sections.push({
+				properties: { type: SectionType.CONTINUOUS },
+				children
+			});
+		}
 	});
 	log_original(null, checksum);
 	const doc = new Document({
@@ -463,20 +468,24 @@ const doDocx = (
 	if(!isPlatform("android")) {
 		Packer.toBlob(doc).then((blob) => {
 			saveAs(blob, filename);
-			toast && toaster({
-				message: `${filename} exported`,
-				color: "success",
-				duration: 5000,
-				toast
-			});
+			if (toast) {
+				toaster({
+					message: `${filename} exported`,
+					color: "success",
+					duration: 5000,
+					toast
+				});
+			}
 		}).catch((e = "Error blob") => {
 			log(["Ex-Doc / Packer / toBlob", e]);
-			toast && toaster({
-				message: "UNABLE TO WRITE FILE: " + String(e).replace(/\n+/g, " "),
-				color: "danger",
-				duration: 10000,
-				toast
-			});
+			if (toast) {
+				toaster({
+					message: "UNABLE TO WRITE FILE: " + String(e).replace(/\n+/g, " "),
+					color: "danger",
+					duration: 10000,
+					toast
+				});
+			}
 		});
 		doClose();
 		return;

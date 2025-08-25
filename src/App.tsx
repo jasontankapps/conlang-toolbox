@@ -12,9 +12,11 @@ import {
 	useIonRouter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { App as Capacitor, BackButtonListenerEvent } from '@capacitor/app';
+import { App as Capacitor } from '@capacitor/app';
 import { LanguageCode } from 'iso-639-1';
 import { useTranslation } from 'react-i18next';
+import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 // Polyfill for Intl.PluralRules
 import 'intl-pluralrules';
@@ -33,6 +35,7 @@ import Loading from './pages/Loading';
 
 import doUpdate095 from './updaters/UpdateTo095';
 import doUpdate0100 from './updaters/UpdateTo0100';
+import { StateObject as OldStateObject } from './updaters/oldReduxTypes';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -60,6 +63,8 @@ import modalPropertiesFunc from './components/ModalProperties';
 import yesNoAlert from './components/yesNoAlert';
 import getLanguage from './components/getLanguage';
 
+function isOldState (object: OldStateObject): asserts object is OldStateObject {}
+
 export const MainOutlet = memo(() => {
 	const [modals, setModals] = useState<SetBooleanState[]>([]);
 	const [doAlert] = useIonAlert();
@@ -79,8 +84,11 @@ export const MainOutlet = memo(() => {
 	const navigator = useIonRouter();
 	useEffect((): (() => void) => {
 		// NOTE: Back Button will automatically go back in history for us.
-		return Capacitor.addListener('backButton', (ev: BackButtonListenerEvent) => {
-			if(modals.length) {
+		let running = true;
+		Capacitor.addListener('backButton', () => {
+			if(!running) {
+				return;
+			} else if(modals.length) {
 				// Close an open modal
 //				dispatch(addToLog("Attempting to close modal."));
 				// Get last modal
@@ -106,10 +114,11 @@ export const MainOutlet = memo(() => {
 					doAlert
 				});
 			}
-		}).remove;
+		});
+		return () => { running = false; };
 	}, [modals, navigator, dispatch, doAlert, t]);
 	return (
-		<IonRouterOutlet placeholder>
+		<IonRouterOutlet>
 			<Route path="/wg" component={() => <WG {...defaultProps} />} />
 			<Route path="/we" component={() => <WE {...defaultProps} />} />
 			<Route path="/dj" component={() => <DJ {...defaultProps} />} />
@@ -135,12 +144,16 @@ const App = memo(() => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { lastClean } = useSelector((state: StateObject) => state.internals)
-	// useEffect should keep this from firing except once per session
-	useEffect(() => {
+	const [hasSet, setHasSet] = useState(false);
+
+	if (!hasSet) {
+		EdgeToEdge.setBackgroundColor({ color: '#000000' });
+		StatusBar.setStyle({ style: Style.Dark });
 		// 0.9.5 and older
 		StateStorage.getItem("lastState").then((storedState: any) => {
-			if(storedState !== null) {
-				if(storedState && (typeof storedState) === "object") {
+			if(storedState && storedState !== null && (typeof storedState) === "object") {
+				isOldState(storedState);
+				if((typeof storedState) === "object") {
 					if (compare(storedState.currentVersion, "0.9.5", "<")) {
 						storedState = doUpdate095(storedState);
 					}
@@ -150,7 +163,8 @@ const App = memo(() => {
 				}
 			}
 		});
-	}, [dispatch]);
+		setHasSet(true);
+	}
 	// Clean state if needed
 	useEffect(() => {
 		maybeCleanState(dispatch, lastClean);
@@ -173,8 +187,11 @@ const App = memo(() => {
 	// Listen for back button
 	useEffect((): (() => void) => {
 		// NOTE: Back Button will automatically go back in history for us.
-		return Capacitor.addListener('backButton', (ev: BackButtonListenerEvent) => {
-			if(modals.length) {
+		let running = true;
+		Capacitor.addListener('backButton', () => {
+			if(!running) {
+				return;
+			} else if(modals.length) {
 				// Close an open modal
 //				dispatch(addToLog("Attempting to close modal."));
 				// Get last modal
@@ -200,14 +217,15 @@ const App = memo(() => {
 					doAlert
 				});
 			}
-		}).remove;
+		});
+		return () => { running = false; };
 	}, [modals, navigator, dispatch, doAlert, t]);
 	return (
 		<IonApp>
 			<IonReactRouter>
 				<IonSplitPane contentId="main" when="xl">
 					<Menu />
-					<IonRouterOutlet id="main" placeholder>
+					<IonRouterOutlet id="main">
 						<Route path="/wg" render={() => <Suspense fallback={<Loading />}><WG {...defaultProps} /></Suspense>} />
 						<Route path="/we" render={() => <Suspense fallback={<Loading />}><WE {...defaultProps} /></Suspense>} />
 						<Route path="/dj" render={() => <Suspense fallback={<Loading />}><DJ {...defaultProps} /></Suspense>} />

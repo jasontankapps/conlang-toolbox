@@ -77,14 +77,16 @@ const ExportSyntaxModal: FC<ExportModalProps> = (props) => {
 		// FOR BROWSER TESTING ONLY
 		//i18n not needed here
 		if(!isPlatform("android")) {
-			var blob = new Blob([output], {type: "text/plain;charset=utf-8"});
+			const blob = new Blob([output], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, filename);
-			toast && toaster({
-				message: `${filename} exported`,
-				color: "success",
-				duration: 5000,
-				toast
-			});
+			if (toast) {
+				toaster({
+					message: `${filename} exported`,
+					color: "success",
+					duration: 5000,
+					toast
+				});
+			}
 			doClose();
 			return;
 		}

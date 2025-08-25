@@ -131,8 +131,9 @@ export const SylCard: FC<CardProps> = (props) => {
 					inner.push(
 						<strong key={`syllCharGroupExample/${bit}/${i}`}>{bit}</strong>
 					);
-					(i + 1 !== (charGroupExample as string[]).length)
-						&& inner.push(<br key={`syllCharGroupExample/linebreak-${i}`} />);
+					if((i + 1) !== (charGroupExample as string[]).length) {
+						inner.push(<br key={`syllCharGroupExample/linebreak-${i}`} />);
+					}
 				});
 				return <span className="emphasizedSection">{inner}</span>;
 			}
@@ -146,8 +147,9 @@ export const SylCard: FC<CardProps> = (props) => {
 				inner.push(
 					<strong key={`syllExample/${bit}/${i}`}>{bit}</strong>
 				);
-				(i + 1 !== (example as string[]).length)
-					&& inner.push(<br key={`syllExample/linebreak-${i}`} />);
+				if((i + 1) !== (example as string[]).length) {
+					inner.push(<br key={`syllExample/linebreak-${i}`} />);
+				}
 				return <React.Fragment key={`syllExampleGroup/${bit}/${i}`}>{inner}</React.Fragment>
 			})}
 		</div>
@@ -255,7 +257,7 @@ export const OptCard: FC<CardProps> = (props) => {
 	);
 }
 
-const WGinfo: FC<PageData> = (props) => {
+const WGinfo: FC<PageData> = () => {
 	const [ t ] = useTranslator('wg');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

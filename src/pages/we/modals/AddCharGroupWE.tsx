@@ -32,7 +32,7 @@ function resetError(prop: string) {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q(`.${prop}Label`);
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 const resetTitle = () => resetError("title");
 const resetLabel = () => resetError("label");
@@ -101,7 +101,7 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 		} else {
 			// Suitable label found
 			const el = $i<HTMLInputElement>("newWEShortLabel");
-			el && (el.value = label);
+			if(el) { el.value = label; }
 			resetError("label");
 		}
 	}, [charGroupMap, toast, tNoSuggest]);
@@ -116,28 +116,28 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const run = runEl ? runEl.value.trim() : "";;
 		if(title === "") {
 			const el = $q(".titleLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoTitle);
 		}
 		if(label === "") {
 			const el = $q(".labelLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoLabel);
 		} else if (charGroupMap[label]) {
 			const el = $q(".labelLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tw("duplicateLabel", { label }));
 		} else {
 			const invalid = "^$\\[]{}.*+()?|";
 			if (invalid.indexOf(label as string) !== -1) {
 				const el = $q(".labelLabel");
-				el && el.classList.add("invalidValue");
+				if(el) { el.classList.add("invalidValue"); }
 				err.push(tw("invalidLabel", { label }));
 			}
 		}
 		if(run === "") {
 			const el = $q(".runLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoRun);
 		}
 		if(err.length > 0) {
@@ -157,7 +157,7 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 			return;
 		}
 		// Everything ok!
-		close && setIsOpen(false);
+		if(close) { setIsOpen(false); }
 		dispatch(addCharacterGroupWE({title, label, run}));
 		$a<HTMLInputElement>("ion-list.addWECharGroup ion-input").forEach(
 			(input) => input.value = ""

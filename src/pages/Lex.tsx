@@ -46,7 +46,7 @@ import { useWindowHeight } from '@react-hook/window-size/throttled';
 import { v4 as uuidv4 } from 'uuid';
 import { FixedSizeList, areEqual } from 'react-window';
 import memoizeOne from 'memoize-one';
-import Markdown, { ExtraProps } from 'react-markdown';
+import Markdown from 'react-markdown';
 
 import {
 	addLexiconItem,
@@ -373,7 +373,7 @@ const otherItemData = memoizeOne((columns, lexicon, toggleDeleting, deletingObj)
 
 const closeSliders = () => {
 	const mainLexList = $i<HTMLIonListElement>("mainLexList");
-	mainLexList && mainLexList.closeSlidingItems();
+	if(mainLexList) { mainLexList.closeSlidingItems(); }
 };
 
 const translations = [
@@ -513,11 +513,11 @@ const Lex: FC<PageData> = (props) => {
 	const [hasLoaded, setHasLoaded] = useState<boolean>(false);
 	useIonViewDidEnter(() => setHasLoaded(true));
 	useIonViewDidLeave(() => setHasLoaded(false));
-	const topBar = $i("lexiconTopBar");
-	const lexInfoHeader = $i("lexiconTitleAndDescription");
-	const lexHeader = $i("theLexiconHeader");
-	const lexColumnNames = $i("lexColumnNames");
-	const lexColumnInputs = $i("lexColumnInputs");
+	const topBar = $i<HTMLElement>("lexiconTopBar");
+	const lexInfoHeader = $i<HTMLElement>("lexiconTitleAndDescription");
+	const lexHeader = $i<HTMLElement>("theLexiconHeader");
+	const lexColumnNames = $i<HTMLElement>("lexColumnNames");
+	const lexColumnInputs = $i<HTMLElement>("lexColumnInputs");
 	// Calculate height
 	useEffect(() => {
 		let used = 0;
@@ -547,7 +547,7 @@ const Lex: FC<PageData> = (props) => {
 			const el = $i<HTMLIonInputElement>(i_id);
 			const info: string = (el && (el.value as string)) || "";
 			newInfo.push(info);
-			info && (foundFlag = true);
+			if(info) { foundFlag = true; }
 			newBlank[id] = "";
 			ids.push(i_id);
 		});
@@ -574,13 +574,13 @@ const Lex: FC<PageData> = (props) => {
 		// clear all inputs
 		ids.forEach((id: string) => {
 			const el = $i<HTMLInputElement>(id);
-			el && (el.value = "");
+			if(el) { el.value = ""; }
 		});
 	}, [columns, dispatch, doAlert, sorter, tError, tNoText, tOk]);
 
 	// Delete Lexicon item
 	const delFromLex = useCallback((item: Lexicon) => {
-		let title: string = item.columns.join(" / ");
+		const title: string = item.columns.join(" / ");
 		closeSliders();
 		if(disableConfirms) {
 			dispatch(deleteLexiconItem(item.id));
@@ -648,11 +648,11 @@ const Lex: FC<PageData> = (props) => {
 	// Memoize functions
 	const updateTitle = useCallback(() => {
 		const el = $i<HTMLInputElement>("lexTitle");
-		el && dispatch(updateLexiconText(["title", el.value.trim()]));
+		if(el) { dispatch(updateLexiconText(["title", el.value.trim()])); }
 	}, [dispatch]);
 	const updateDescription = useCallback(() => {
 		const el = $i<HTMLInputElement>("lexDesc");
-		el && dispatch(updateLexiconText(["description", el.value.trim()]));
+		if(el) { dispatch(updateLexiconText(["description", el.value.trim()])); }
 	}, [dispatch]);
 	const openLexSorter = useCallback(() => setIsOpenLexSorter(true), []);
 	const updateSortDir = useCallback(() => dispatch(updateLexiconSortDir([!sortDir, sorter])), [dispatch, sortDir, sorter]);
@@ -891,7 +891,7 @@ const Lex: FC<PageData> = (props) => {
 export default Lex;
 
 const mdComponents = {
-	code(props: React.ClassAttributes<HTMLElement> & React.HTMLAttributes<HTMLElement> & ExtraProps) {
+	code(/*props: React.ClassAttributes<HTMLElement> & React.HTMLAttributes<HTMLElement> & ExtraProps*/) {
 		return <IonIcon icon={reorderTwo} color="tertiary" size="small" />;
 	}
 };

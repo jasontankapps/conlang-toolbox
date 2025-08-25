@@ -1,6 +1,6 @@
 const bouncing: { [key: string]: number } = {};
 
-function debounce <F extends Function, T extends unknown>(func: F, args: T[], amount: number, namespace: string = "default") {
+function debounce <F extends Function, T>(func: F, args: T[], amount: number, namespace: string = "default") {
 	if(bouncing[namespace]) {
 		clearTimeout(bouncing[namespace]);
 	}

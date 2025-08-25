@@ -595,10 +595,12 @@ ion-app .logTextArea {
 	flex-flow: row wrap;
 	justify-content: center;
 }
+ion-app .logTextArea textarea,
 ion-app .logTextArea ion-textarea {
 	height: 150px;
 	min-width: 200px;
 	width: 80%;
+	resize: none;
 }
 .hasSpecialLabels ion-label {
 	font-size: 1.25rem;

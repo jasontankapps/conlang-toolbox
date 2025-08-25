@@ -58,6 +58,7 @@ const calculateCharGroupReferenceRegex = (transform: string, charGroupMap: Mappe
 	try {
 		// In case there's an invalid grouping for some reason.
 		returnValue = new RegExp(final.join("%"), "g");
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (any) {
 		returnValue = new RegExp("^$");
 	}

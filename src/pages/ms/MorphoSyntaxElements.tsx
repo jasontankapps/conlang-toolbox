@@ -156,7 +156,7 @@ export const TransTable = (props: PropsWithChildren<TransProps>) => {
 	let length = 1;
 	const cName = "translation" + (className ? " " + className : "");
 	const finalRow = children ? tableRows.length : -1;
-	children && tableRows.push(children as string);
+	if(children) { tableRows.push(children as string); }
 	const mainRows = tableRows.filter((row: string) => row).map((row: string, i: number) => {
 		if(i === finalRow) {
 			return <tr key={"ROW-" + String(i)}><td colSpan={length}>{row}</td></tr>;
@@ -372,7 +372,7 @@ export const CheckboxItem: FC<CheckboxProps> = (props) => {
 		const final: MSBool[][] = [];
 		let temp: MSBool[] = [];
 		let count = 0;
-		boxes.forEach((box, i) => {
+		boxes.forEach((box) => {
 			count++;
 			temp.push(box || error);
 			if(count >= boxesPerRow) {
@@ -466,11 +466,13 @@ const msMarkdownComponents: Partial<Components> = {
 		return `${children}`;
 	},
 	table: (tableprops) => {
-		const { node, ...rest } = tableprops;
+		const { ...rest } = tableprops;
+		delete rest.node;
 		return <table {...rest} className="informational" />;
 	},
 	li: (liprops) => {
-		const { node, children, ...rest } = liprops;
+		const { children, ...rest } = liprops;
+		delete rest.node;
 		if(typeof children === "string") {
 			if(children.indexOf("[newSection]") === 0) {
 				return <li {...rest} className="newSection">{children.slice(12)}</li>;
@@ -544,6 +546,6 @@ export interface MSTextbox extends BasicText {
 	prop: MSText
 }
 
-export const MSSections = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
+export type MSSectionsType = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10";
 
 export type AnyMSItem = (MSHeader | MSRange | MSModal | MSTextbox | MSCheckboxes);

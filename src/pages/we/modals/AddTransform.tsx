@@ -33,7 +33,7 @@ function resetError() {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q(".seekLabel");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const commons = [
@@ -78,7 +78,7 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 		// Test info for validness, then save if needed and reset the newTransform
 		if(seek === "") {
 			const el = $q(".seekLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoSeek);
 		}
 		try {
@@ -107,7 +107,7 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const replace = replaceEl ? replaceEl.value : "";
 		const descriptionEl = $i<HTMLInputElement>("optDescWE");
 		const description = descriptionEl ? descriptionEl.value : "";
-		close && setIsOpen(false);
+		if(close) { setIsOpen(false); }
 		dispatch(addTransformWE({
 			id: uuidv4(),
 			seek,
@@ -117,7 +117,7 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 		}));
 		$a<HTMLInputElement>("ion-list.weAddTransform ion-input").forEach((input) => input.value = "");
 		const el = $q<HTMLInputElement>("ion-list.weAddTransform ion-radio-group");
-		el && (el.value = "both");
+		if(el) { el.value = "both"; }
 		toaster({
 			message: tThingAdd,
 			duration: 2500,

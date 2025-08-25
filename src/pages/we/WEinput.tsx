@@ -70,13 +70,13 @@ const WEInput: FC<PageData> = (props) => {
 	}, [updateInput]);
 	const acceptImport = useCallback((value: string) => {
 		const el = $i<HTMLInputElement>("weInput");
-		el && (el.value = value);
+		if(el) { el.value = value; }
 		updateInput(value);
 	}, [updateInput]);
 	const clearInput = useCallback(() => {
 		const handler = () => {
 			const el = $i<HTMLInputElement>("weInput");
-			el && (el.value = "");
+			if(el) { el.value = ""; }
 			updateInput("");
 		};
 		if(disableConfirms) {

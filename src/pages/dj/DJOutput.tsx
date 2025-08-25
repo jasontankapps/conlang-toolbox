@@ -12,8 +12,7 @@ import {
 	useIonToast,
 	useIonAlert,
 	AlertInput,
-	SelectCustomEvent,
-	ToggleCustomEvent
+	SelectCustomEvent
 } from '@ionic/react';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -114,9 +113,9 @@ const DJOutput: FC<PageData> = (props) => {
 
 	useEffect(() => {
 		const types: (keyof DJCustomInfo)[] = [];
-		declensions.length > 0 && types.push("declensions");
-		conjugations.length > 0 && types.push("conjugations");
-		other.length > 0 && types.push("other");
+		if(declensions.length > 0) { types.push("declensions"); }
+		if(conjugations.length > 0) { types.push("conjugations"); }
+		if(other.length > 0) { types.push("other"); }
 		setType(types);
 	}, [declensions, conjugations, other]);
 	useEffect(() => {
@@ -181,11 +180,13 @@ const DJOutput: FC<PageData> = (props) => {
 				value: "text"
 			}
 		];
-		displayType !== "text" && inputs.unshift({
-			label: tCSV,
-			type: "radio",
-			value: "csv"
-		});
+		if (displayType !== "text") {
+			inputs.unshift({
+				label: tCSV,
+				type: "radio",
+				value: "csv"
+			});
+		}
 		doAlert({
 			header: tChooseFormat,
 			inputs,
@@ -337,12 +338,12 @@ const DJOutput: FC<PageData> = (props) => {
 			</IonSelect>
 		</IonItem>
 	) : <></>, [conjugations.length, declensions.length, numberOfTypes, other.length, tConj, tDecl, tOther, type]);
-	const doSetInputUse = useCallback((e: ToggleCustomEvent) => setUsingInput(!usingInput), [usingInput]);
-	const doSetShowingInfo = useCallback((e: ToggleCustomEvent) => setShowGroupInfo(!showGroupInfo), [showGroupInfo]);
-	const doSetShowingExamples = useCallback((e: ToggleCustomEvent) => setShowExamples(!showExamples), [showExamples]);
-	const doSetSorting = useCallback((e: ToggleCustomEvent) => setSortInput(!sortInput), [sortInput]);
-	const setMatchOnce = useCallback((e: ToggleCustomEvent) => setWordsMatchOneTimeOnly(!wordsMatchOneTimeOnly), [wordsMatchOneTimeOnly]);
-	const setShowingUnmatched = useCallback((e: ToggleCustomEvent) => setShowUnmatched(!showUnmatched), [showUnmatched]);
+	const doSetInputUse = useCallback(() => setUsingInput(!usingInput), [usingInput]);
+	const doSetShowingInfo = useCallback(() => setShowGroupInfo(!showGroupInfo), [showGroupInfo]);
+	const doSetShowingExamples = useCallback(() => setShowExamples(!showExamples), [showExamples]);
+	const doSetSorting = useCallback(() => setSortInput(!sortInput), [sortInput]);
+	const setMatchOnce = useCallback(() => setWordsMatchOneTimeOnly(!wordsMatchOneTimeOnly), [wordsMatchOneTimeOnly]);
+	const setShowingUnmatched = useCallback(() => setShowUnmatched(!showUnmatched), [showUnmatched]);
 	const doCopy = useCallback(() => copyText(copyStrings.filter(line => line).join("\n\n\n"), toast), [toast, copyStrings]);
 
 	return (

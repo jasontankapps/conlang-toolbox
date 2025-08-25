@@ -31,7 +31,7 @@ function resetError(prop: string) {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q("." + prop + "Label");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 const resetSeek = () => resetError("seek");
 const resetContext = () => resetError("context");
@@ -95,17 +95,17 @@ const AddSoundChangeModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const anticontext = anticontextEl ? anticontextEl.value : "";
 		if(seek === "") {
 			const el = $q(".seekLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoSearch);
 		}
 		if((temp = contextTest(context, "Context"))) {
 			const el = $q(".contextLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(temp);
 		}
 		if(anticontext && (temp = contextTest(anticontext, "Exception"))) {
 			const el = $q(".anticontextLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(temp);
 		}
 		try {
@@ -135,7 +135,7 @@ const AddSoundChangeModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const descEl = $i<HTMLInputElement>("optDescWESC");
 		const replace = repairRegexErrors(replaceEl ? replaceEl.value : "");
 		const description = descEl ? descEl.value.trim() : "";
-		close && setIsOpen(false);
+		if(close) { setIsOpen(false); }
 		dispatch(addSoundChangeWE({
 			id: uuidv4(),
 			seek: repairRegexErrors(seek),

@@ -117,13 +117,13 @@ const WGRew: FC<PageData> = (props) => {
 	const arrow = (ltr() ? "⟶" : "⟵");
 	const editTransform = useCallback((transform: WGTransformObject) => {
 		const groups = $q<HTMLIonListElement>((".transforms"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setEditing(transform);
 		setIsOpenEditTransform(true);
 	}, []);
 	const maybeDeleteTransform = useCallback((transform: WGTransformObject) => {
 		const groups = $q<HTMLIonListElement>((".transforms"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteTransformWG(transform.id));
 			toaster({

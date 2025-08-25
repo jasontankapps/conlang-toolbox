@@ -20,8 +20,7 @@ import {
 	IonItemOption,
 	useIonAlert,
 	IonToggle,
-	SelectCustomEvent,
-	ToggleCustomEvent
+	SelectCustomEvent
 } from '@ionic/react';
 import {
 	closeCircleOutline,
@@ -119,7 +118,7 @@ const SortSettings: FC<PageData> = (props) => {
 	const editEqualityModalInfo = modalPropsMaker(editEqualityOpen, setEditEqualityOpen);
 	const openEditor = (sorter: SortObject) => {
 		const el = $i<HTMLIonListElement>("listOfCustomSorts");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		setEditingCustomSort(sorter);
 		setEditModalOpen(true);
 	};
@@ -148,9 +147,9 @@ const SortSettings: FC<PageData> = (props) => {
 			customizations
 		} = sorter;
 		const desc: string[] = [];
-		sortLanguage && desc.push(langObj[sortLanguage]);
-		sensitivity && desc.push(sensitivity);
-		customAlphabet && desc.push(tCustom);
+		if(sortLanguage) { desc.push(langObj[sortLanguage]); }
+		if(sensitivity) { desc.push(sensitivity); }
+		if(customAlphabet) { desc.push(tCustom); }
 		if(customizations && customizations.length) {
 			let r: number = 0;
 			let e: number = 0;
@@ -161,13 +160,13 @@ const SortSettings: FC<PageData> = (props) => {
 					r++;
 				}
 			});
-			r > 0 && desc.push(t("relation", { count: r }));
-			e > 0 && desc.push(t("equality", { count: e }));
+			if(r > 0) { desc.push(t("relation", { count: r })); }
+			if(e > 0) { desc.push(t("equality", { count: e })); }
 		}
 		const maybeDeleteSort = (id: string, title: string) => {
 			const el = $i<HTMLIonListElement>("listOfCustomSorts");
-			el && el.closeSlidingItems();
-			let message = permanents[id];
+			if(el) { el.closeSlidingItems(); }
+			const message = permanents[id];
 			if(message) {
 				return doAlert({
 					header: "",
@@ -220,7 +219,7 @@ const SortSettings: FC<PageData> = (props) => {
 		);
 	}), [customSorts, t, tc, doAlert, dispatch, tCustom, tDelete, tEdit, tOk, tYouSure]);
 
-	const toggleUsingLang = useCallback((e: ToggleCustomEvent) => {
+	const toggleUsingLang = useCallback(() => {
 		const newValue = !useLanguageSort;
 		setUseLanguageSort(newValue);
 		dispatch(setSortLanguageCustom(newValue ? defaultSortLanguage : "unicode"));

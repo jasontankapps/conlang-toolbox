@@ -117,13 +117,8 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 		const doSave = (title: string, msg: string) => {
 			const {
 				// Remove props we aren't saving
-				output,
-				showSyllableBreaks,
-				sentencesPerText,
-				capitalizeWords,
-				sortWordlist,
-				wordlistMultiColumn,
-				wordsPerWordlist,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				output, showSyllableBreaks, sentencesPerText, capitalizeWords, sortWordlist, wordlistMultiColumn, wordsPerWordlist,
 				...save
 			} = wg;
 			CustomStorageWG.setItem(title, save).then(() => {
@@ -223,7 +218,7 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 			});
 		}
 	}, [customInfo, disableConfirms, doAlert, setTitles, tc, toast, tCannotUndo]);
-	const customInfoList = useMemo(() => customInfo.map((title: string, i: number) => (
+	const customInfoList = useMemo(() => customInfo.map((title: string) => (
 		<SavedItem
 			title={title}
 			maybeDelete={() => maybeDeleteInfo(title)}

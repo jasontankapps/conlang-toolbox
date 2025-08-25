@@ -83,7 +83,7 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 		const cols = (itemToEdit ? [...itemToEdit.columns] : []);
 		cols.forEach((col: string, i: number) => {
 			const el = $i<HTMLInputElement>(`edit_lex_input_${id}_${i}`);
-			el && (el.value = col);
+			if(el) { el.value = col; }
 		});
 		setOriginalString(cols.join(nonsense));
 		setId(id);

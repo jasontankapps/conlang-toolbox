@@ -113,15 +113,15 @@ const EditDeclenjugation: FC<EditDJModal> = (props) => {
 		setUseWholeWord(uww);
 		setId(id);
 		const editDJTitle = $i<HTMLInputElement>("editDJTitle");
-		editDJTitle && (editDJTitle.value = title);
+		if(editDJTitle) { editDJTitle.value = title; }
 		const editDJPrefix = $i<HTMLInputElement>("editDJPrefix");
-		editDJPrefix && (editDJPrefix.value = prefix);
+		if(editDJPrefix) { editDJPrefix.value = prefix; }
 		const editDJSuffix = $i<HTMLInputElement>("editDJSuffix");
-		editDJSuffix && (editDJSuffix.value = suffix);
+		if(editDJSuffix) { editDJSuffix.value = suffix; }
 		const editDJRegex1 = $i<HTMLInputElement>("editDJRegex1");
-		editDJRegex1 && (editDJRegex1.value = regex1);
+		if(editDJRegex1) { editDJRegex1.value = regex1; }
 		const editDJRegex2 = $i<HTMLInputElement>("editDJRegex2");
-		editDJRegex2 && (editDJRegex2.value = regex2);
+		if(editDJRegex2) { editDJRegex2.value = regex2; }
 	}, [incomingDeclenjugation]);
 	useEffect(() => {
 		onLoad();

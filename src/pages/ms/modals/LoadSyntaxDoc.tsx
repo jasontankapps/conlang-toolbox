@@ -56,7 +56,7 @@ const LoadMSModal: FC<MSmodalProps> = (props) => {
 			}
 			const handler = () => {
 				const {boolStrings, ...newObj} = pair[1];
-				boolStrings && boolStrings.forEach((s) => (newObj[s as MSBool] = true));
+				if(boolStrings) { boolStrings.forEach((s) => (newObj[s as MSBool] = true)); }
 				dispatch(loadStateMS(newObj));
 				setIsOpen(false);
 			};

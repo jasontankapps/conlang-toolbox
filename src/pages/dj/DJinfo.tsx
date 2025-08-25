@@ -16,7 +16,7 @@ import {
 	logOutOutline,
 	reorderThree
 } from 'ionicons/icons';
-import Markdown, { ExtraProps } from 'react-markdown';
+import Markdown from 'react-markdown';
 
 import { PageData, SetBooleanState } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
@@ -25,7 +25,6 @@ import Header from '../../components/Header';
 import { DJGroupsIcon, DeclenjugatorIcon } from '../../components/icons';
 import { RegularExpressions } from '../../components/regularExpressionsInfo';
 
-type CodeProps = React.ClassAttributes<HTMLElement> & React.HTMLAttributes<HTMLElement> & ExtraProps;
 interface CardProps {
 	hideOverview?: boolean
 	setIsOpenInfo?: SetBooleanState
@@ -84,7 +83,7 @@ export const GroupCard: FC<CardProps> = (props) => {
 		);
 	}), [example, t]);
 	const codeComps = useMemo(() => ({
-		code(props: CodeProps) {
+		code() {
 			return <IonIcon icon={reorderThree} color="tertiary" size="small" />;
 		}
 	}), []);
@@ -127,7 +126,7 @@ export const OutputCard: FC<CardProps> = (props) => {
 	);
 }
 
-const DJinfo: FC<PageData> = (props) => {
+const DJinfo: FC<PageData> = () => {
 	const [ t ] = useTranslator('dj');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

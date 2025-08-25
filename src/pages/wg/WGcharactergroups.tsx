@@ -132,7 +132,7 @@ const WGCharGroup: FC<PageData> = (props) => {
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
 	const editCharGroup = useCallback((charGroup: WGCharGroupObject) => {
 		const groups = $q<HTMLIonListElement>(".charGroups");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setIsOpenEditCharGroup(true);
 		setEditing(charGroup);
 	}, []);
@@ -144,7 +144,7 @@ const WGCharGroup: FC<PageData> = (props) => {
 				editCharGroup={editCharGroup}
 				maybeDeleteCharGroup={(label: string, charGroup: WGCharGroupObject) => {
 					const groups = $q<HTMLIonListElement>((".charGroups"));
-					groups && groups.closeSlidingItems();
+					if(groups) { groups.closeSlidingItems(); }
 					const handler = () => {
 						dispatch(deleteCharGroupWG(charGroup));
 						toaster({

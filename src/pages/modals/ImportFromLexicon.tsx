@@ -178,7 +178,7 @@ const LexiconImporterModal: FC<ImporterProps> = (props) => {
 
 	const onLoad = useCallback(() => {
 		const bools: boolean[] = [];
-		columns.forEach(col => bools.push(false));
+		columns.forEach(() => bools.push(false));
 		setImporting(bools);
 	}, [columns]);
 
@@ -441,7 +441,7 @@ const LexiconImporterModal: FC<ImporterProps> = (props) => {
 		wordTests.length > 0 ?
 			<>
 				<IonItemDivider>{tWordsCont}</IonItemDivider>
-				{wordTests.map((test, i) => {
+				{wordTests.map((test) => {
 					return displayTest(
 						test,
 						() => deleteWordTest(test)
@@ -454,7 +454,7 @@ const LexiconImporterModal: FC<ImporterProps> = (props) => {
 		wordMatches.length > 0 ?
 			<>
 				<IonItemDivider>{tWordsMatch}</IonItemDivider>
-				{wordMatches.map((test, i) => {
+				{wordMatches.map((test) => {
 					return displayTest(
 						`/${test}/`,
 						() => deleteWordMatch(test)
@@ -467,7 +467,7 @@ const LexiconImporterModal: FC<ImporterProps> = (props) => {
 		columnTests.length > 0 ?
 			<>
 				<IonItemDivider>{tWordsCol}</IonItemDivider>
-				{columnTests.map((obj, i) => {
+				{columnTests.map((obj) => {
 					const {col, test} = obj;
 					return displayTest(
 						tc("columnContains", { column: columns[col].label, test }),
@@ -481,7 +481,7 @@ const LexiconImporterModal: FC<ImporterProps> = (props) => {
 		columnMatches.length > 0 ?
 			<>
 				<IonItemDivider>{tWordsMatch}</IonItemDivider>
-				{columnMatches.map((obj, i) => {
+				{columnMatches.map((obj) => {
 					const {col, test} = obj;
 					return displayTest(
 						tc("columnMatches", { column: columns[col].label, test }),

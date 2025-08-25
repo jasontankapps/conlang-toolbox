@@ -154,13 +154,13 @@ const WERew: FC<PageData> = (props) => {
 	const { transforms } = useSelector((state: StateObject) => state.we);
 	const editTransform = useCallback((transform: WETransformObject) => {
 		const groups = $q<HTMLIonListElement>((".transforms"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setEditing(transform);
 		setIsOpenEditTransform(true);
 	}, []);
 	const maybeDeleteTransform = useCallback((trans: WETransformObject) => {
 		const groups = $q<HTMLIonListElement>((".transforms"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteTransformWE(trans.id));
 			toaster({

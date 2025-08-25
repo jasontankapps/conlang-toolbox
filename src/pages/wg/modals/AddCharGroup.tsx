@@ -35,7 +35,7 @@ function resetError(prop: string) {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q("." + prop + "Label");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const presentations = ["LettersCharacters", "ShortLabel", "TitleOrDesc" ];
@@ -112,7 +112,7 @@ const AddCharGroupModal: FC<ExtraCharactersModalOpener> = (props) => {
 		} else {
 			// Suitable label found
 			const el = $i<HTMLInputElement>("newWGShortLabel");
-			el && (el.value = label);
+			if(el) { el.value = label; }
 			resetError("label");
 		}
 	}, [charGroupMap, toast, tNoSuggest]);
@@ -128,28 +128,28 @@ const AddCharGroupModal: FC<ExtraCharactersModalOpener> = (props) => {
 		const run = runEl ? runEl.value.trim() : "";;
 		if(title === "") {
 			const el = $q(".titleLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoTitle);
 		}
 		if(!label) {
 			const el = $q(".labelLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoLabel);
 		} else if (charGroupMap[label]) {
 			const el = $q(".labelLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tw("duplicateLabel", { label }));
 		} else {
 			const invalid = "^$\\[]{}.*+()?|";
 			if (invalid.indexOf(label) !== -1) {
 				const el = $q(".labelLabel");
-				el && el.classList.add("invalidValue");
+				if(el) { el.classList.add("invalidValue"); }
 				err.push(tw("invalidLabel", { label }));
 			}
 		}
 		if(run === "") {
 			const el = $q(".runLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoRun);
 		}
 		if(err.length > 0) {
@@ -169,7 +169,7 @@ const AddCharGroupModal: FC<ExtraCharactersModalOpener> = (props) => {
 			return;
 		}
 		// Everything ok!
-		close && setIsOpen(false);
+		if(close) { setIsOpen(false); }
 		dispatch(addCharGroupWG({
 			title,
 			label,

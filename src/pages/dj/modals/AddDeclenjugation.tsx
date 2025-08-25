@@ -93,15 +93,15 @@ const AddDeclenjugation: FC<AddDJModal> = (props) => {
 		setUseAdvancedMethod(false);
 		setUseWholeWord(false);
 		const addDJTitle = $i<HTMLInputElement>("addDJTitle");
-		addDJTitle && (addDJTitle.value = "");
+		if(addDJTitle) { addDJTitle.value = ""; }
 		const addDJPrefix = $i<HTMLInputElement>("addDJPrefix");
-		addDJPrefix && (addDJPrefix.value = "");
+		if(addDJPrefix) { addDJPrefix.value = ""; }
 		const addDJSuffix = $i<HTMLInputElement>("addDJSuffix");
-		addDJSuffix && (addDJSuffix.value = "");
+		if(addDJSuffix) { addDJSuffix.value = ""; }
 		const addDJRegex1 = $i<HTMLInputElement>("addDJRegex1");
-		addDJRegex1 && (addDJRegex1.value = "");
+		if(addDJRegex1) { addDJRegex1.value = ""; }
 		const addDJRegex2 = $i<HTMLInputElement>("addDJRegex2");
-		addDJRegex2 && (addDJRegex2.value = "");
+		if(addDJRegex2) { addDJRegex2.value = ""; }
 	}, []);
 	const closeModal = useCallback(() => {
 		setIsOpen(false);

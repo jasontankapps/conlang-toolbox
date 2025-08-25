@@ -40,7 +40,7 @@ function resetError(prop: string) {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q("." + prop + "Label");
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const resetSeek = () => resetError("seek");
@@ -98,17 +98,17 @@ const EditSoundChangeModal: FC<ModalProps> = (props) => {
 		const _descEl = $i<HTMLInputElement>("editOptDescWESC");
 		if(editing) {
 			const { seek, replace, context, anticontext, description } = editing;
-			_seekEl && (_seekEl.value = seek);
-			_replaceEl && (_replaceEl.value = replace);
-			_contextEl && (_contextEl.value = context);
-			_antiEl && (_antiEl.value = anticontext);
-			_descEl && (_descEl.value = description);
+			if(_seekEl) { _seekEl.value = seek; }
+			if(_replaceEl) { _replaceEl.value = replace; }
+			if(_contextEl) { _contextEl.value = context; }
+			if(_antiEl) { _antiEl.value = anticontext; }
+			if(_descEl) { _descEl.value = description; }
 		} else {
-			_seekEl && (_seekEl.value = "");
-			_replaceEl && (_replaceEl.value = "");
-			_contextEl && (_contextEl.value = "");
-			_antiEl && (_antiEl.value = "");
-			_descEl && (_descEl.value = "");
+			if(_seekEl) { _seekEl.value = ""; }
+			if(_replaceEl) { _replaceEl.value = ""; }
+			if(_contextEl) { _contextEl.value = ""; }
+			if(_antiEl) { _antiEl.value = ""; }
+			if(_descEl) { _descEl.value = ""; }
 		}
 		setSeekEl(_seekEl);
 		setReplaceEl(_replaceEl);
@@ -148,18 +148,18 @@ const EditSoundChangeModal: FC<ModalProps> = (props) => {
 		let temp: boolean | string;
 		if(seek === "") {
 			const el = $q(".seekLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoSearch);
 		}
 		if((temp = contextTest(context, "Context"))) {
 			err.push(temp);
 			const el = $q(".contextLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 		}
 		if(anti && (temp = contextTest(anti, "Exception"))) {
 			err.push(temp);
 			const el = $q(".anticontextLabel");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 		}
 		try {
 			new RegExp(seek);
@@ -204,7 +204,7 @@ const EditSoundChangeModal: FC<ModalProps> = (props) => {
 	}, [antiEl, contextEl, descEl, dispatch, doAlert, editing, replaceEl, seekEl, setIsOpen, toast, t, tCancel, tError, tNoSearch, tThingSaved]);
 	const maybeDeleteSoundChange = useCallback(() => {
 		const groups = $q<HTMLIonListElement>((".soundChanges"));
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			setIsOpen(false);
 			dispatch(deleteSoundChangeWE(editing!.id));

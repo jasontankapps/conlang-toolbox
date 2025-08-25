@@ -115,7 +115,7 @@ const PlainMenuItem: FC<PlainMenuItemProps> = (props)  => {
 	);
 };
 
-const Menu: FC<{}> = () => {
+const Menu: FC<object> = () => {
 	const [menuInfo, setMenuInfo] = useState<string | false>(false);
 	const allPages = useMemo(() => {
 		return appMenuInfo.map((menuSection: MenuSection) => {

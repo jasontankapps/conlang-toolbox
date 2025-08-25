@@ -98,8 +98,8 @@ const AddCustomSortEquality: FC<CustomSortModal> = (props) => {
 		}
 		const equality: EqualityObject = { id: uuidv4(), base, equals, separator };
 		setSavedEquality(equality);
-		_base && (_base.value = "");
-		_equals && (_equals.value = "");
+		if(_base) { _base.value = ""; }
+		if(_equals) { _equals.value = ""; }
 		setIsOpen(false);
 		toaster({
 			message: tThingAdded,
@@ -119,15 +119,15 @@ const AddCustomSortEquality: FC<CustomSortModal> = (props) => {
 				submit: tYesDisc,
 				cssClass: "warning",
 				handler: () => {
-					_base && (_base.value = "");
-					_equals && (_equals.value = "");
+					if(_base) { _base.value = ""; }
+					if(_equals) { _equals.value = ""; }
 					setIsOpen(false);
 				},
 				doAlert
 			});
 		}
-		_base && (_base.value = "");
-		_equals && (_equals.value = "");
+		if(_base) { _base.value = ""; }
+		if(_equals) { _equals.value = ""; }
 		setIsOpen(false);
 	}, [setIsOpen, doAlert, tUnsaved, tYesDisc, tYouSure]);
 	const openEx = useCallback(() => openECM(true), [openECM]);

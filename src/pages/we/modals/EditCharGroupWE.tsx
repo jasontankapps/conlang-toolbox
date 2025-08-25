@@ -38,7 +38,7 @@ function resetError (prop: keyof WECharGroupObject) {
 	// Remove danger color if present
 	// Debounce means this sometimes doesn't exist by the time this is called.
 	const where = $q(`.${prop}LabelEdit`);
-	where && where.classList.remove("invalidValue");
+	if(where) { where.classList.remove("invalidValue"); }
 }
 const resetTitle = () => resetError("title");
 const resetLabel = () => resetError("label");
@@ -86,18 +86,18 @@ const EditCharGroupWEModal: FC<ModalProps> = (props) => {
 		const _runEl = $i<HTMLInputElement>("editingWECharGroupRun");
 			if(editing) {
 			const { label, title, run } = editing;
-			_titleEl && (_titleEl.value = title);
-			_labelEl && (_labelEl.value = label || "");
-			_runEl && (_runEl.value = run);
+			if(_titleEl) { _titleEl.value = title; }
+			if(_labelEl) { _labelEl.value = label || ""; }
+			if(_runEl) { _runEl.value = run; }
 			const cgm: { [key: string]: WECharGroupObject } = {};
 			characterGroups.forEach((chg: WECharGroupObject) => {
 				cgm[chg.label || ""] = chg;
 			});
 			setCharGroupMap(cgm);
 		} else {
-			_titleEl && (_titleEl.value = "");
-			_labelEl && (_labelEl.value = "");
-			_runEl && (_runEl.value = "");
+			if(_titleEl) { _titleEl.value = ""; }
+			if(_labelEl) { _labelEl.value = ""; }
+			if(_runEl) { _runEl.value = ""; }
 		}
 		setTitleEl(_titleEl);
 		setLabelEl(_labelEl);
@@ -150,28 +150,28 @@ const EditCharGroupWEModal: FC<ModalProps> = (props) => {
 		// Test info for validness, then save if needed and reset the editingCharGroup
 		if(title === "") {
 			const el = $q(".titleLabelEdit");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoTitle);
 		}
 		if(label === "") {
 			const el = $q(".labelLabelEdit");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoLabel);
 		} else if (editing!.label !== label && charGroupMap[label!]) {
 			const el = $q(".labelLabelEdit");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tw("duplicateLabel", { label }));
 		} else {
 			const invalid = "^$\\[]{}.*+()?|";
 			if (invalid.indexOf(label as string) !== -1) {
 				const el = $q(".labelLabelEdit");
-				el && el.classList.add("invalidValue");
+				if(el) { el.classList.add("invalidValue"); }
 				err.push(tw("invalidLabel", { label }));
 			}
 		}
 		if(run === "") {
 			const el = $q(".runLabelEdit");
-			el && el.classList.add("invalidValue");
+			if(el) { el.classList.add("invalidValue"); }
 			err.push(tNoRun);
 		}
 		if(err.length > 0) {

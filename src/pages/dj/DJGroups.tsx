@@ -91,8 +91,8 @@ const DeclenjugationInstance: FC<DeclenjugationInfo> = (props) => {
 		stem = <>/<em>{match}</em>/ {arrow} <em>{replace}</em></>;
 	} else {
 		let rootling = "-";
-		prefix && (rootling = prefix + rootling);
-		suffix && (rootling = rootling + suffix);
+		if(prefix) { rootling = prefix + rootling; }
+		if(suffix) { rootling = rootling + suffix; }
 		stem = <em>{rootling}</em>;
 	}
 	return (
@@ -276,13 +276,13 @@ const DJGroups: FC<PageData> = (props) => {
 
 	const editGroup = useCallback((type: keyof DJCustomInfo, group: DJGroup) => {
 		const groups = $q<HTMLIonListElement>(".djGroups");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		setEditingGroup([type, group]);
 		setIsOpenEditGroup(true);
 	}, []);
 	const maybeDeleteGroup = useCallback((type: keyof DJCustomInfo, group: DJGroup) => {
 		const groups = $q<HTMLIonListElement>(".djGroups");
-		groups && groups.closeSlidingItems();
+		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteGroup([type, group.id]));
 			toaster({
@@ -357,11 +357,13 @@ const DJGroups: FC<PageData> = (props) => {
 				<IonIcon icon={helpCircleOutline} />
 			</IonButton>
 		];
-		canTrash && output.unshift(
-			<IonButton key="djGroupsClearEverything" aria-label={tDel} onClick={() => maybeClearEverything()}>
-				<IonIcon icon={trashBinOutline} />
-			</IonButton>
-		);
+		if(canTrash) {
+			output.unshift(
+				<IonButton key="djGroupsClearEverything" aria-label={tDel} onClick={() => maybeClearEverything()}>
+					<IonIcon icon={trashBinOutline} />
+				</IonButton>
+			);
+		}
 		return output;
 	}, [canTrash, maybeClearEverything, openCustomInfoModal, tDel, tHelp, tSave]);
 

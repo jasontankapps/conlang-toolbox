@@ -88,14 +88,14 @@ const EditCustomSortRelation: FC<CustomSortModal> = (props) => {
 		setBase(_base);
 		setPre(_pre);
 		setPost(_post);
-		_base && (_base.value = base);
-		_pre && (_pre.value = pre.join(separator));
-		_post && (_post.value = post.join(separator));
+		if(_base) { _base.value = base; }
+		if(_pre) { _pre.value = pre.join(separator); }
+		if(_post) { _post.value = post.join(separator); }
 	}, [incomingRelation, tError]);
 	const close = useCallback(() => {
-		_base && (_base.value = "");
-		_pre && (_pre.value = "");
-		_post && (_post.value = "");
+		if(_base) { _base.value = ""; }
+		if(_pre) { _pre.value = ""; }
+		if(_post) { _post.value = ""; }
 		setIsOpen(false);
 	}, [_base, _pre, _post, setIsOpen]);
 	const maybeSaveRelation = useCallback(() => {

@@ -72,7 +72,7 @@ interface soundChangeModified {
 type CharGroupMap = {[key: string]: WECharGroupObject};
 
 const interpretFromAndTo = (input: string, charGroupMap: CharGroupMap) => {
-	var rules: (string | string[])[] = [],
+	let rules: (string | string[])[] = [],
 		assembly: (string | string[])[] = [],
 		fromTo = "",
 		backslash = false,
@@ -313,8 +313,8 @@ const WEOut: FC<PageData> = (props) => {
 		soundChanges.forEach((change: WESoundChangeObject) => {
 			let seek: arrayOfStringsAndStringArrays | RegExp;
 			let replace: string | arrayOfStringsAndStringArrays;
-			let context: (RegExp | null)[];
-			let anticontext: (RegExp | null)[];
+			//let context: (RegExp | null)[];
+			//let anticontext: (RegExp | null)[];
 			let charGroupFlag = (change.seek.indexOf("%") !== -1) && (change.replace.indexOf("%") !== -1)
 			// SEEK
 			let temp: any = change.seek;
@@ -337,7 +337,7 @@ const WEOut: FC<PageData> = (props) => {
 					charGroupFlag = false;
 					replace = replace.join("");
 					// Need to run through seek to get a single RegExp
-					let temp = (seek as (string | string[])[]).map(unit => typeof unit === "string" ? unit : "[" + unit.join("") + "]");
+					const temp = (seek as (string | string[])[]).map(unit => typeof unit === "string" ? unit : "[" + unit.join("") + "]");
 					seek = new RegExp(temp.join(""), "g");
 				}
 			} else {
@@ -359,7 +359,7 @@ const WEOut: FC<PageData> = (props) => {
 					temp[0] = null;
 				}
 				if(temp[1]) {
-					let t = "^" + temp[1];
+					const t = "^" + temp[1];
 					if(t[t.length - 1] === "#") {
 						temp[1] = calculateCharGroupReferenceRegex(t.slice(0, -1) + "$", charGroupMap);
 					} else {
@@ -369,7 +369,7 @@ const WEOut: FC<PageData> = (props) => {
 					temp[1] = null;
 				}
 			}
-			context = temp;
+			const context: (RegExp | null)[] = temp;
 			// ANTICONTEXT
 			temp = change.anticontext.split("_");
 			if(temp.length !== 2) {
@@ -386,7 +386,7 @@ const WEOut: FC<PageData> = (props) => {
 					temp[0] = null;
 				}
 				if(temp[1]) {
-					let t = "^" + temp[1];
+					const t = "^" + temp[1];
 					if(t[t.length - 1] === "#") {
 						temp[1] = calculateCharGroupReferenceRegex(t.slice(0, -1) + "$", charGroupMap);
 					} else {
@@ -396,7 +396,7 @@ const WEOut: FC<PageData> = (props) => {
 					temp[1] = null;
 				}
 			}
-			anticontext = temp;
+			const anticontext: (RegExp | null)[] = temp;
 			// SAVE
 			newObj[change.id] = {
 				seek,
@@ -442,20 +442,21 @@ const WEOut: FC<PageData> = (props) => {
 		const arrowLR = "⟶";
 		const arrowRL = "⟵";
 		const reverse = (outputStyle === "outputFirst");
-		const arrow = (ltr($i("outputPaneWE") || document.body) ? (reverse ? arrowRL : arrowLR) : (reverse ? arrowLR : arrowRL));
+		const arrow = (ltr($i<HTMLElement>("outputPaneWE") || document.body) ? (reverse ? arrowRL : arrowLR) : (reverse ? arrowLR : arrowRL));
 		let setter: SetState<string[][]> = setDisplayOutputInput;
 		switch(outputStyle) {
-			case "outputOnly":
+			case "outputOnly": {
 				// [word...]
 				const evolved = changeTheWords({input: rawInput});
 				setDisplayList(evolved as string[]);
 				setCopyString(evolved.join("\n"));
 				break;
+			}
 			case "inputFirst":
 				// [[word, original]...]
 				setter = setDisplayInputOutput;
 			// eslint-disable-next-line no-fallthrough
-			case "outputFirst":
+			case "outputFirst": {
 				// [[original, word]...]
 				// leadingWord class for the first word
 				const output: string[][] = [];
@@ -465,7 +466,8 @@ const WEOut: FC<PageData> = (props) => {
 				});
 				setter(output);
 				break;
-			case "rulesApplied":
+			}
+			case "rulesApplied": {
 				// [original, word, [[rule, new word]...]]
 				const rulesApplied: string[][][] = [];
 				changeTheWords({input: rawInput, rulesFlag: true}).forEach(unit => {
@@ -491,6 +493,7 @@ const WEOut: FC<PageData> = (props) => {
 				]
 				*/
 				break;
+			}
 			default:
 				setErrorString(tError);
 		}
@@ -522,7 +525,7 @@ const WEOut: FC<PageData> = (props) => {
 				const contx = modified.context;
 				const antix = modified.anticontext;
 				const rule = `${seek}➜${replace} / ${context}${anticontext ? ` ! ${anticontext}` : ""}`;
-				let previous = word;
+				const previous = word;
 				if(modified.flagged) {
 					// We have character group matches to deal with.
 					const seeking = modified.seek as arrayOfStringsAndStringArrays;
@@ -599,7 +602,7 @@ const WEOut: FC<PageData> = (props) => {
 								if(typeof transform === "string") {
 									replaceText = replaceText + transform;
 								} else {
-									let [id, run] = ids[i];
+									const [id, run] = ids[i];
 									i++;
 									let ind = run.indexOf(g[id]);
 									if(ind < 0) {
@@ -700,7 +703,7 @@ const WEOut: FC<PageData> = (props) => {
 						}
 					}
 				}
-				rulesFlag && previous !== word && rulesThatApplied.push([rule, word]);
+				if(rulesFlag && previous !== word) { rulesThatApplied.push([rule, word]); }
 			});
 			// Loop over the transforms again.
 			transforms.forEach((tr: WETransformObject) => {
@@ -817,13 +820,13 @@ const WEOut: FC<PageData> = (props) => {
 				if(savedWordsObject[text]) {
 					setSavedWords(savedWords.filter(word => word !== text));
 					delete newObj[text];
-					const el = id && $i(id);
-					el && el.classList.remove("saved");
+					const el = id && $i<HTMLElement>(id);
+					if(el) { el.classList.remove("saved"); }
 				} else {
 					setSavedWords([...savedWords, text]);
 					newObj[text] = true;
-					const el = id && $i(id);
-					el && el.classList.add("saved");
+					const el = id && $i<HTMLElement>(id);
+					if(el) { el.classList.add("saved"); }
 				}
 				setSavedWordsObject(newObj);
 			}

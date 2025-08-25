@@ -193,7 +193,7 @@ export interface MorphoSyntaxObject {
 }
 
 
-export interface PhonoGraphObject {}
+//export interface PhonoGraphObject {}
 
 /*
 export interface Lexicon {

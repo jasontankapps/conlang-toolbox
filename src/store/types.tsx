@@ -397,7 +397,7 @@ export interface StateObject {
 	internals: InternalState
 }
 
-export type SetState<T extends unknown> = Dispatch<SetStateAction<T>>;
+export type SetState<T,> = Dispatch<SetStateAction<T>>;
 export type SetBooleanState = SetState<boolean>;
 export type ModalPropsMaker = (x: boolean, y: SetBooleanState) => ({isOpen: boolean, setIsOpen: SetBooleanState})
 

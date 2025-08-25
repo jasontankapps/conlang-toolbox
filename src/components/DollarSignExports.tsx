@@ -7,7 +7,7 @@ export const $a =
 	<T extends HTMLElement>(query: string, doc: Document | HTMLElement = window.document): T[] =>
 		Array.from(doc.querySelectorAll(query)) as T[];
 export const $i =
-	<T extends HTMLElement>(query: string, doc = window.document): T | null =>
+	<T extends object>(query: string, doc = window.document): T | null =>
 		doc.getElementById(query) as T | null;
 // Wrap setTimeout in a Promise
 type WrappedPromise = (ms: number) => Promise<ReturnType<typeof setTimeout>>

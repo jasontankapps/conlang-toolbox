@@ -169,14 +169,14 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		} = editingCustomSort || {};
 		setId(id);
 		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		editSortTitle && (editSortTitle.value = title);
+		if(editSortTitle) { editSortTitle.value = title; }
 		setSortLang(sortLanguage);
 		setSortSensitivity(sensitivity);
 		if(customAlphabet.length > 0) {
 			setUsingAlpha(true);
 		}
 		const editCustomAlphabet = $i<HTMLInputElement>("editCustomAlphabet");
-		editCustomAlphabet && (editCustomAlphabet.value = customAlphabet.join(separator));
+		if(editCustomAlphabet) { editCustomAlphabet.value = customAlphabet.join(separator); }
 		setSeparator(separator);
 		setCustomizations(customizations);
 	}, [editingCustomSort, tError]);
@@ -184,12 +184,12 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		setIsOpen(false);
 		setId("");
 		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		editSortTitle && (editSortTitle.value = "");
+		if(editSortTitle) { editSortTitle.value = ""; }
 		setSortLang("default");
 		setSortSensitivity("default");
 		setUsingAlpha(false);
 		const editCustomAlphabet = $i<HTMLInputElement>("editCustomAlphabet");
-		editCustomAlphabet && (editCustomAlphabet.value = "");
+		if(editCustomAlphabet) { editCustomAlphabet.value = ""; }
 		setSeparator(",");
 		setCustomizations([]);
 	}, [setIsOpen]);
@@ -260,7 +260,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		}
 	}, [isOpen, outgoingEquality, setOutgoingEquality, customizations]);
 	const maybeSaveEditedSort = useCallback(() => {
-		let message = permanents[id];
+		const message = permanents[id];
 		if(message) {
 			return doAlert({
 				header: "",
@@ -356,7 +356,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		});
 	}, [closeModal, customizations, dispatch, doAlert, id, separator, sortLang, sortSensitivity, toast, usingAlpha, tBlank, tNoInfo, tNoTitle, tOk, tThingSaved]);
 	const maybeDeleteSort = useCallback(() => {
-		let message = permanents[id];
+		const message = permanents[id];
 		if(message) {
 			return doAlert({
 				header: "",
@@ -401,7 +401,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 	}, [addEqualityModalInfo, setSavedEquality]);
 	const editRelation = useCallback((relation: RelationObject) => {
 		const el = $i<HTMLIonListElement>("editingCustomSortList");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		setIncomingRelation(relation);
 		editRelationModalInfo.setIsOpen(true);
 	}, [editRelationModalInfo, setIncomingRelation]);
@@ -417,7 +417,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 	}, [customizations, doAlert, tDelThisSort, tc, tRUSure]);
 	const editEquality = useCallback((relation: EqualityObject) => {
 		const el = $i<HTMLIonListElement>("editingCustomSortList");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		setIncomingEquality(relation);
 		editEqualityModalInfo.setIsOpen(true);
 	}, [editEqualityModalInfo, setIncomingEquality]);

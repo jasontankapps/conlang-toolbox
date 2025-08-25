@@ -176,7 +176,9 @@ const getDJRawInfo = (
 		className += " sideHeaders";
 		const stems: string[] = [];
 		columnClasses.push("headers");
-		showExamples && columnClasses.push("examples");
+		if (showExamples) {
+			columnClasses.push("examples");
+		}
 		columnClasses.push(null);
 		input.forEach(word => {
 			const stem = findStem(word, group);
@@ -221,7 +223,9 @@ const getDJRawInfo = (
 		// example example
 		// item1   item1
 		// item2   item2
-		displayMethod !== "text" && (className += " topHeaders");
+		if(displayMethod !== "text") {
+			className += " topHeaders";
+		}
 		const headers: string[] = [typeString];
 		const examples: string[] = [EXAMPLES];
 		rowClasses.push("headers");
@@ -237,9 +241,11 @@ const getDJRawInfo = (
 			headers.push(title);
 			columnIds.push(id);
 			columnClasses.push((i % 2) ? "mid" : "mid striped");
-			showExamples && examples.push(
-				changeWord(useWholeWord ? WORD : STEM, prefix, suffix, regex)
-			);
+			if (showExamples) {
+				examples.push(
+					changeWord(useWholeWord ? WORD : STEM, prefix, suffix, regex)
+				);
+			}
 		});
 		// Go through each word and make a row out of each
 		input.forEach(word => {
@@ -260,7 +266,7 @@ const getDJRawInfo = (
 			}
 		});
 		// Add examples row (if needed)
-		showExamples && rows.unshift(examples);
+		if (showExamples) { rows.unshift(examples); }
 		// Add row of headers
 		rows.unshift(headers);
 	}
@@ -451,7 +457,7 @@ export const display = (
 		);
 		// Send copy strings
 		copyStrings.push("", title);
-		showGroupInfo && copyStrings.push(description);
+		if (showGroupInfo) { copyStrings.push(description); }
 		if(textDisplayActive) {
 			// Text display
 			copyRows.forEach(row => {
@@ -463,7 +469,7 @@ export const display = (
 			// Chart display
 			copyStrings.push(...getTextFromChart(copyRows));
 		}
-		(data && (found.length === 0)) && copyStrings.push(NOMATCHESFOUND);
+		if(data && (found.length === 0)) { copyStrings.push(NOMATCHESFOUND); }
 	});
 	return [
 		output,
@@ -621,7 +627,7 @@ const getExportText = (
 			found
 		} = declenjugation;
 		output.push("", title);
-		showGroupInfo && output.push(description);
+		if(showGroupInfo) { output.push(description); }
 		if(inputFlag && found.length === 0) {
 			output.push(noMatches)
 		} else if(chart) {
@@ -695,7 +701,7 @@ const getExportCSV = (info: DJRawInfo[], showGroupInfo: boolean, inputFlag: bool
 			found
 		} = declension;
 		output.push("", quote(title));
-		showGroupInfo && output.push(quote(description));
+		if (showGroupInfo) { output.push(quote(description)); }
 		if(inputFlag && found.length === 0) {
 			output.push(noMatches);
 		} else {

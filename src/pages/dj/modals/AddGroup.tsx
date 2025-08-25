@@ -190,17 +190,17 @@ const AddGroup: FC<AddGroupProps> = (props) => {
 		setSeparator(" ");
 		setDeclenjugations([]);
 		const addTitle = $i<HTMLInputElement>("addTitle");
-		addTitle && (addTitle.value = "");
+		if(addTitle) { addTitle.value = ""; }
 		const addAppliesTo = $i<HTMLInputElement>("addAppliesTo");
-		addAppliesTo && (addAppliesTo.value = "");
+		if(addAppliesTo) { addAppliesTo.value = ""; }
 		const addStarts = $i<HTMLInputElement>("addStarts");
-		addStarts && (addStarts.value = "");
+		if(addStarts) { addStarts.value = ""; }
 		const addEnds = $i<HTMLInputElement>("addEnds");
-		addEnds && (addEnds.value = "");
+		if(addEnds) { addEnds.value = ""; }
 		const addRegex1 = $i<HTMLInputElement>("addRegex1");
-		addRegex1 && (addRegex1.value = "");
+		if(addRegex1) { addRegex1.value = ""; }
 		const addRegex2 = $i<HTMLInputElement>("addRegex2");
-		addRegex2 && (addRegex2.value = "");
+		if(addRegex2) { addRegex2.value = ""; }
 	}, []);
 	const grabInfo = useCallback(() => {
 		const addTitle = $i<HTMLInputElement>("addTitle");
@@ -341,13 +341,13 @@ const AddGroup: FC<AddGroupProps> = (props) => {
 	}, [addDeclenjugationModalInfo, setSavedDeclenjugation]);
 	const editDeclenjugation = useCallback((declenjugation: Declenjugation) => {
 		const el = $i<HTMLIonListElement>("addingDJGroup");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		setIncomingDeclenjugation(declenjugation);
 		editDeclenjugationModalInfo.setIsOpen(true);
 	}, [editDeclenjugationModalInfo, setIncomingDeclenjugation]);
 	const maybeDeleteDeclenjugation = useCallback((id: string) => {
 		const el = $i<HTMLIonListElement>("addingDJGroup");
-		el && el.closeSlidingItems();
+		if(el) { el.closeSlidingItems(); }
 		const handler = () => {
 			setDeclenjugations(declenjugations.filter(obj => obj.id !== id));
 			toaster({
@@ -358,14 +358,18 @@ const AddGroup: FC<AddGroupProps> = (props) => {
 				toast
 			});
 		};
-		disableConfirms ? handler() : yesNoAlert({
-			header: t("Delete" + typeString),
-			message: tRUSure,
-			submit: tc("confirmDel", { count: 1 }),
-			cssClass: "danger",
-			handler,
-			doAlert
-		});
+		if(disableConfirms) {
+			handler();
+		} else {
+			yesNoAlert({
+				header: t("Delete" + typeString),
+				message: tRUSure,
+				submit: tc("confirmDel", { count: 1 }),
+				cssClass: "danger",
+				handler,
+				doAlert
+			});
+		}
 	}, [declenjugations, disableConfirms, doAlert, tc, tDeleted, tRUSure, toast, t, typeString]);
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
@@ -395,8 +399,8 @@ const AddGroup: FC<AddGroupProps> = (props) => {
 			stem = `/${match}/ ${arrow} ${replace}`;
 		} else {
 			stem = "-";
-			prefix && (stem = prefix + stem);
-			suffix && (stem = stem + suffix);
+			if(prefix) { stem = prefix + stem; }
+			if(suffix) { stem = stem + suffix; }
 		}
 		return (
 			<IonItemSliding
