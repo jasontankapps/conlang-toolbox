@@ -33,13 +33,13 @@ const setSyntaxTextFunc = (state: MSState, action: PayloadAction<[MSText, string
 
 const loadStateFunc = (state: MSState, action: PayloadAction<MSState>) => {
 	const final = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...action.payload
 	};
 	return final;
 };
 
-const cleanStateFunc = (state: MSState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: MSState) => {
 	const temp: any = {};
 	cleanerObject.ms.forEach(key => {
 		temp[key] = state[key] || initialState[key];

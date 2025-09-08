@@ -755,7 +755,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 							<IonLabel>{tAddNew}</IonLabel>
 						</IonButton>
 					</IonItem>
-					<IonReorderGroup disabled={false} onIonItemReorder={doReorder}>
+					<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
 						{customizations.length > 0 ?
 							allCustomizations
 						:

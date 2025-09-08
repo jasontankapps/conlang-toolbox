@@ -30,16 +30,18 @@ const removeCustomHybridMeaningsFunc = (state: ConceptsState, action: PayloadAct
 
 const loadStateConceptsFunc = (state: ConceptsState, action: PayloadAction<ConceptsState>) => {
 	const final = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...action.payload
 	};
 	return final;
 };
 
-const cleanStateFunc = (state: ConceptsState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: ConceptsState) => {
 	const temp: any = {};
 	cleanerObject.concepts.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if (state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: ConceptsState = {...temp};
 	return final;

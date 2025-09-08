@@ -33,7 +33,7 @@ const sortLexicon = (
 ) => {
 	const maxCol = sortPattern.length;
 	const [xIsBlank, yIsBlank] = sortBlank(sortDir, blankSort);
-	let newLexicon = [...lexicon];
+	const newLexicon = [...lexicon];
 	function sortFunction (a: Lexicon, b: Lexicon) {
 		const columnsA = a.columns;
 		const columnsB = b.columns;
@@ -81,7 +81,7 @@ const sortLexicon = (
 };
 
 
-const cleanStateFunc = (state: LexiconState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: LexiconState) => {
 	const temp: any = {};
 	cleanerObject.lexicon.forEach(key => {
 		if((key === "customSort") || (state[key] !== undefined)) {
@@ -94,7 +94,7 @@ const cleanStateFunc = (state: LexiconState, action: PayloadAction | null) => {
 
 const loadStateFunc = (state: LexiconState, action: PayloadAction<LexiconState>) => {
 	const final = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...action.payload,
 		truncateColumns: state.truncateColumns
 	};

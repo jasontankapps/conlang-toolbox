@@ -8,7 +8,8 @@ import {
 	PAUSE,
 	PERSIST,
 	PURGE,
-	REGISTER
+	REGISTER,
+	PersistConfig
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
@@ -28,12 +29,13 @@ import sortingSlice from './sortingSlice';
 import declenjugatorSlice from './declenjugatorSlice';
 import blankAppState from './blankAppState';
 import internalsSlice from './internalsSlice';
-import { AppSettings, ConceptDisplay, ConceptDisplayObject, ThemeNames } from './types';
+import { AppSettings, ConceptDisplay, ConceptDisplayObject, StateObject, ThemeNames } from './types';
 
 //
 //
 //
 // ----- USE THIS to put in temporary changes for testing.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const initialAppState = {...blankAppState};
 // ----- END
 //
@@ -104,9 +106,128 @@ const migrations = {
 		};
 		appState.theme = (appState.theme.replace(/ /g, "") as ThemeNames);
 		newState.appSettings = appState;
-		console.log({...state});
-		console.log({...appState});
-		console.log({...newState});
+		return newState;
+	},
+	4: (state: any) => {
+		// Fix state issues caused by IonReorder bug
+		const newState = {...state};
+		const { sortSettings, we, wg, dj } = state as StateObject;
+		const ids = {
+			data: [] as string[],
+			clear: () => ids.data = [],
+			push: (...args: string[]) => ids.data.push(...args),
+			has: (id: string) => ids.data.indexOf(id) !== -1
+		};
+		// CLEAN nulls AND DUPES FROM:
+		//   customSorts
+		newState.sortSettings.customSorts = sortSettings.customSorts.filter(obj => obj).map(obj => {
+			const sub: string[] = [];
+			const {id, customizations} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			const o = {...obj};
+			o.customizations = customizations && customizations.filter(custom => {
+				const id = custom.id;
+				if(sub.indexOf(id) !== -1) {
+					return false;
+				}
+				sub.push(id);
+				return true;
+			});
+			return obj;
+		}).filter(obj => obj);
+		//   we.soundChanges
+		ids.clear();
+		newState.we.soundChanges = we.soundChanges.filter(obj => obj).map(obj => {
+			const {id} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			return obj;
+		}).filter(obj => obj);
+		//   we.transforms
+		ids.clear();
+		newState.we.transforms = we.transforms.filter(obj => obj).map(obj => {
+			const {id} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			return obj;
+		}).filter(obj => obj);
+		//   wg.transforms
+		ids.clear();
+		newState.wg.transforms = wg.transforms.filter(obj => obj).map(obj => {
+			const {id} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			return obj;
+		}).filter(obj => obj);
+		// dj.declensions
+		ids.clear();
+		newState.dj.declensions = dj.declensions.filter(obj => obj).map(obj => {
+			const sub: string[] = [];
+			const {id, declenjugations} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			const o = {...obj};
+			o.declenjugations = declenjugations && declenjugations.filter(dj => {
+				const id = dj.id;
+				if(sub.indexOf(id) !== -1) {
+					return false;
+				}
+				sub.push(id);
+				return true;
+			});
+			return obj;
+		}).filter(obj => obj);
+		// dj.conjugations
+		ids.clear();
+		newState.dj.conjugations = dj.conjugations.filter(obj => obj).map(obj => {
+			const sub: string[] = [];
+			const {id, declenjugations} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			const o = {...obj};
+			o.declenjugations = declenjugations && declenjugations.filter(dj => {
+				const id = dj.id;
+				if(sub.indexOf(id) !== -1) {
+					return false;
+				}
+				sub.push(id);
+				return true;
+			});
+			return obj;
+		}).filter(obj => obj);
+		// dj.other
+		ids.clear();
+		newState.dj.other = dj.other.filter(obj => obj).map(obj => {
+			const sub: string[] = [];
+			const {id, declenjugations} = obj;
+			if(ids.has(id)) {
+				return null;
+			}
+			ids.push(id);
+			const o = {...obj};
+			o.declenjugations = declenjugations && declenjugations.filter(dj => {
+				const id = dj.id;
+				if(sub.indexOf(id) !== -1) {
+					return false;
+				}
+				sub.push(id);
+				return true;
+			});
+			return obj;
+		}).filter(obj => obj);
 		return newState;
 	}
 }
@@ -144,9 +265,9 @@ const stateReconciler = (incomingState: any, originalState: any, reducedState: a
 	}
 	return autoMergeLevel1(incomingState, originalState, reducedState, config);
 };
-const persistConfig = {
+const persistConfig: PersistConfig<typeof initialAppState> = {
 	key: 'root',
-	version: 3,
+	version: 4,
 	storage,
 	stateReconciler,
 	migrate: createMigrate(migrations, { debug: false })
@@ -155,7 +276,7 @@ const reducer = combineReducers(reducerConfig);
 const persistedReducer = persistReducer(persistConfig, reducer);
 const store = configureStore({
 	reducer: persistedReducer,
-	preloadedState: initialAppState,
+//	preloadedState: initialAppState,
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			serializableCheck: {

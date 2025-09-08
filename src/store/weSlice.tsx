@@ -163,7 +163,7 @@ const loadStateFunc = (state: WEState, action: PayloadAction<WEPresetObject>) =>
 		soundChanges
 	} = action.payload || initialState;
 	const newState = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		characterGroups: [...characterGroups],
 		transforms: [...transforms],
 		soundChanges: [...soundChanges]
@@ -171,10 +171,12 @@ const loadStateFunc = (state: WEState, action: PayloadAction<WEPresetObject>) =>
 	return newState;
 };
 
-const cleanStateFunc = (state: WEState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: WEState) => {
 	const temp: any = {};
 	cleanerObject.we.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if (state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: WEState = {...temp};
 	return final;

@@ -99,7 +99,7 @@ const EditLexiconSortModal: FC<EditSortModal> = (props) => {
 						<IonLabel className="ion-text-wrap">{tSortLexDesc}</IonLabel>
 					</IonItem>
 					<IonItemDivider>{tLexSorting}</IonItemDivider>
-					<IonReorderGroup disabled={false} onIonItemReorder={doReorder}>
+					<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
 						{sortPatterns}
 					</IonReorderGroup>
 				</IonList>

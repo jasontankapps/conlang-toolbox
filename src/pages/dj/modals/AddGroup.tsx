@@ -590,7 +590,7 @@ const AddGroup: FC<AddGroupProps> = (props) => {
 					</IonItem>
 					<IonReorderGroup
 						disabled={false}
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{allDeclenjugations}
 					</IonReorderGroup>

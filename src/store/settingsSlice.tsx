@@ -25,17 +25,19 @@ const setDisableConfirmsFunc = (state: AppSettings, action: PayloadAction<boolea
 
 const loadStateSettingsFunc = (state: AppSettings, action: PayloadAction<AppSettings>) => {
 	const final = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...action.payload
 	};
 	checkTheme(state.theme, final.theme);
 	return final;
 };
 
-const cleanStateFunc = (state: AppSettings, action: PayloadAction | null) => {
+const cleanStateFunc = (state: AppSettings) => {
 	const temp: any = {};
 	cleanerObject.appSettings.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if (state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: AppSettings = {...temp};
 	checkTheme(state.theme, final.theme);

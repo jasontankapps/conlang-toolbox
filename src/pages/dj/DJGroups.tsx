@@ -16,10 +16,10 @@ import {
 	useIonToast,
 	IonReorderGroup,
 	IonReorder,
-	ItemReorderCustomEvent,
-	ItemReorderEventDetail,
 	IonItemDivider,
-	IonLoading
+	IonLoading,
+	ReorderEndCustomEvent,
+	ReorderEndEventDetail
 } from '@ionic/react';
 import {
 	addOutline,
@@ -60,7 +60,7 @@ interface GroupingInfo {
 	label: string
 	groups: DJGroup[]
 	type: keyof DJCustomInfo
-	doReorder: (ed: ItemReorderEventDetail, type: keyof DJCustomInfo) => void
+	doReorder: (ed: ReorderEndEventDetail, type: keyof DJCustomInfo) => void
 	editGroup: (type: keyof DJCustomInfo, group: DJGroup) => void
 	maybeDeleteGroup: (type: keyof DJCustomInfo, group: DJGroup) => void
 	tEdit: string
@@ -192,7 +192,7 @@ const Grouping: FC<GroupingInfo> = (props) => {
 			tEdit={tEdit}
 		/>
 	)), [groups, editGroup, maybeDeleteGroup, tDel, tEdit, type]);
-	const onReorder = useCallback((event: ItemReorderCustomEvent) => doReorder(event.detail, type), [doReorder, type]);
+	const onReorder = useCallback((event: ReorderEndCustomEvent) => doReorder(event.detail, type), [doReorder, type]);
 	if(groups.length === 0) {
 		return <></>;
 	}
@@ -201,7 +201,7 @@ const Grouping: FC<GroupingInfo> = (props) => {
 			<IonItemDivider sticky color="secondary">{label}</IonItemDivider>
 			<IonReorderGroup
 				disabled={false}
-				onIonItemReorder={onReorder}
+				onIonReorderEnd={onReorder}
 			>
 				{theGroups}
 			</IonReorderGroup>
@@ -368,7 +368,7 @@ const DJGroups: FC<PageData> = (props) => {
 	}, [canTrash, maybeClearEverything, openCustomInfoModal, tDel, tHelp, tSave]);
 
 
-	const doReorder = useCallback((ed: ItemReorderEventDetail, type: keyof DJCustomInfo) => {
+	const doReorder = useCallback((ed: ReorderEndEventDetail, type: keyof DJCustomInfo) => {
 		// move things around
 		const { from, to } = ed;
 		let groups: DJGroup[] = [];

@@ -274,7 +274,7 @@ const WESChange: FC<PageData> = (props) => {
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{soundchangesItems}
 					</IonReorderGroup>

@@ -237,7 +237,7 @@ const WGRew: FC<PageData> = (props) => {
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{transformationsMap}
 					</IonReorderGroup>

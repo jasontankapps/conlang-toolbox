@@ -1,4 +1,4 @@
-import React, { useCallback, useState, FC, useMemo } from 'react';
+import React, { useCallback, useState, FC } from 'react';
 import {
 	IonPage,
 	IonIcon,
@@ -45,6 +45,12 @@ const subPages = (objs: AppPage[], prefix: string) => objs.filter(obj => !obj.hi
 	);
 });
 
+const msLinks = subPages(appPagesObject.ms, "ms");
+const weLinks = subPages(appPagesObject.we, "we");
+const wgLinks = subPages(appPagesObject.wg, "wg");
+const djLinks = subPages(appPagesObject.dj, "dj");
+
+
 const translations =  [
 	"AppInfo", "Concepts", "appTitle", "Declenjugator", "Help",
 	"Lexicon", "MorphoSyntax", "WordEvolve", "WordGen"
@@ -63,11 +69,6 @@ const Home: FC<PageData> = (props) => {
 	] = useI18Memo(translations);
 	const openLex = useCallback(() => setIsOpenLexicon(true), []);
 	const openConcepts = useCallback(() => setIsOpenConcepts(true), []);
-
-	const msLinks = useMemo(() => subPages(appPagesObject.ms, "ms"), []);
-	const weLinks = useMemo(() => subPages(appPagesObject.we, "we"), []);
-	const wgLinks = useMemo(() => subPages(appPagesObject.wg, "wg"), []);
-	const djLinks = useMemo(() => subPages(appPagesObject.dj, "dj"), []);
 
 	return (
 		<IonPage className={theme}>

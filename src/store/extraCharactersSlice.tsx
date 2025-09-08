@@ -26,16 +26,18 @@ const setNowShowingFunc = (state: ExtraCharactersState, action: PayloadAction<Ex
 };
 const loadStateFunc = (state: ExtraCharactersState, action: PayloadAction<ExtraCharactersState>) => {
 	const final = {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...action.payload
 	};
 	return final;
 };
 
-const cleanStateFunc = (state: ExtraCharactersState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: ExtraCharactersState) => {
 	const temp: any = {};
 	cleanerObject.ec.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if (state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: ExtraCharactersState = {...temp};
 	return final;

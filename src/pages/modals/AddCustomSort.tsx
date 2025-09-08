@@ -716,7 +716,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 					</IonItem>
 					<IonReorderGroup
 						disabled={false}
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{customizations.length > 0 ?
 							allCustomizations

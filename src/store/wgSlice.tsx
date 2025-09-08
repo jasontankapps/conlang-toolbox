@@ -94,7 +94,7 @@ const setSyllablesFunc = (state: WGState, action: PayloadAction<{ syllables: Syl
 	state.syllableDropoffOverrides[syllables] = override;
 	return state;
 };
-const clearSyllablesFunc = (state: WGState, action: PayloadAction) => {
+const clearSyllablesFunc = (state: WGState) => {
 	state.singleWord = "";
 	state.wordInitial = "";
 	state.wordMiddle = "";
@@ -239,7 +239,7 @@ const loadStateFunc = (state: WGState, action: PayloadAction<Base_WG | null>) =>
 		customSort
 	} = action.payload || initialState;
 	return {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		characterGroups: [...characterGroups],
 		multipleSyllableTypes,
 		singleWord,
@@ -263,10 +263,12 @@ const loadStateFunc = (state: WGState, action: PayloadAction<Base_WG | null>) =>
 	};
 };
 
-const cleanStateFunc = (state: WGState, action: PayloadAction | null) => {
+const cleanStateFunc = (state: WGState) => {
 	const temp: any = {};
 	cleanerObject.wg.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if(state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: WGState = {...temp};
 	return final;

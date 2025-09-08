@@ -709,7 +709,7 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 					</IonItem>
 					<IonReorderGroup
 						disabled={false}
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{allDeclenjugations}
 					</IonReorderGroup>

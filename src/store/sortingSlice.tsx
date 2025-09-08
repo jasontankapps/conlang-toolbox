@@ -82,15 +82,17 @@ const setDefaultCustomSortFunc = (state: SortSettings, action: PayloadAction<str
 const loadSortSettingsStateFunc = (state: SortSettings, action: PayloadAction<SortSettings>) => {
 	const { payload } = action;
 	return {
-		...cleanStateFunc(state, null),
+		...cleanStateFunc(state),
 		...payload
 	};
 };
 
-const cleanStateFunc = (state: SortSettings, action: PayloadAction | null) => {
+const cleanStateFunc = (state: SortSettings) => {
 	const temp: any = {};
 	cleanerObject.sortSettings.forEach(key => {
-		state[key] !== undefined && (temp[key] = state[key]);
+		if (state[key] !== undefined) {
+			temp[key] = state[key];
+		}
 	});
 	const final: SortSettings = {...temp};
 	return final;

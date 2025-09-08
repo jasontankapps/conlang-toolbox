@@ -272,7 +272,7 @@ const WERew: FC<PageData> = (props) => {
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"
-						onIonItemReorder={doReorder}
+						onIonReorderEnd={doReorder}
 					>
 						{transformItems}
 					</IonReorderGroup>

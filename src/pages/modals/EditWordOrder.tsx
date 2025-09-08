@@ -471,7 +471,7 @@ const EditLexiconOrderModal: FC<OrderModalProps> = (props) => {
 						</IonSelect>
 					</IonItem>
 					<IonItemDivider>{tRearr}</IonItemDivider>
-					<IonReorderGroup disabled={false} onIonItemReorder={doReorder}>
+					<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
 						{reorderColumns}
 					</IonReorderGroup>
 				</IonList>
