@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo, useState, FC, useCallback } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState, FC, useCallback, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -22,10 +22,9 @@ import {
 	copyOutline
 } from 'ionicons/icons';
 
-import { DJCustomInfo, PageData, SortObject, StateObject } from '../../store/types';
+import { DJCustomInfo, SortObject, StateObject } from '../../store/types';
 //import { addItemsToLexiconColumn } from '../../store/lexiconSlice';
 
-//import { $a, $i } from '../../components/DollarSignExports';
 import toaster from '../../components/toaster';
 //import { LexiconOutlineIcon } from '../../components/icons';
 //import PermanentInfo from '../../components/PermanentInfo';
@@ -43,6 +42,7 @@ import makeSorter from '../../components/stringSorter';
 import PermanentInfo from '../../components/PermanentInfo';
 import Header from '../../components/Header';
 import ModalWrap from '../../components/ModalWrap';
+import { ModalMakingContext } from '../../components/contexts';
 import useI18Memo from '../../components/useI18Memo';
 import { OutputCard } from './DJinfo';
 
@@ -63,7 +63,7 @@ const commons = [
 	"Help", "Output", "fileCsv", "fileText", "fileDocx"
 ];
 
-const DJOutput: FC<PageData> = (props) => {
+const DJOutput: FC = () => {
 	const [
 		tCancel, tChooseFormat, tCopy, tGen,
 		tHelp, tOut, tCSV, tTxt, tDocx
@@ -76,7 +76,7 @@ const DJOutput: FC<PageData> = (props) => {
 		tExport, tpDisplayAs
 	] = useI18Memo(translations, "dj");
 
-//	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
@@ -224,7 +224,12 @@ const DJOutput: FC<PageData> = (props) => {
 				}
 			]
 		});
-	}, [conjugations, data, declensions, dispatch, displayType, doAlert, other, showUnmatched, tCSV, tCancel, tChooseFormat, tChooseOne, tDocx, tExport, tNoFormat, tTxt, toast, type.length, typeObj]);
+	}, [
+		conjugations, data, declensions, dispatch, displayType,
+		doAlert, other, showUnmatched, tCSV, tCancel,
+		tChooseFormat, tChooseOne, tDocx, tExport, tNoFormat,
+		tTxt, toast, type.length, typeObj
+	]);
 
 	const doGenerate = useCallback(() => {
 		if(type.length === 0) {
@@ -283,7 +288,11 @@ const DJOutput: FC<PageData> = (props) => {
 		} else {
 			setDisplayUnmatched([]);
 		}
-	}, [conjugations, data, declensions, displayType, other, showUnmatched, tChooseOne, tUnmatchedWords, toast, type.length, typeObj]);
+	}, [
+		conjugations, data, declensions, displayType,
+		other, showUnmatched, tChooseOne, tUnmatchedWords,
+		toast, type.length, typeObj
+	]);
 
 	const endButtons = useMemo(() => [
 		<IonButton key="djOutputHelpButton" aria-label={tHelp} onClick={() => setIsOpenInfo(true)}>
@@ -348,7 +357,7 @@ const DJOutput: FC<PageData> = (props) => {
 
 	return (
 		<IonPage>
-			<ModalWrap {...props.modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
+			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<OutputCard setIsOpenInfo={setIsOpenInfo} />
 			</ModalWrap>
 			<Header

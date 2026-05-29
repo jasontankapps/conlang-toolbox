@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import Markdown from 'react-markdown';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 
-import { PageData, StateObject, ThemeNames } from '../store/types';
+import { StateObject, ThemeNames } from '../store/types';
 
 import Header from '../components/Header';
 import copyText from '../components/copyText';
@@ -58,7 +58,7 @@ const changelog = [
 ];
 const context = { joinArrays: "\n" };
 
-const AppInfo: FC<PageData> = () => {
+const AppInfo: FC = () => {
 	const width = useWindowWidth();
 	const [
 		tBugRep, tCLog, tCredits,
@@ -128,7 +128,7 @@ const AppInfo: FC<PageData> = () => {
 
 	return (
 		<IonPage className={theme}>
-			<Header title={tAppInfo} />
+			<Header title={tAppInfo} id="appInfoPageHeader" />
 			<IonContent className="containedCards">
 				<IonGrid>
 					<IonRow>
@@ -205,7 +205,7 @@ const AppInfo: FC<PageData> = () => {
 									<IonCardTitle>{tCLog}</IonCardTitle>
 								</IonCardHeader>
 								<IonCardContent className="ion-padding-start changelog">
-									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.2</strong></h2>
+									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.3</strong></h2>
 									<Markdown>{tCL130}</Markdown>
 									<h2 className="ion-text-center"><strong>v.0.12.0</strong></h2>
 									<Markdown>{tCL120}</Markdown>

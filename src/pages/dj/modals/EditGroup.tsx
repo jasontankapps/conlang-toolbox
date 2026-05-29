@@ -5,12 +5,8 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
 	IonButton,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast,
 	IonSelect,
@@ -25,11 +21,9 @@ import {
 	SelectCustomEvent
 } from '@ionic/react';
 import {
-	saveOutline,
 	addCircleOutline,
 	trash,
-	reorderThree,
-	trashOutline
+	reorderThree
 } from 'ionicons/icons';
 
 import {
@@ -37,7 +31,6 @@ import {
 	DJGroup,
 	DJSeparator,
 	Declenjugation,
-	ExtraCharactersModalOpener,
 	ModalProperties,
 	SetState,
 	StateObject
@@ -45,18 +38,19 @@ import {
 import { addGroup, deleteGroup, editGroup } from '../../../store/declenjugatorSlice';
 import useTranslator from '../../../store/translationHooks';
 
-import { $i } from '../../../components/DollarSignExports';
 import toaster from '../../../components/toaster';
 import yesNoAlert from '../../../components/yesNoAlert';
 import ltr from '../../../components/LTR';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import useElement from '../../../components/useElement';
+import getSetValue from '../../../components/getSetValue';
+import Modal from '../../../components/Modal';
 
 function clearBlanks (input: string[]) {
 	return input.filter(line => line);
 }
 
-interface EditGroupProps extends ExtraCharactersModalOpener {
+interface EditGroupProps extends ModalProperties {
 	editingGroupInfo: [keyof DJCustomInfo, DJGroup] | null
 
 	addDeclenjugationModalInfo: ModalProperties
@@ -91,7 +85,7 @@ const translations = [
 
 const commons = [
 	"AddNew", "MaybeDiscardEdits",
-	"Delete", "Deleted", "Edit", "Ok", "Save", "UnsavedInfo",
+	"Delete", "Deleted", "Edit", "Ok", "UnsavedInfo",
 	"YesDiscard", "areYouSure", "emphasizedError"
 ];
 
@@ -100,7 +94,7 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	const [ t ] = useTranslator('dj');
 	const [ tc ] = useTranslator('common');
 	const [
-		tAddNew, tYouSure, tDel, tDeleted, tEdit, tOk, tSave,
+		tAddNew, tYouSure, tDel, tDeleted, tEdit, tOk,
 		tUnsaved, tYes, tRUSure, tError
 	] = useI18Memo(commons);
 	const [ tChooseSep, tComma, tConj1, tDecl1, tNeedBoth, tOther1, tSemi,
@@ -117,7 +111,6 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	const {
 		isOpen,
 		setIsOpen,
-		openECM,
 
 		editingGroupInfo,
 
@@ -141,6 +134,14 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	const [type, setType] = useState<keyof DJCustomInfo>("declensions");
 	const [typeString, setTypeString] = useState<string>("Declensions");
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
+	const [editTitle, editTitleRef] = useElement<HTMLIonInputElement>();
+	const [editAppliesTo, editAppliesToRef] = useElement<HTMLIonInputElement>();
+	const [editStarts, editStartsRef] = useElement<HTMLIonInputElement>();
+	const [editEnds, editEndsRef] = useElement<HTMLIonInputElement>();
+	const [editRegex1, editRegex1Ref] = useElement<HTMLIonInputElement>();
+	const [editRegex2, editRegex2Ref] = useElement<HTMLIonInputElement>();
+	const [editingDJGroup, editingDJGroupRef] = useElement<HTMLIonListElement>();
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	useEffect(() => {
 		if(isOpen && savedDeclenjugation) {
@@ -193,7 +194,7 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	}, [t, type, setDeclenjugationType]);
 
 	const onLoad = useCallback(() => {
-		const [editingType, editingGroup] = editingGroupInfo || [type, null];
+		const [editingType, editingGroup] = editingGroupInfo || [type, {}];
 		const error = tError;
 		const {
 			id = error,
@@ -204,62 +205,56 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 			regex,
 			separator = " ",
 			declenjugations = []
-		} = editingGroup || {};
+		} = editingGroup;
 		setId(id);
 		setSeparator(separator);
 		if(editingType) { setType(editingType); }
 		setDeclenjugations(declenjugations);
-		const editTitle = $i<HTMLInputElement>("editTitle");
-		if(editTitle) { editTitle.value = title; }
-		const editAppliesTo = $i<HTMLInputElement>("editAppliesTo");
-		if(editAppliesTo) { editAppliesTo.value = appliesTo; }
-		const editStarts = $i<HTMLInputElement>("editStarts");
-		if(editStarts) { editStarts.value = startsWith.join(separator); }
-		const editEnds = $i<HTMLInputElement>("editEnds");
-		if(editEnds) { editEnds.value = endsWith.join(separator); }
+		getSetValue(editTitle, title);
+		getSetValue(editAppliesTo, appliesTo);
+		getSetValue(editStarts, startsWith.join(separator));
+		getSetValue(editEnds, endsWith.join(separator));
 		if(regex) {
 			setUseAdvancedMethod(true);
-			const editRegex1 = $i<HTMLInputElement>("editRegex1");
-			if(editRegex1) { editRegex1.value = regex[0]; }
-			const editRegex2 = $i<HTMLInputElement>("editRegex2");
-			if(editRegex2) { editRegex2.value = regex[1]; }
+			getSetValue(editRegex1, regex[0]);
+			getSetValue(editRegex2, regex[1]);
 		} else {
 			setUseAdvancedMethod(false);
 		}
-	}, [editingGroupInfo, type, tError]);
+	}, [
+		editingGroupInfo, type, tError, editTitle, editAppliesTo,
+		editStarts, editEnds, editRegex1, editRegex2
+	]);
+
+	useEffect(() => {
+		if(isLoaded && editTitle && editAppliesTo && editStarts && editEnds && editRegex1 && editRegex2) { return; }
+		onLoad();
+		setIsLoaded(true);
+	}, [
+		isLoaded, setIsLoaded, onLoad, editTitle, editAppliesTo,
+		editStarts, editEnds, editRegex1, editRegex2
+	]);
 
 	const closeModal = useCallback(() => {
 		setIsOpen(false);
 		setId("");
-		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		if(editSortTitle) { editSortTitle.value = ""; }
-		const editAppliesTo = $i<HTMLInputElement>("editAppliesTo");
-		if(editAppliesTo) { editAppliesTo.value = ""; }
+		getSetValue(editTitle, "");
+		getSetValue(editAppliesTo, "");
 		setSeparator(" ");
 		setDeclenjugations([]);
-		const editStarts = $i<HTMLInputElement>("editStarts");
-		if(editStarts) { editStarts.value = ""; }
-		const editEnds = $i<HTMLInputElement>("editEnds");
-		if(editEnds) { editEnds.value = ""; }
-		const editRegex1 = $i<HTMLInputElement>("editRegex1");
-		if(editRegex1) { editRegex1.value = ""; }
-		const editRegex2 = $i<HTMLInputElement>("editRegex2");
-		if(editRegex2) { editRegex2.value = ""; }
-	}, [setIsOpen]);
+		getSetValue(editStarts, "");
+		getSetValue(editEnds, "");
+		getSetValue(editRegex1, "");
+		getSetValue(editRegex2, "");
+	}, [setIsOpen, editTitle, editAppliesTo, editStarts, editEnds, editRegex1, editRegex2]);
 
 	const grabInfo = useCallback(() => {
-		const editTitle = $i<HTMLInputElement>("editTitle");
-		const title = editTitle ? editTitle.value.trim() : "";
-		const editAppliesTo = $i<HTMLInputElement>("editAppliesTo");
-		const appliesTo = editAppliesTo ? editAppliesTo.value.trim() : "";
-		const editStarts = $i<HTMLInputElement>("editStarts");
-		const startsWith: string[] = editStarts && editStarts.value ? clearBlanks(editStarts.value.split(separator)) : [];
-		const editEnds = $i<HTMLInputElement>("editEnds");
-		const endsWith: string[] = editEnds && editEnds.value ? clearBlanks(editEnds.value.split(separator)) : [];
-		const editRegex1 = $i<HTMLInputElement>("editRegex1");
-		const regex1: string = (editRegex1 && editRegex1.value) || "";
-		const editRegex2 = $i<HTMLInputElement>("editRegex2");
-		const regex2: string = (editRegex2 && editRegex2.value) || "";
+		const title = getSetValue(editTitle).trim();
+		const appliesTo = getSetValue(editAppliesTo).trim();
+		const startsWith: string[] = clearBlanks(getSetValue(editStarts).split(separator));
+		const endsWith: string[] = clearBlanks(getSetValue(editEnds).split(separator));
+		const regex1 = getSetValue(editRegex1);
+		const regex2 = getSetValue(editRegex2);
 		return {
 			title,
 			appliesTo,
@@ -268,7 +263,7 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 			regex1,
 			regex2
 		};
-	}, [separator]);
+	}, [separator, editTitle, editAppliesTo, editStarts, editEnds, editRegex1, editRegex2]);
 	const maybeSaveGroup = useCallback(() => {
 		const {
 			title,
@@ -420,7 +415,10 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 			});
 		}
 		closeModal();
-	}, [closeModal, declenjugations, doAlert, editingGroupInfo, grabInfo, separator, type, tUnsaved, tYes, tYouSure]);
+	}, [
+		closeModal, declenjugations, doAlert, editingGroupInfo,
+		grabInfo, separator, type, tUnsaved, tYes, tYouSure
+	]);
 	const maybeDeleteGroup = useCallback(() => {
 		const handler = () => {
 			dispatch(deleteGroup([editingGroupInfo![0], id]));
@@ -454,14 +452,12 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 		addDeclenjugationModalInfo.setIsOpen(true);
 	}, [addDeclenjugationModalInfo, setSavedDeclenjugation]);
 	const editDeclenjugation = useCallback((declenjugation: Declenjugation) => {
-		const el = $i<HTMLIonListElement>("editingDJGroup");
-		if(el) { el.closeSlidingItems(); }
+		editingDJGroup && editingDJGroup.closeSlidingItems();
 		setIncomingDeclenjugation(declenjugation);
 		editDeclenjugationModalInfo.setIsOpen(true);
-	}, [editDeclenjugationModalInfo, setIncomingDeclenjugation]);
+	}, [editDeclenjugationModalInfo, setIncomingDeclenjugation, editingDJGroup]);
 	const maybeDeleteDeclenjugation = useCallback((id: string) => {
-		const el = $i<HTMLIonListElement>("editingDJGroup");
-		if(el) { el.closeSlidingItems(); }
+		editingDJGroup && editingDJGroup.closeSlidingItems();
 		const handler = () => {
 			setDeclenjugations(declenjugations.filter(obj => obj.id !== id));
 			toaster({
@@ -484,7 +480,10 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 				doAlert
 			});
 		}
-	}, [typeString, t, declenjugations, disableConfirms, doAlert, tc, tDeleted, tRUSure, toast]);
+	}, [
+		typeString, t, declenjugations, disableConfirms,
+		doAlert, tc, tDeleted, tRUSure, toast, editingDJGroup
+	]);
 
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
@@ -569,173 +568,165 @@ const EditGroup: FC<EditGroupProps> = (props) => {
 	const interfaceOperatorType = useMemo(() => ({header: tType}), [tType]);
 
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false} onIonModalDidPresent={onLoad}>
-			<ModalHeader title={tEditGroup} openECM={openECM} closeModal={maybeCancel}  />
-			<IonContent>
-				<IonList lines="full" id="editingDJGroup" className="hasSpecialLabels hasToggles">
-					<IonItem className="labelled">
-						<IonLabel className="ion-text-wrap ion-padding-bottom">
-							{tTitleInput}
-						</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tTitleInput}
-							id="editTitle"
-						/>
-					</IonItem>
-					<IonItem>
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpType}
-							value={type}
-							onIonChange={doSetType}
-							interfaceOptions={interfaceOperatorType}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="declensions"
-							>{tDecl1}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="conjugations"
-							>{tConj1}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="other"
-							>{tOther1}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel className="ion-text-wrap ion-padding-bottom">
-							{tpTypes}
-						</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tTypes}
-							id="editAppliesTo"
-							placeholder={tExample}
-						/>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonToggle
-							labelPlacement="start"
-							enableOnOffLabels
-							checked={useAdvancedMethod}
-							onIonChange={toggleAdvMeth}
-						>
-							<h2>{tUseAdv}</h2>
-							<p>{tUseRegex}</p>
-						</IonToggle>
-					</IonItem>
-					<IonItemDivider>{useAdvancedMethod ? tRegEx : tSimple}</IonItemDivider>
-					<IonItem className={`labelled toggleable${useAdvancedMethod ? "" : " toggled"}`}>
-						<IonLabel className="ion-text-wrap ion-padding-bottom">{tpMatching}</IonLabel>
-					</IonItem>
-					<IonItem lines="none" className={`toggleable${useAdvancedMethod ? "" : " toggled"}`}>
-						<IonInput
-							aria-label={tMatching}
-							id="editRegex1"
-							labelPlacement="stacked"
-						/>
-					</IonItem>
-					<IonItem className={`labelled toggleable${useAdvancedMethod ? "" : " toggled"}`}>
-						<IonLabel className="ion-text-wrap ion-padding-bottom">{tpReplacement}</IonLabel>
-					</IonItem>
-					<IonItem className={`toggleable${useAdvancedMethod ? "" : " toggled"}`}>
-						<IonInput
-							aria-label={tReplacement}
-							id="editRegex2"
-							labelPlacement="stacked"
-						/>
-					</IonItem>
-					<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonLabel className="ion-text-wrap ion-padding-bottom">{tpRemoveStart}</IonLabel>
-					</IonItem>
-					<IonItem className={`toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonInput
-							aria-label={tRemoveStart}
-							id="editStarts"
-						/>
-					</IonItem>
-					<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonLabel className="ion-text-wrap ion-padding-bottom">{tpRemoveEnd}</IonLabel>
-					</IonItem>
-					<IonItem className={`toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonInput
-							aria-label={tRemoveEnd}
-							id="editEnds"
-							labelPlacement="stacked"
-						/>
-					</IonItem>
-					<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonLabel className="ion-text-wrap ion-padding-bottom">{tpSeparate}</IonLabel>
-					</IonItem>
-					<IonItem className={`wrappableInnards toggleable${useAdvancedMethod ? " toggled" : ""}`}>
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							aria-label={tChooseSep}
-							value={separator}
-							onIonChange={doSetSep}
-							interfaceOptions={interfaceOperatorSep}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=" "
-							>{tSpace}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=","
-							>{tComma}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=";"
-							>{tSemi}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="/"
-							>{tSlash}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItemDivider color="secondary">{typeString}</IonItemDivider>
-					<IonItem>
-						<IonButton slot="end" onClick={maybeAddNewDeclenjugation}>
-							<IonIcon slot="start" icon={addCircleOutline} />
-							{tAddNew}
-						</IonButton>
-					</IonItem>
-					<IonReorderGroup
-						disabled={false}
-						onIonReorderEnd={doReorder}
+		<Modal
+			bottomEnd={[{button: "save", action: maybeSaveGroup}]}
+			bottomStart={[{button: "delete", action: maybeDeleteGroup}]}
+			isOpen={isOpen}
+			closeFunc={maybeCancel}
+			title={tEditGroup}
+			enclosed
+			onIonModalDidPresent={onLoad}
+			extraChars
+		>
+			<IonList lines="full" id="editingDJGroup" ref={editingDJGroupRef} className="hasSpecialLabels hasToggles">
+				<IonItem className="labelled">
+					<IonLabel className="ion-text-wrap ion-padding-bottom">
+						{tTitleInput}
+					</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tTitleInput}
+						id="editTitle"
+						ref={editTitleRef}
+					/>
+				</IonItem>
+				<IonItem>
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpType}
+						value={type}
+						onIonChange={doSetType}
+						interfaceOptions={interfaceOperatorType}
 					>
-						{allDeclenjugations}
-					</IonReorderGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter className="modalBorderTop">
-				<IonToolbar>
-					<IonButton
-						color="danger"
-						slot="start"
-						onClick={maybeDeleteGroup}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="declensions"
+						>{tDecl1}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="conjugations"
+						>{tConj1}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="other"
+						>{tOther1}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel className="ion-text-wrap ion-padding-bottom">
+						{tpTypes}
+					</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tTypes}
+						id="editAppliesTo"
+						placeholder={tExample}
+						ref={editAppliesToRef}
+					/>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonToggle
+						labelPlacement="start"
+						enableOnOffLabels
+						checked={useAdvancedMethod}
+						onIonChange={toggleAdvMeth}
 					>
-						<IonIcon icon={trashOutline} slot="start" />
-						<IonLabel>{tDel}</IonLabel>
+						<h2>{tUseAdv}</h2>
+						<p>{tUseRegex}</p>
+					</IonToggle>
+				</IonItem>
+				<IonItemDivider>{useAdvancedMethod ? tRegEx : tSimple}</IonItemDivider>
+				<IonItem className={`labelled toggleable${useAdvancedMethod ? "" : " toggled"}`}>
+					<IonLabel className="ion-text-wrap ion-padding-bottom">{tpMatching}</IonLabel>
+				</IonItem>
+				<IonItem lines="none" className={`toggleable${useAdvancedMethod ? "" : " toggled"}`}>
+					<IonInput
+						aria-label={tMatching}
+						id="editRegex1"
+						labelPlacement="stacked"
+						ref={editRegex1Ref}
+					/>
+				</IonItem>
+				<IonItem className={`labelled toggleable${useAdvancedMethod ? "" : " toggled"}`}>
+					<IonLabel className="ion-text-wrap ion-padding-bottom">{tpReplacement}</IonLabel>
+				</IonItem>
+				<IonItem className={`toggleable${useAdvancedMethod ? "" : " toggled"}`}>
+					<IonInput
+						aria-label={tReplacement}
+						id="editRegex2"
+						labelPlacement="stacked"
+						ref={editRegex2Ref}
+					/>
+				</IonItem>
+				<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonLabel className="ion-text-wrap ion-padding-bottom">{tpRemoveStart}</IonLabel>
+				</IonItem>
+				<IonItem className={`toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonInput
+						aria-label={tRemoveStart}
+						id="editStarts"
+						ref={editStartsRef}
+					/>
+				</IonItem>
+				<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonLabel className="ion-text-wrap ion-padding-bottom">{tpRemoveEnd}</IonLabel>
+				</IonItem>
+				<IonItem className={`toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonInput
+						aria-label={tRemoveEnd}
+						id="editEnds"
+						labelPlacement="stacked"
+						ref={editEndsRef}
+					/>
+				</IonItem>
+				<IonItem className={`labelled toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonLabel className="ion-text-wrap ion-padding-bottom">{tpSeparate}</IonLabel>
+				</IonItem>
+				<IonItem className={`wrappableInnards toggleable${useAdvancedMethod ? " toggled" : ""}`}>
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						aria-label={tChooseSep}
+						value={separator}
+						onIonChange={doSetSep}
+						interfaceOptions={interfaceOperatorSep}
+					>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=" "
+						>{tSpace}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=","
+						>{tComma}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=";"
+						>{tSemi}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="/"
+						>{tSlash}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItemDivider color="secondary">{typeString}</IonItemDivider>
+				<IonItem>
+					<IonButton slot="end" onClick={maybeAddNewDeclenjugation}>
+						<IonIcon slot="start" icon={addCircleOutline} />
+						{tAddNew}
 					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={maybeSaveGroup}
-					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tSave}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonItem>
+				<IonReorderGroup
+					disabled={false}
+					onIonReorderEnd={doReorder}
+				>
+					{allDeclenjugations}
+				</IonReorderGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

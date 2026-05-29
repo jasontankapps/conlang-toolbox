@@ -21,7 +21,7 @@ import {
 } from 'ionicons/icons';
 import Markdown, { ExtraProps } from 'react-markdown';
 
-import { PageData, SetBooleanState } from '../../store/types';
+import { SetBooleanState } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import ltr from '../../components/LTR';
@@ -182,7 +182,7 @@ export const OutCard: FC<CardProps> = (props) => {
 	);
 };
 
-const WEinfo: FC<PageData> = () => {
+const WEinfo: FC = () => {
 	const [ t ] = useTranslator('we');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

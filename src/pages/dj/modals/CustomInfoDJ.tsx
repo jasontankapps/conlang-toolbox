@@ -4,11 +4,7 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
 	IonButton,
-	IonModal,
-	IonFooter,
 	IonItemGroup,
 	IonItemDivider,
 	IonInput,
@@ -16,24 +12,23 @@ import {
 	useIonToast
 } from '@ionic/react';
 import {
-	closeCircleSharp,
 	trashOutline
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { DJCustomInfo, ExtraCharactersModalOpener, SetState, StateObject } from '../../../store/types';
+import { DJCustomInfo, ModalProperties, SetState, StateObject } from '../../../store/types';
 import useTranslator from '../../../store/translationHooks';
 import { loadStateDJ } from '../../../store/declenjugatorSlice';
 
 import escape from '../../../components/EscapeForHTML';
-import { $i } from '../../../components/DollarSignExports';
 import { DeclenjugatorStorage } from '../../../components/PersistentInfo';
 import yesNoAlert from '../../../components/yesNoAlert';
 import toaster from '../../../components/toaster';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import useElement from '../../../components/useElement';
+import Modal from '../../../components/Modal';
 
-interface ExtraInfo extends ExtraCharactersModalOpener {
+interface ExtraInfo extends ModalProperties {
 	titles: string[] | null
 	setTitles: SetState<string[] | null>
 }
@@ -45,7 +40,7 @@ const translations = [
 ];
 
 const commons = [
-	"deleteThisCannotUndo", "Cancel", "Delete", "LoadError",
+	"deleteThisCannotUndo", "Delete", "LoadError",
 	"Load", "ManageCustomInfo", "NameOfSave", "NameYourInfo",
 	"NoSavedInfo", "Ok", "Save", "YesOverwriteIt", "confirmLoad",
 	"LoadSavedInfo", "SaveCurrentInfo"
@@ -54,13 +49,14 @@ const commons = [
 const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 	const [ tc ] = useTranslator('common');
 	const [
-		tYouSure, tCancel, tDel, tLoadErr, tLoad, tManage,
+		tYouSure, tDel, tLoadErr, tLoad, tManage,
 		tNameSave, tNameInfo, tNoSaved, tOk, tSave, tYes,
 		tConfLoad, tLoadInfo, tSaveThings
 	] = useI18Memo(commons);
 	const [ tNoTitle, tClearEverything, tOverwritePrev ] = useI18Memo(translations, "dj");
+	const [currentDJInfoSaveName, currentDJInfoSaveNameRef] = useElement<HTMLIonInputElement>();
 
-	const { isOpen, setIsOpen, openECM, titles, setTitles } = props;
+	const { isOpen, setIsOpen, titles, setTitles } = props;
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
@@ -76,8 +72,9 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 		setIsOpen(false);
 	}, [setIsOpen, setTitles]);
 	const maybeSaveInfo = useCallback(() => {
-		const el = $i<HTMLInputElement>("currentDJInfoSaveName");
-		const title = (el && escape(el.value).trim()) || "";
+		const title = (
+			currentDJInfoSaveName && escape(currentDJInfoSaveName.value ? String(currentDJInfoSaveName.value) : "").trim()
+		) || "";
 		if(title === "") {
 			return doAlert({
 				message: tNoTitle,
@@ -123,7 +120,11 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 				});
 			}
 		});
-	}, [conjugations, declensions, disableConfirms, doAlert, doCleanClose, other, tNoTitle, tOk, tOverwritePrev, tYes, tc, toast]);
+	}, [
+		conjugations, declensions, disableConfirms, doAlert,
+		doCleanClose, other, tNoTitle, tOk, tOverwritePrev,
+		tYes, tc, toast, currentDJInfoSaveName
+	]);
 	const maybeLoadInfo = useCallback((title: string) => {
 		const handler = () => {
 			DeclenjugatorStorage.getItem<DJCustomInfo>(title).then((value) => {
@@ -165,7 +166,10 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 				doAlert
 			});
 	}
-	}, [disableConfirms, dispatch, doAlert, doCleanClose, tConfLoad, tLoadErr, tOk, tClearEverything, tc, toast]);
+	}, [
+		disableConfirms, dispatch, doAlert, doCleanClose,
+		tConfLoad, tLoadErr, tOk, tClearEverything, tc, toast
+	]);
 	const maybeDeleteInfo = useCallback((title: string) => {
 		const handler = () => {
 			const newCustom = customInfo.filter(ci => ci !== title);
@@ -217,53 +221,48 @@ const ManageCustomInfo: FC<ExtraInfo> = (props) => {
 		);
 	}), [customInfo, maybeDeleteInfo, maybeLoadInfo, tDel, tLoad]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doCleanClose}>
-			<ModalHeader title={tManage} openECM={openECM} closeModal={doCleanClose} />
-			<IonContent>
-				<IonList lines="none">
-					<IonItemGroup>
-						<IonItemDivider>
-							<IonLabel>{tSaveThings}</IonLabel>
-						</IonItemDivider>
-						<IonItem>
-							<IonInput
-								aria-label={tNameSave}
-								id="currentDJInfoSaveName"
-								inputmode="text"
-								placeholder={tNameInfo}
-								type="text"
-							/>
-							<IonButton
-								slot="end"
-								onClick={maybeSaveInfo}
-								strong={true}
-								color="success"
-							>{tSave}</IonButton>
-						</IonItem>
-					</IonItemGroup>
-					<IonItemGroup className="buttonFilled">
-						<IonItemDivider>
-							<IonLabel>{tLoadInfo}</IonLabel>
-						</IonItemDivider>
-						{customInfoItems}
-						{
-							(customInfo.length === 0) ?
-								<IonItem color="warning"><IonLabel>{tNoSaved}</IonLabel></IonItem>
-							:
-								<></>
-						}
-					</IonItemGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="danger" slot="end" onClick={doCleanClose}>
-						<IonIcon icon={closeCircleSharp} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			closeFunc={doCleanClose}
+			title={tManage}
+			bottomEnd={[{button: "cancel", color: "danger"}]}
+		>
+			<IonList lines="none">
+				<IonItemGroup>
+					<IonItemDivider>
+						<IonLabel>{tSaveThings}</IonLabel>
+					</IonItemDivider>
+					<IonItem>
+						<IonInput
+							aria-label={tNameSave}
+							id="currentDJInfoSaveName"
+							ref={currentDJInfoSaveNameRef}
+							inputmode="text"
+							placeholder={tNameInfo}
+							type="text"
+						/>
+						<IonButton
+							slot="end"
+							onClick={maybeSaveInfo}
+							strong={true}
+							color="success"
+						>{tSave}</IonButton>
+					</IonItem>
+				</IonItemGroup>
+				<IonItemGroup className="buttonFilled">
+					<IonItemDivider>
+						<IonLabel>{tLoadInfo}</IonLabel>
+					</IonItemDivider>
+					{customInfoItems}
+					{
+						(customInfo.length === 0) ?
+							<IonItem color="warning"><IonLabel>{tNoSaved}</IonLabel></IonItem>
+						:
+							<></>
+					}
+				</IonItemGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

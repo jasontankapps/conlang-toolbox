@@ -1,4 +1,4 @@
-import React, { useCallback, useState, FC } from 'react';
+import React, { useCallback, useState, FC, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -30,7 +30,6 @@ import {
 	Zero_OneHundred,
 	Two_Fifteen,
 	Zero_Fifty,
-	PageData,
 	StateObject
 } from '../../store/types';
 import {
@@ -51,6 +50,7 @@ import { CustomStorageWG } from '../../components/PersistentInfo';
 import ModalWrap from "../../components/ModalWrap";
 import useI18Memo from '../../components/useI18Memo';
 import log from '../../components/Logging';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 
 import ExtraCharactersModal from '../modals/ExtraCharacters';
 import MaybeLoadPreset from './modals/MaybeLoadPreset';
@@ -76,7 +76,7 @@ const declarative = { context: "declarative" };
 const interrogative = { context: "interrogative" };
 const exclamatory = { context: "exclamatory" };
 
-const WGSet: FC<PageData> = (props) => {
+const WGSet: FC = () => {
 	const [ tHelp, tLoad, tWait, tSettings ] = useI18Memo(commons);
 	const [
 		tAlways, tCap, tCGRD, tF050, tF0100, tF215, tMax, tNever, tPresets,
@@ -92,7 +92,7 @@ const WGSet: FC<PageData> = (props) => {
 	const [isOpenLoadPreset, setIsOpenLoadPreset] = useState<boolean>(false);
 	const [isOpenManageCustom, setIsOpenManageCustom] = useState<boolean>(false);
 	const [infoModalTitles, setInfoModalTitles] = useState<string[] | null>(null);
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const {
 		monosyllablesRate,
 		maxSyllablesPerWord,
@@ -136,13 +136,14 @@ const WGSet: FC<PageData> = (props) => {
 	const doSetExclamatorySentencePost = useCallback((e: InputCustomEvent) => dispatch(setExclamatorySentencePost(e.target.value as string)), [dispatch]);
 	return (
 		<IonPage>
-			<MaybeLoadPreset {...modalPropsMaker(isOpenLoadPreset, setIsOpenLoadPreset)} />
-			<ManageCustomInfo
-				{...modalPropsMaker(isOpenManageCustom, setIsOpenManageCustom)}
-				openECM={setIsOpenECM}
-				titles={infoModalTitles}
-				setTitles={setInfoModalTitles}
-			/>
+			<ExCharContext value={openEx}>
+				<MaybeLoadPreset {...modalPropsMaker(isOpenLoadPreset, setIsOpenLoadPreset)} />
+				<ManageCustomInfo
+					{...modalPropsMaker(isOpenManageCustom, setIsOpenManageCustom)}
+					titles={infoModalTitles}
+					setTitles={setInfoModalTitles}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<OptCard setIsOpenInfo={setIsOpenInfo} />

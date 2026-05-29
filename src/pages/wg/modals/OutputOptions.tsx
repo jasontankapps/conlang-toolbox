@@ -1,17 +1,12 @@
 import React, { useCallback, useMemo, FC } from 'react';
 import {
-	IonContent,
-	IonToolbar,
 	IonList,
-	IonButton,
 	IonItemDivider,
 	IonItem,
 	IonLabel,
 	IonToggle,
 	IonRange,
-	IonModal,
 	IonIcon,
-	IonFooter,
 	IonSelect,
 	IonSelectOption,
 	ToggleCustomEvent,
@@ -44,7 +39,7 @@ import useTranslator from '../../../store/translationHooks';
 
 import PermanentInfo from '../../../components/PermanentInfo';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import Modal from '../../../components/Modal';
 
 const translations = [
 	"AllPossibleSyllables", "CapitalizeWords", "Default",
@@ -64,7 +59,6 @@ const OutputOptionsModal: FC<ModalProperties> = (props) => {
 		tPseudo, tSyllBr, tSort, tWhat, tWLSize, tWL,
 		tPsCtrl, tWLSyllCtrl
 	] = useI18Memo(translations, 'wg');
-	const tDone = useMemo(() => tc("Done"), [tc]);
 
 	const { isOpen, setIsOpen } = props;
 	const dispatch = useDispatch();
@@ -101,126 +95,119 @@ const OutputOptionsModal: FC<ModalProperties> = (props) => {
 	const toWL = useCallback(() => dispatch(setOutputTypeWG('wordlist')), [dispatch]);
 	const toSyll = useCallback(() => dispatch(setOutputTypeWG('syllables')), [dispatch]);
 
-	const sortOptions = useMemo(() => customSorts.concat(PermanentInfo.sort.permanentCustomSortObjs).map(sorter => (
-		<IonSelectOption
-			className="ion-text-wrap ion-text-align-end"
-			key={`customSortChooser:${sorter.id}:${sorter.title}`}
-			value={sorter.id}
-		>{sorter.title}</IonSelectOption>
-	)), [customSorts]);
-
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer}>
-			<ModalHeader title={tOutOpts} closeModal={setIsOpen} />
-			<IonContent>
-				<IonList lines="full" className="hasSpecialLabels">
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							labelPlacement="start"
-							checked={showSyllableBreaks}
-							onIonChange={setSylBreak}
-						>{tSyllBr}</IonToggle>
-					</IonItem>
-					<IonItemDivider>{tWhat}</IonItemDivider>
-					<IonItem button={true} onClick={toText}>
-						<IonLabel>{tPseudo}</IonLabel>
-						<IonIcon
-							icon={output === "text" ? checkmarkCircleOutline : ellipseOutline}
-						/>
-					</IonItem>
-					<IonItem button={true} onClick={toWL}>
-						<IonLabel>{tWL}</IonLabel>
-						<IonIcon
-							icon={output === "wordlist" ? checkmarkCircleOutline : ellipseOutline}
-						/>
-					</IonItem>
-					<IonItem button={true} onClick={toSyll}>
-						<IonLabel>{tAllSyll}</IonLabel>
-						<IonIcon
-							icon={output === "syllables" ? checkmarkCircleOutline : ellipseOutline}
-						/>
-					</IonItem>
-					<IonItemDivider>{output === "text" ? tPsCtrl : tWLSyllCtrl}</IonItemDivider>
-					<IonItem className={(output === "text" ? "" : "hide") + " labelled"}>
-						<IonLabel>{tNumSent}</IonLabel>
-					</IonItem>
-					<IonItem className={output === "text" ? "" : "hide"}>
-						<IonRange
-							debounce={250}
-							min={5} max={100}
-							value={sentencesPerText}
-							pin={true}
-							onIonChange={onChangeSentencesWordlist}
-						>
-							<div slot="start">5</div>
-							<div slot="end">100</div>
-						</IonRange>
-					</IonItem>
-					<IonItem className={output === "text" ? "hide" : ""}>
-						<IonToggle
-							enableOnOffLabels
-							labelPlacement="start"
-							checked={capitalizeWords}
-							onIonChange={setCapWords}
-						>{tCap}</IonToggle>
-					</IonItem>
-					<IonItem className={output === "text" ? "hide" : ""}>
-						<IonToggle
-							enableOnOffLabels
-							labelPlacement="start"
-							checked={sortWordlist}
-							onIonChange={setSortList}
-						>{tSort}</IonToggle>
-					</IonItem>
-					<IonItem className={(output === "text" || !sortWordlist) ? "hide" : ""}>
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tSortMethod}
-							value={customSort || null}
-							onIonChange={onChangeCustomSort}
-						>
+		<Modal
+			isOpen={isOpen}
+			title={tOutOpts}
+			closeFunc={closer}
+			bottomEnd={[{button: "done"}]}
+		>
+			<IonList lines="full" className="hasSpecialLabels">
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						labelPlacement="start"
+						checked={showSyllableBreaks}
+						onIonChange={setSylBreak}
+					>{tSyllBr}</IonToggle>
+				</IonItem>
+				<IonItemDivider>{tWhat}</IonItemDivider>
+				<IonItem button={true} onClick={toText}>
+					<IonLabel>{tPseudo}</IonLabel>
+					<IonIcon
+						icon={output === "text" ? checkmarkCircleOutline : ellipseOutline}
+					/>
+				</IonItem>
+				<IonItem button={true} onClick={toWL}>
+					<IonLabel>{tWL}</IonLabel>
+					<IonIcon
+						icon={output === "wordlist" ? checkmarkCircleOutline : ellipseOutline}
+					/>
+				</IonItem>
+				<IonItem button={true} onClick={toSyll}>
+					<IonLabel>{tAllSyll}</IonLabel>
+					<IonIcon
+						icon={output === "syllables" ? checkmarkCircleOutline : ellipseOutline}
+					/>
+				</IonItem>
+				<IonItemDivider>{output === "text" ? tPsCtrl : tWLSyllCtrl}</IonItemDivider>
+				<IonItem className={(output === "text" ? "" : "hide") + " labelled"}>
+					<IonLabel>{tNumSent}</IonLabel>
+				</IonItem>
+				<IonItem className={output === "text" ? "" : "hide"}>
+					<IonRange
+						debounce={250}
+						min={5} max={100}
+						value={sentencesPerText}
+						pin={true}
+						onIonChange={onChangeSentencesWordlist}
+					>
+						<div slot="start">5</div>
+						<div slot="end">100</div>
+					</IonRange>
+				</IonItem>
+				<IonItem className={output === "text" ? "hide" : ""}>
+					<IonToggle
+						enableOnOffLabels
+						labelPlacement="start"
+						checked={capitalizeWords}
+						onIonChange={setCapWords}
+					>{tCap}</IonToggle>
+				</IonItem>
+				<IonItem className={output === "text" ? "hide" : ""}>
+					<IonToggle
+						enableOnOffLabels
+						labelPlacement="start"
+						checked={sortWordlist}
+						onIonChange={setSortList}
+					>{tSort}</IonToggle>
+				</IonItem>
+				<IonItem className={(output === "text" || !sortWordlist) ? "hide" : ""}>
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tSortMethod}
+						value={customSort || null}
+						onIonChange={onChangeCustomSort}
+					>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value={null}
+						>{tDefault}</IonSelectOption>
+						{customSorts.concat(PermanentInfo.sort.permanentCustomSortObjs).map(sorter => (
 							<IonSelectOption
 								className="ion-text-wrap ion-text-align-end"
-								value={null}
-							>{tDefault}</IonSelectOption>
-							{sortOptions}
-						</IonSelect>
-					</IonItem>
-					<IonItem className={output === "text" ? "hide" : ""}>
-						<IonToggle
-							enableOnOffLabels
-							labelPlacement="start"
-							checked={wordlistMultiColumn}
-							onIonChange={setWLMultiC}
-						>{tMulti}</IonToggle>
-					</IonItem>
-					<IonItem className={(output === "text" ? "hide" : "") + " labelled"}>
-						<IonLabel>{tWLSize}</IonLabel>
-					</IonItem>
-					<IonItem className={output === "text" ? "hide" : ""}>
-						<IonRange
-							debounce={250}
-							min={50} max={1000}
-							value={wordsPerWordlist}
-							pin={true}
-							onIonChange={onChangeWordsWordlist}
-						>
-							<div slot="start">50</div>
-							<div slot="end">1000</div>
-						</IonRange>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="success" slot="end" onClick={closer}>
-						<IonLabel>{tDone}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+								key={`customSortChooser:${sorter.id}:${sorter.title}`}
+								value={sorter.id}
+							>{sorter.title}</IonSelectOption>
+						))}
+					</IonSelect>
+				</IonItem>
+				<IonItem className={output === "text" ? "hide" : ""}>
+					<IonToggle
+						enableOnOffLabels
+						labelPlacement="start"
+						checked={wordlistMultiColumn}
+						onIonChange={setWLMultiC}
+					>{tMulti}</IonToggle>
+				</IonItem>
+				<IonItem className={(output === "text" ? "hide" : "") + " labelled"}>
+					<IonLabel>{tWLSize}</IonLabel>
+				</IonItem>
+				<IonItem className={output === "text" ? "hide" : ""}>
+					<IonRange
+						debounce={250}
+						min={50} max={1000}
+						value={wordsPerWordlist}
+						pin={true}
+						onIonChange={onChangeWordsWordlist}
+					>
+						<div slot="start">50</div>
+						<div slot="end">1000</div>
+					</IonRange>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

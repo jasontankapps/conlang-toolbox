@@ -4,15 +4,8 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
 	IonButton,
-	IonTitle,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast,
 	IonSelect,
@@ -26,9 +19,6 @@ import {
 	SelectCustomEvent
 } from '@ionic/react';
 import {
-	closeCircleOutline,
-	saveOutline,
-	globeOutline,
 	addOutline,
 	trash,
 	reorderThree
@@ -39,7 +29,6 @@ import { LanguageCode } from 'iso-639-1';
 
 import {
 	EqualityObject,
-	ExtraCharactersModalOpener,
 	ModalProperties,
 	RelationObject,
 	SetState,
@@ -51,12 +40,14 @@ import {
 import { addNewCustomSort } from '../../store/sortingSlice';
 import useTranslator from '../../store/translationHooks';
 
-import { $i } from '../../components/DollarSignExports';
 import toaster from '../../components/toaster';
 import yesNoAlert from '../../components/yesNoAlert';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
+import getSetValue from '../../components/getSetValue';
+import Modal from '../../components/Modal';
 
-interface CustomSortModal extends ExtraCharactersModalOpener {
+interface CustomSortModal extends ModalProperties {
 	langObj: {[key: string]: string}
 	languages: LanguageCode[]
 
@@ -91,14 +82,14 @@ const translations = [
 	"noEnteredInfoMsg",
 	"needTitleMsg", "alternateAlphabetExplanation",
 	"SortLanguage", "SortSensitivity", "AlphabetSeparator",
-	"AddSort", "DeleteSort", "SortAdded"
+	"CustomSort", "DeleteSort", "SortAdded"
 ];
 
 const commons = [
 	"AddNew", "deleteThisCannotUndo",
-	"MaybeDiscardThing", "Cancel", "Close",
-	"defaultSort", "Delete", "Edit", "ExtraChars", "Ok", "Save",
-	"Title", "UnsavedInfo", "YesDiscard", "areYouSure"
+	"MaybeDiscardThing", "defaultSort", "Delete",
+	"Edit", "Ok", "Title", "UnsavedInfo",
+	"YesDiscard", "areYouSure"
 ];
 
 const AddCustomSort: FC<CustomSortModal> = (props) => {
@@ -108,18 +99,17 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		tDefSens, tDiaPlus, tDia, tEqualities, tNoSep, tPeriod, tRelations,
 		tSemi, tSimilarSep, tSpace, tTitleSort, tUniSort, tUppLow, tUseAlph,
 		tWriteAlpha, tNoNewInfo, tNoTitle, tAltAlphExpl, tpSortLang,
-		tpSortSens, tpAlphaSep, tAddThing, tDelThing, tThingSaved
+		tpSortSens, tpAlphaSep, tCustomSort, tDelThing, tThingSaved
 	] = useI18Memo(translations, 'settings');
 	const [
-		tAddNew, tYouSure, tSureDiscard, tCancel, tClose, tDefSort, tDelete,
-		tEdit, tExChar, tOk, tSave, tTitle, tUnsaved, tYesDisc, tRUSure
+		tAddNew, tYouSure, tSureDiscard, tDefSort, tDelete,
+		tEdit, tOk, tTitle, tUnsaved, tYesDisc, tRUSure
 	] = useI18Memo(commons);
 	const tpTitle = useMemo(() => tc("Title", { context: "presentation" }), [tc]);
 
 	const {
 		isOpen,
 		setIsOpen,
-		openECM,
 
 		langObj,
 		languages,
@@ -150,17 +140,18 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 	const [usingAlpha, setUsingAlpha] = useState<boolean>(false);
 	const [separator, setSeparator] = useState<SortSeparator>("");
 	const [customizations, setCustomizations] = useState<(RelationObject | EqualityObject)[]>([]);
+	const [addSortTitle, addSortTitleRef] = useElement<HTMLIonInputElement>();
+	const [addCustomAlphabet, addCustomAlphabetRef] = useElement<HTMLIonInputElement>();
+	const [addingCustomSortList, addingCustomSortListRef] = useElement<HTMLIonListElement>();
 	const closeModal = useCallback(() => {
 		setIsOpen(false);
 		setCustomizations([]);
 		setSortLang("default");
 		setSortSensitivity("default");
 		setUsingAlpha(false);
-		const addSortTitle = $i<HTMLInputElement>("addSortTitle");
-		if(addSortTitle) { addSortTitle.value = ""; }
-		const addCustomAlphabet = $i<HTMLInputElement>("addCustomAlphabet");
-		if(addCustomAlphabet) { addCustomAlphabet.value = ""; }
-	}, [setIsOpen]);
+		getSetValue(addSortTitle, "");
+		getSetValue(addCustomAlphabet, "");
+	}, [setIsOpen, addSortTitle, addCustomAlphabet]);
 	// Accept new relation from other modal
 	useEffect(() => {
 		if(isOpen && savedRelation) {
@@ -230,8 +221,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		}
 	}, [isOpen, outgoingEquality, setOutgoingEquality, customizations]);
 	const maybeSaveNewSort = useCallback(() => {
-		const addSortTitle = $i<HTMLInputElement>("addSortTitle");
-		const title = addSortTitle ? addSortTitle.value.trim() : "";
+		const title = getSetValue(addSortTitle);
 		if(!title) {
 			doAlert({
 				message: tNoTitle,
@@ -252,8 +242,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 			title
 		};
 		if(usingAlpha) {
-			const addCustomAlphabet = $i<HTMLInputElement>("addCustomAlphabet");
-			const alpha: string[] = (addCustomAlphabet ? addCustomAlphabet.value : "")
+			const alpha: string[] = getSetValue(addCustomAlphabet)
 				.split(separator)
 				.filter((char: string) => char);
 			if(alpha.length === 0) {
@@ -312,13 +301,12 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 	}, [
 		closeModal, customizations, dispatch, doAlert, separator, sortLang,
 		sortSensitivity, tBlankProv, tNoNewInfo, tNoTitle, tOk, tThingSaved,
-		toast, usingAlpha
+		toast, usingAlpha, addSortTitle, addCustomAlphabet
 	]);
 	const maybeCancel = useCallback(() => {
-		const addCustomAlphabet = $i<HTMLInputElement>("addCustomAlphabet");
 		if(
 			sortLang !== "default" || sortSensitivity !== "default"
-			|| (usingAlpha && addCustomAlphabet && addCustomAlphabet.value.trim())
+			|| (usingAlpha && getSetValue(addCustomAlphabet).trim())
 			|| (customizations.length > 0)
 		) {
 			return yesNoAlert({
@@ -333,7 +321,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		closeModal();
 	}, [
 		closeModal, customizations.length, doAlert, sortLang, sortSensitivity,
-		tSureDiscard, tUnsaved, tYesDisc, usingAlpha
+		tSureDiscard, tUnsaved, tYesDisc, usingAlpha, addCustomAlphabet
 	]);
 	const maybeAddNewRelation = useCallback(() => {
 		setSavedRelation(null);
@@ -354,7 +342,6 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		setCustomizations(final);
 		ed.complete();
 	}, [customizations]);
-	const openEx = useCallback(() => openECM(true), [openECM]);
 	const saveSortLang = useCallback((e: SelectCustomEvent) => setSortLang(e.detail.value), []);
 	const saveSortSens = useCallback((e: SelectCustomEvent) => setSortSensitivity(e.detail.value), []);
 	const saveSeparator = useCallback((e: SelectCustomEvent) => setSeparator(e.detail.value), []);
@@ -379,8 +366,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							color="primary"
 							aria-label={tEdit}
 							onClick={() => {
-								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								if(el) { el.closeSlidingItems(); }
+								addingCustomSortList && addingCustomSortList.closeSlidingItems();
 								setIncomingEquality(obj);
 								editEqualityModalInfo.setIsOpen(true);
 							}}
@@ -394,8 +380,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							color="danger"
 							aria-label={tDelete}
 							onClick={() => {
-								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								if(el) { el.closeSlidingItems(); }
+								addingCustomSortList && addingCustomSortList.closeSlidingItems();
 								yesNoAlert({
 									header: tDelThing,
 									message: tYouSure,
@@ -462,8 +447,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							color="primary"
 							aria-label={tEdit}
 							onClick={() => {
-								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								if(el) { el.closeSlidingItems(); }
+								addingCustomSortList && addingCustomSortList.closeSlidingItems();
 								setIncomingRelation(obj);
 								editRelationModalInfo.setIsOpen(true);
 							}}
@@ -477,8 +461,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 							color="danger"
 							aria-label={tDelete}
 							onClick={() => {
-								const el = $i<HTMLIonListElement>("addingCustomSortList");
-								if(el) { el.closeSlidingItems(); }
+								addingCustomSortList && addingCustomSortList.closeSlidingItems();
 								yesNoAlert({
 									header: tDelThing,
 									message: tRUSure,
@@ -546,7 +529,7 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 	}), [
 		customizations, tDelete, doAlert, tc, tDelThing, tRUSure,
 		tEdit, editEqualityModalInfo, editRelationModalInfo, tYouSure,
-		setIncomingEquality, setIncomingRelation
+		setIncomingEquality, setIncomingRelation, addingCustomSortList
 	]);
 	const allLanguages = useMemo(() => languages.map((language) => (
 		<IonSelectOption
@@ -556,201 +539,176 @@ const AddCustomSort: FC<CustomSortModal> = (props) => {
 		>{langObj[language] || language}</IonSelectOption>
 	)), [languages, langObj]);
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tAddThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={openEx} aria-label={tExChar}>
-							<IonIcon icon={globeOutline} />
-						</IonButton>
-						<IonButton onClick={maybeCancel} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="full" id="addingCustomSortList">
-					<IonItem>
-						<div slot="start" className="ion-margin-end">{tpTitle}</div>
-						<IonInput
-							aria-label={tTitle}
-							id="addSortTitle"
-							helperText={tTitleSort}
-						/>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSortLang}
-							value={sortLang}
-							onIonChange={saveSortLang}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="default"
-							>{tDefSort}</IonSelectOption>
-							{allLanguages}
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="unicode"
-							>{tUniSort}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSortSens}
-							value={sortSensitivity}
-							onIonChange={saveSortSens}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="default"
-							>{tDefSens}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="base"
-							>{tBaseOnly}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="accent"
-							>{tDia}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="case"
-							>{tUppLow}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="variant"
-							>{tDiaPlus}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem
-						className="wrappableInnards"
-						lines={usingAlpha ? "none" : undefined}
+		<Modal
+			isOpen={isOpen}
+			closeFunc={maybeCancel}
+			enclosed
+			title={tCustomSort}
+			bottomEnd={[{button: "add", action: maybeSaveNewSort}]}
+			bottomStart={[{button: "cancel"}]}
+			extraChars
+		>
+			<IonList lines="full" id="addingCustomSortList" ref={addingCustomSortListRef}>
+				<IonItem>
+					<div slot="start" className="ion-margin-end">{tpTitle}</div>
+					<IonInput
+						aria-label={tTitle}
+						id="addSortTitle"
+						helperText={tTitleSort}
+						ref={addSortTitleRef}
+					/>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSortLang}
+						value={sortLang}
+						onIonChange={saveSortLang}
 					>
-						<IonToggle
-							labelPlacement="start"
-							enableOnOffLabels
-							checked={usingAlpha}
-							onIonChange={toggleUsingAlpha}
-						>
-							<h2>{tUseAlph}</h2>
-							<p>{tAltAlphExpl}</p>
-						</IonToggle>
-					</IonItem>
-					{ usingAlpha ?
-						<>
-							<IonItem lines="none">
-								<IonInput
-									aria-label={tCustomAlpha}
-									id="addCustomAlphabet"
-									helperText={tWriteAlpha}
-								/>
-							</IonItem>
-							<IonItem className="wrappableInnards">
-								<IonSelect
-									color="primary"
-									className="ion-text-wrap settings"
-									label={tpAlphaSep}
-									value={separator}
-									onIonChange={saveSeparator}
-								>
-									<IonSelectOption
-										className="ion-text-wrap ion-text-align-end"
-										value=""
-									>{tNoSep}</IonSelectOption>
-									<IonSelectOption
-										className="ion-text-wrap ion-text-align-end"
-										value=" "
-									>{tSpace}</IonSelectOption>
-									<IonSelectOption
-										className="ion-text-wrap ion-text-align-end"
-										value=","
-									>{tComma}</IonSelectOption>
-									<IonSelectOption
-										className="ion-text-wrap ion-text-align-end"
-										value="."
-									>{tPeriod}</IonSelectOption>
-									<IonSelectOption
-										className="ion-text-wrap ion-text-align-end"
-										value=";"
-									>{tSemi}</IonSelectOption>
-								</IonSelect>
-							</IonItem>
-						</>
-					:
-						<></>
-					}
-					<IonItem className="wrappableInnards" lines="none">
-						<IonLabel>
-							<h2>{tRelations}</h2>
-							<p>{tSimilarSep}</p>
-						</IonLabel>
-						<IonButton
-							color="secondary"
-							slot="end"
-							onClick={maybeAddNewRelation}
-						>
-							<IonIcon icon={addOutline} slot="end" />
-							<IonLabel>{tAddNew}</IonLabel>
-						</IonButton>
-					</IonItem>
-					<IonItem className="wrappableInnards" lines="none">
-						<IonLabel>
-							<h2>{tEqualities}</h2>
-							<p>{tCharsEqual}</p>
-						</IonLabel>
-						<IonButton
-							color="secondary"
-							slot="end"
-							onClick={maybeAddNewEquality}
-						>
-							<IonIcon icon={addOutline} slot="end" />
-							<IonLabel>{tAddNew}</IonLabel>
-						</IonButton>
-					</IonItem>
-					<IonReorderGroup
-						disabled={false}
-						onIonReorderEnd={doReorder}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="default"
+						>{tDefSort}</IonSelectOption>
+						{allLanguages}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="unicode"
+						>{tUniSort}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSortSens}
+						value={sortSensitivity}
+						onIonChange={saveSortSens}
 					>
-						{customizations.length > 0 ?
-							allCustomizations
-						:
-							<IonItem>
-								<IonLabel
-									className="ion-text-align-end"
-								><em>{tNone}</em></IonLabel>
-							</IonItem>
-						}
-					</IonReorderGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter className="modalBorderTop">
-				<IonToolbar>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="default"
+						>{tDefSens}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="base"
+						>{tBaseOnly}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="accent"
+						>{tDia}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="case"
+						>{tUppLow}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="variant"
+						>{tDiaPlus}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem
+					className="wrappableInnards"
+					lines={usingAlpha ? "none" : undefined}
+				>
+					<IonToggle
+						labelPlacement="start"
+						enableOnOffLabels
+						checked={usingAlpha}
+						onIonChange={toggleUsingAlpha}
+					>
+						<h2>{tUseAlph}</h2>
+						<p>{tAltAlphExpl}</p>
+					</IonToggle>
+				</IonItem>
+				{ usingAlpha ?
+					<>
+						<IonItem lines="none">
+							<IonInput
+								aria-label={tCustomAlpha}
+								id="addCustomAlphabet"
+								helperText={tWriteAlpha}
+								ref={addCustomAlphabetRef}
+							/>
+						</IonItem>
+						<IonItem className="wrappableInnards">
+							<IonSelect
+								color="primary"
+								className="ion-text-wrap settings"
+								label={tpAlphaSep}
+								value={separator}
+								onIonChange={saveSeparator}
+							>
+								<IonSelectOption
+									className="ion-text-wrap ion-text-align-end"
+									value=""
+								>{tNoSep}</IonSelectOption>
+								<IonSelectOption
+									className="ion-text-wrap ion-text-align-end"
+									value=" "
+								>{tSpace}</IonSelectOption>
+								<IonSelectOption
+									className="ion-text-wrap ion-text-align-end"
+									value=","
+								>{tComma}</IonSelectOption>
+								<IonSelectOption
+									className="ion-text-wrap ion-text-align-end"
+									value="."
+								>{tPeriod}</IonSelectOption>
+								<IonSelectOption
+									className="ion-text-wrap ion-text-align-end"
+									value=";"
+								>{tSemi}</IonSelectOption>
+							</IonSelect>
+						</IonItem>
+					</>
+				:
+					<></>
+				}
+				<IonItem className="wrappableInnards" lines="none">
+					<IonLabel>
+						<h2>{tRelations}</h2>
+						<p>{tSimilarSep}</p>
+					</IonLabel>
 					<IonButton
-						color="warning"
-						slot="start"
-						onClick={maybeCancel}
-					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-					<IonButton
-						color="success"
+						color="secondary"
 						slot="end"
-						onClick={maybeSaveNewSort}
+						onClick={maybeAddNewRelation}
 					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tSave}</IonLabel>
+						<IonIcon icon={addOutline} slot="end" />
+						<IonLabel>{tAddNew}</IonLabel>
 					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonItem>
+				<IonItem className="wrappableInnards" lines="none">
+					<IonLabel>
+						<h2>{tEqualities}</h2>
+						<p>{tCharsEqual}</p>
+					</IonLabel>
+					<IonButton
+						color="secondary"
+						slot="end"
+						onClick={maybeAddNewEquality}
+					>
+						<IonIcon icon={addOutline} slot="end" />
+						<IonLabel>{tAddNew}</IonLabel>
+					</IonButton>
+				</IonItem>
+				<IonReorderGroup
+					disabled={false}
+					onIonReorderEnd={doReorder}
+				>
+					{customizations.length > 0 ?
+						allCustomizations
+					:
+						<IonItem>
+							<IonLabel
+								className="ion-text-align-end"
+							><em>{tNone}</em></IonLabel>
+						</IonItem>
+					}
+				</IonReorderGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

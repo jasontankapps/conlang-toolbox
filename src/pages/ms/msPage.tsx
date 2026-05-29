@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useContext, useMemo } from 'react';
 import {
 	IonPage,
 	IonContent,
@@ -10,10 +10,12 @@ import {
 } from '@ionic/react';
 import { useDispatch, useSelector } from "react-redux";
 
-import { MSNum, MSText, PageData, StateObject } from '../../store/types';
+import { MSNum, MSText, StateObject } from '../../store/types';
 import { setLastViewMS } from '../../store/internalsSlice';
 import { setSyntaxNum } from '../../store/msSlice';
 import useTranslator from '../../store/translationHooks';
+
+import { ModalMakingContext } from '../../components/contexts';
 
 import {
 	CheckboxItem,
@@ -32,7 +34,7 @@ import {
 import msInfo from './getMSInfo';
 import { Dispatch } from 'redux';
 
-interface MSData extends PageData {
+interface MSData {
 	page: "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10"
 }
 
@@ -40,14 +42,14 @@ const rangeChangeFunc = (dispatch: Dispatch, nProp: MSNum) => {
 	return (e: RangeCustomEvent) => dispatch(setSyntaxNum([nProp, e.target.value as number]));
 };
 
-const MSPage: FC<MSData> = (props) => {
+const MSPage: FC<MSData> = ({page}) => {
 	const [ t ] = useTranslator('ms');
 	const [ tc ] = useTranslator('common');
 	const dispatch = useDispatch();
 	const ms = useSelector((state: StateObject) => state.ms);
-	const { modalPropsMaker, page } = props;
 	const info = msInfo[page] as SpecificMSPageData[];
 	const header = info[0].content;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const pageContents = useMemo(() => info.map((block: SpecificMSPageData, i: number) => {
 		const { tag, prop, ...etc } = block;
 		const key = `${page}-${tag}-${i}`;
@@ -118,7 +120,7 @@ const MSPage: FC<MSData> = (props) => {
 	});
 	return (
 		<IonPage>
-			<SyntaxHeader title={title} {...props} />
+			<SyntaxHeader title={title} />
 			<IonContent fullscreen
 				className="evenBackground disappearingHeaderKludgeFix"
 				id="morphoSyntaxPage"

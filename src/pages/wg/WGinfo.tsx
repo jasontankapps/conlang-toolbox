@@ -21,7 +21,7 @@ import {
 } from 'ionicons/icons';
 import Markdown, { ExtraProps } from 'react-markdown';
 
-import { PageData, SetBooleanState } from '../../store/types';
+import { SetBooleanState } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import ltr from '../../components/LTR';
@@ -116,7 +116,7 @@ const syllInfo = [
 export const SylCard: FC<CardProps> = (props) => {
 	const [ t ] = useTranslator('wg');
 	const { isOverview } = props;
-	const [ charGroupExample, example ] = useI18MemoObject(syllExamples, 'wg');
+	const [ charGroupExample, example ] = useI18MemoObject<string[]>(syllExamples, 'wg');
 	const [
 		startIsOverview, startNotOverview,
 		plainText, endIsOverview, endNotOverview
@@ -257,7 +257,7 @@ export const OptCard: FC<CardProps> = (props) => {
 	);
 }
 
-const WGinfo: FC<PageData> = () => {
+const WGinfo: FC = () => {
 	const [ t ] = useTranslator('wg');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

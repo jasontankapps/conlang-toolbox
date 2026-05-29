@@ -1,23 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from 'react';
 import {
-	IonIcon,
 	IonLabel,
 	IonList,
 	IonItem,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
 	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	IonTextarea,
 	useIonToast,
 	IonItemDivider,
 	IonToggle
 } from '@ionic/react';
-import { closeCircleOutline, checkmarkDoneCircleOutline } from "ionicons/icons";
 import { useSelector } from 'react-redux';
 import Markdown from 'react-markdown';
 
@@ -48,11 +39,11 @@ import {
 	LexiconStorage,
 	MorphoSyntaxStorage
 } from '../../components/PersistentInfo';
-import { $i } from '../../components/DollarSignExports';
 import copyText from '../../components/copyText';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
-const commons = [ "Close", "CopyToClipboard", "Done", "Loading" ];
+const commons = [ "CopyToClipboard", "Loading" ];
 
 const translations = [
 	"ExportedData", "OtherAppSettings", "WhatToExport", "ExportData"
@@ -61,7 +52,7 @@ const translations = [
 const MExportAllData: FC<ModalProperties> = (props) => {
 	const [ t ] = useTranslator('common');
 	const [ ts ] = useTranslator('settings');
-	const [ tClose, tCopy, tDone, tLoading ] = useI18Memo(commons);
+	const [ tCopy, tLoading ] = useI18Memo(commons);
 	const [ tExportedData, tOtherSettings, tWhatToExport, tExportThing ] = useI18Memo(translations, "settings");
 	const tExportMsg = useMemo(() => ts("exportAllMsg", { joinArrays: "\n" }), [ts]);
 	const tCurrentMorphoSyntaxSettings = useMemo(() => ts("currentSettings", { tool: t("MorphoSyntax") }), [ts, t]);
@@ -94,17 +85,15 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 	const [export_msStored, setExport_msStored] = useState<boolean>(true);
 	const [export_djStored, setExport_djStored] = useState<boolean>(true);
 	const [export_lexStored, setExport_lexStored] = useState<boolean>(true);
-	const {
-		wg,
-		we,
-		ms,
-		dj,
-		lexicon,
-		concepts,
-		ec,
-		appSettings,
-		sortSettings
-	} = useSelector((state: StateObject) => state);
+	const wg = useSelector((state: StateObject) => state.wg);
+	const we = useSelector((state: StateObject) => state.we);
+	const ms = useSelector((state: StateObject) => state.ms);
+	const dj = useSelector((state: StateObject) => state.dj);
+	const lexicon = useSelector((state: StateObject) => state.lexicon);
+	const concepts = useSelector((state: StateObject) => state.concepts);
+	const ec = useSelector((state: StateObject) => state.ec);
+	const appSettings = useSelector((state: StateObject) => state.appSettings);
+	const sortSettings = useSelector((state: StateObject) => state.sortSettings);
 
 	const exportedSortSettings = useMemo(() => {
 		const { customSorts, ...etc } = sortSettings;
@@ -145,8 +134,6 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 		const weS: storedWE = [];
 		const djS: storedDJ = [];
 		setOutputString(tLoading);
-		const where = $i<HTMLInputElement>("exportedData");
-		if(where) { where.value = tLoading; }
 
 		const copyDJGroup = (input: DJGroup) => {
 			const {startsWith, endsWith, regex, declenjugations} = input;
@@ -312,8 +299,6 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 		}
 		const final = JSON.stringify(exportable);
 		setOutputString(final);
-		const where = $i<HTMLInputElement>("exportedData");
-		if(where) { where.value = final; }
 	}, [
 		output,
 		export_wg,
@@ -363,146 +348,132 @@ const MExportAllData: FC<ModalProperties> = (props) => {
 	const toggleSetExport_set = useCallback(() => setExport_set(!export_set), [export_set]);
 
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doClose} onIonModalDidPresent={onLoad}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tExportThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={doClose} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="full">
-					<IonItem>
-						<IonLabel className="ion-text-center ion-text-wrap">
-							<h2 className="ion-text-center ion-text-wrap blankContents">
-								<Markdown>{tExportMsg}</Markdown>
-							</h2>
-						</IonLabel>
-					</IonItem>
-					<IonItem lines="none">
-						<IonTextarea
-							aria-label={tExportedData}
-							wrap="soft"
-							rows={12}
-							id="exportedData"
-							value={outputString}
-						></IonTextarea>
-					</IonItem>
-					<IonItem lines="none">
-						<IonButton
-							color="primary"
-							onClick={doCopyText}
-							slot="end"
-						>{tCopy}</IonButton>
-					</IonItem>
-					<IonItemDivider>{tWhatToExport}</IonItemDivider>
-					<IonItem lines="none">
-						<IonToggle
-							enableOnOffLabels
-							checked={export_ms}
-							onIonChange={toggleSetExport_ms}
-						>{tCurrentMorphoSyntaxSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_msStored}
-							onIonChange={toggleSetExport_msStored}
-						>{tStoredMorphoSyntaxDocuments}</IonToggle>
-					</IonItem>
-					<IonItem lines="none">
-						<IonToggle
-							enableOnOffLabels
-							checked={export_wg}
-							onIonChange={toggleSetExport_wg}
-						>{tCurrentWordGenSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_wgStored}
-							onIonChange={toggleSetExport_wgStored}
-						>{tStoredWordGenSettings}</IonToggle>
-					</IonItem>
-					<IonItem lines="none">
-						<IonToggle
-							enableOnOffLabels
-							checked={export_we}
-							onIonChange={toggleSetExport_we}
-						>{tCurrentWordEvolveSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_weStored}
-							onIonChange={toggleSetExport_weStored}
-						>{tStoredWordEvolveSettings}</IonToggle>
-					</IonItem>
-					<IonItem lines="none">
-						<IonToggle
-							enableOnOffLabels
-							checked={export_dj}
-							onIonChange={toggleSetExport_dj}
-						>{tCurrentDeclenjugatorSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_djStored}
-							onIonChange={toggleSetExport_djStored}
-						>{tStoredDeclenjugatorSettings}</IonToggle>
-					</IonItem>
-					<IonItem lines="none">
-						<IonToggle
-							enableOnOffLabels
-							checked={export_lex}
-							onIonChange={toggleSetExport_lex}
-						>{tCurrentLexiconSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_lexStored}
-							onIonChange={toggleSetExport_lexStored}
-						>{tStoredLexiconDocuments}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_con}
-							onIonChange={toggleSetExport_con}
-						>{tConceptsSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							checked={export_ec}
-							onIonChange={toggleSetExport_ec}
-						>{tExtraCharactersSettings}</IonToggle>
-					</IonItem>
-					<IonItem>
-						<IonToggle
-							enableOnOffLabels
-							aria-label={tOtherSettings}
-							checked={export_set}
-							onIonChange={toggleSetExport_set}
-						>{tOtherSettings}</IonToggle>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="success" slot="end" onClick={doClose}>
-						<IonIcon icon={checkmarkDoneCircleOutline} slot="start" />
-						<IonLabel>{tDone}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			closeFunc={doClose}
+			title={tExportThing}
+			onIonModalDidPresent={onLoad}
+			bottomEnd={[{button: "done"}]}
+		>
+			<IonList lines="full">
+				<IonItem>
+					<IonLabel className="ion-text-center ion-text-wrap">
+						<h2 className="ion-text-center ion-text-wrap blankContents">
+							<Markdown>{tExportMsg}</Markdown>
+						</h2>
+					</IonLabel>
+				</IonItem>
+				<IonItem lines="none">
+					<IonTextarea
+						aria-label={tExportedData}
+						wrap="soft"
+						rows={12}
+						id="exportedData"
+						value={outputString}
+					></IonTextarea>
+				</IonItem>
+				<IonItem lines="none">
+					<IonButton
+						color="primary"
+						onClick={doCopyText}
+						slot="end"
+					>{tCopy}</IonButton>
+				</IonItem>
+				<IonItemDivider>{tWhatToExport}</IonItemDivider>
+				<IonItem lines="none">
+					<IonToggle
+						enableOnOffLabels
+						checked={export_ms}
+						onIonChange={toggleSetExport_ms}
+					>{tCurrentMorphoSyntaxSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_msStored}
+						onIonChange={toggleSetExport_msStored}
+					>{tStoredMorphoSyntaxDocuments}</IonToggle>
+				</IonItem>
+				<IonItem lines="none">
+					<IonToggle
+						enableOnOffLabels
+						checked={export_wg}
+						onIonChange={toggleSetExport_wg}
+					>{tCurrentWordGenSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_wgStored}
+						onIonChange={toggleSetExport_wgStored}
+					>{tStoredWordGenSettings}</IonToggle>
+				</IonItem>
+				<IonItem lines="none">
+					<IonToggle
+						enableOnOffLabels
+						checked={export_we}
+						onIonChange={toggleSetExport_we}
+					>{tCurrentWordEvolveSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_weStored}
+						onIonChange={toggleSetExport_weStored}
+					>{tStoredWordEvolveSettings}</IonToggle>
+				</IonItem>
+				<IonItem lines="none">
+					<IonToggle
+						enableOnOffLabels
+						checked={export_dj}
+						onIonChange={toggleSetExport_dj}
+					>{tCurrentDeclenjugatorSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_djStored}
+						onIonChange={toggleSetExport_djStored}
+					>{tStoredDeclenjugatorSettings}</IonToggle>
+				</IonItem>
+				<IonItem lines="none">
+					<IonToggle
+						enableOnOffLabels
+						checked={export_lex}
+						onIonChange={toggleSetExport_lex}
+					>{tCurrentLexiconSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_lexStored}
+						onIonChange={toggleSetExport_lexStored}
+					>{tStoredLexiconDocuments}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_con}
+						onIonChange={toggleSetExport_con}
+					>{tConceptsSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						checked={export_ec}
+						onIonChange={toggleSetExport_ec}
+					>{tExtraCharactersSettings}</IonToggle>
+				</IonItem>
+				<IonItem>
+					<IonToggle
+						enableOnOffLabels
+						aria-label={tOtherSettings}
+						checked={export_set}
+						onIonChange={toggleSetExport_set}
+					>{tOtherSettings}</IonToggle>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

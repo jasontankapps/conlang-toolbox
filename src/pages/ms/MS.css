@@ -143,24 +143,19 @@
 	margin-inline-start: 0;
 	margin-inline-end: 0.5rem;
 }
-#morphoSyntaxPage table,
-.morphoSyntaxModal table {
+:is(#morphoSyntaxPage, .morphoSyntaxModal) table {
 	background: var(--ion-background-shader);
 	border: solid 0.25rem var(--ion-color-dark-tint);
 	margin: 0.5rem 1rem;
 }
-#morphoSyntaxPage table td,
-.morphoSyntaxModal table td,
-#morphoSyntaxPage table th,
-.morphoSyntaxModal table th {
+:is(#morphoSyntaxPage, .morphoSyntaxModal) table :is(td, th) {
 	padding-block: 0.5rem;
 	padding-inline: 1rem;
 	vertical-align: top;
 	text-align: start;
 	border: 0;
 }
-.morphoSyntaxModal table.informational th,
-.morphoSyntaxModal table.informational td + td {
+.morphoSyntaxModal table.informational :is(th, td + td) {
 	text-align: center;
 	padding-inline: 0.25rem;
 }
@@ -168,23 +163,19 @@
 	border-width: 0.1rem;
 	margin: 0;
 }
-.morphoSyntaxModal table.translation td,
-.morphoSyntaxModal table.translation td + td {
+.morphoSyntaxModal table.translation :is(th, td + td) {
 	padding-inline: 0.25rem;
 	hyphens: manual;
 	overflow-wrap: break-word;
 }
-#morphoSyntaxPage table td + td,
-.morphoSyntaxModal table td + td {
+:is(#morphoSyntaxPage, .morphoSyntaxModal) table td + td {
 	padding-inline-start: 0;
 }
-#morphoSyntaxPage table tr:nth-child(even),
-.morphoSyntaxModal table tr:nth-child(even),
+:is(#morphoSyntaxPage, .morphoSyntaxModal) table tr:nth-child(even),
 .morphoSyntaxModal table.informational thead tr {
 	background: var(--ion-background-shader);
 }
-#morphoSyntaxPage table ul,
-.morphoSyntaxModal table ul {
+:is(#morphoSyntaxPage, .morphoSyntaxModal) table ul {
 	margin: 0;
 }
 #morphoSyntaxPage .morphoSyntaxTextItem::part(native) {

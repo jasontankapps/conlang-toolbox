@@ -88,6 +88,7 @@ const settings = {
 	noEqualCharMsg: "You must provide some \"equal\" characters.",
 	noPostPreCharMsg: "You must provide some \"pre\" or \"post\" characters.",
 
+	CustomSort: "Custom Sort",
 	NewCustomSort: "New Custom Sort",
 	AddSort: "Add Custom Sort",
 	SortAdded: "Custom Sort added",

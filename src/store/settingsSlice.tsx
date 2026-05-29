@@ -2,18 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { AppSettings, ThemeNames } from './types';
 import blankAppState, { cleanerObject } from './blankAppState';
-import maybeUpdateTheme from '../components/MaybeUpdateTheme';
 
 const initialState = blankAppState.appSettings;
 
-const checkTheme = (old: ThemeNames, incoming: ThemeNames) => {
-	if(old !== incoming) {
-		maybeUpdateTheme(old, incoming);
-	}
-};
-
 const setThemeFunc = (state: AppSettings, action: PayloadAction<ThemeNames>) => {
-	checkTheme(state.theme, action.payload);
 	state.theme = action.payload;
 	return state;
 };
@@ -28,7 +20,6 @@ const loadStateSettingsFunc = (state: AppSettings, action: PayloadAction<AppSett
 		...cleanStateFunc(state),
 		...action.payload
 	};
-	checkTheme(state.theme, final.theme);
 	return final;
 };
 
@@ -40,7 +31,6 @@ const cleanStateFunc = (state: AppSettings) => {
 		}
 	});
 	const final: AppSettings = {...temp};
-	checkTheme(state.theme, final.theme);
 	return final;
 };
 

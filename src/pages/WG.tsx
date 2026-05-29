@@ -9,8 +9,6 @@ import {
 	IonRouterOutlet
 } from '@ionic/react';
 
-import { PageData } from '../store/types';
-
 import { appPagesObject } from '../components/appPagesInfo';
 import WGCharGroups from "./wg/WGcharactergroups";
 import WGTransforms from "./wg/WGtransforms";
@@ -20,7 +18,7 @@ import WGSettings from "./wg/WGsettings";
 import WGinfo from './wg/WGinfo';
 
 
-const WG: FC<PageData> = (props) => {
+const WG: FC = () => {
 	const tabs = useMemo(() => appPagesObject.wg.filter(obj => !obj.hidden).map(obj => {
 		const { title, tabTitle, url, tab, icon, Icon } = obj;
 		return (
@@ -37,12 +35,12 @@ const WG: FC<PageData> = (props) => {
 					Using the render method prop cuts down the number of renders your components will have due to route changes.
 					Use the component prop when your component depends on the RouterComponentProps passed in automatically.
 				*/}
-				<Route path="/wg/overview" render={() => <WGinfo {...props} />} exact={true} />
-				<Route path="/wg/charGroups" render={() => <WGCharGroups {...props} /> } exact={true} />
-				<Route path="/wg/syllables" render={() => <WGSyllables {...props} />} exact={true} />
-				<Route path="/wg/transforms" render={() => <WGTransforms {...props} />} exact={true} />
-				<Route path="/wg/output" render={() => <WGOutput {...props} />} exact={true} />
-				<Route path="/wg/settings" render={() => <WGSettings {...props} />} exact={true} />
+				<Route path="/wg/overview" render={() => <WGinfo />} exact={true} />
+				<Route path="/wg/charGroups" render={() => <WGCharGroups /> } exact={true} />
+				<Route path="/wg/syllables" render={() => <WGSyllables />} exact={true} />
+				<Route path="/wg/transforms" render={() => <WGTransforms />} exact={true} />
+				<Route path="/wg/output" render={() => <WGOutput />} exact={true} />
+				<Route path="/wg/settings" render={() => <WGSettings />} exact={true} />
 			</IonRouterOutlet>
 			<IonTabBar slot="bottom">
 				{tabs}

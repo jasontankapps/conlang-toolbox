@@ -1,39 +1,27 @@
 import React, { FC, useCallback, useState } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast,
 	IonSelect,
 	IonSelectOption,
 	SelectCustomEvent
 } from '@ionic/react';
-import {
-	closeCircleOutline,
-	saveOutline,
-	globeOutline
-} from 'ionicons/icons';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ExtraCharactersModalOpener, RelationObject, SetState, SortSeparator } from '../../store/types';
+import { ModalProperties, RelationObject, SetState, SortSeparator } from '../../store/types';
 
 import toaster from '../../components/toaster';
-import { $i } from '../../components/DollarSignExports';
 import yesNoAlert from '../../components/yesNoAlert';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
+import getSetValue from '../../components/getSetValue';
+import Modal from '../../components/Modal';
 
-interface CustomSortModal extends ExtraCharactersModalOpener {
+interface CustomSortModal extends ModalProperties {
 	setSavedRelation: SetState<RelationObject | null>
 }
 
@@ -53,20 +41,22 @@ const commons = [
 ];
 
 const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
-	const [ tYouSure, tCancel, tClose, tExChar, tOk, tSave, tUnsaved, tYesDisc ] = useI18Memo(commons);
+	const [ tYouSure, tOk, tUnsaved, tYesDisc ] = useI18Memo(commons);
 	const [
 		tBase, tAfterBase, tBeforeBase, tComma, tThingAdded, tEndBefore, tNoSep,
 		tPeriod, tSemi, tSpace, tStartAfter, tTheBase, tNoBase, tNoPrePost,
 		tpBase, tpSep, tpAfter, tpBefore, tAddThing
 	] = useI18Memo(translations, "settings");
 
-	const { isOpen, setIsOpen, openECM, setSavedRelation } = props;
+	const { isOpen, setIsOpen, setSavedRelation } = props;
 	const [separator, setSeparator] = useState<SortSeparator>("");
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
+	const [addBaseRelation, addBaseRelationRef] = useElement<HTMLIonInputElement>();
+	const [addPreRelation, addPreRelationRef] = useElement<HTMLIonInputElement>();
+	const [addPostRelation, addPostRelationRef] = useElement<HTMLIonInputElement>();
 	const maybeSaveRelation = useCallback(() => {
-		const _base = $i<HTMLInputElement>("addBaseRelation");
-		const base = (_base && _base.value) || "";
+		const base = getSetValue(addBaseRelation);
 		if(!base) {
 			doAlert({
 				message: tNoBase,
@@ -81,10 +71,8 @@ const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
 			})
 			return;
 		}
-		const _pre = $i<HTMLInputElement>("addPreRelation");
-		const _post = $i<HTMLInputElement>("addPostRelation");
-		const pre = _pre && _pre.value ? _pre.value.split(separator) : [];
-		const post = _post && _post.value ? _post.value.split(separator) : [];
+		const pre = getSetValue(addPreRelation).split(separator);
+		const post = getSetValue(addPostRelation).split(separator);
 		if(!(pre.length + post.length)) {
 			doAlert({
 				message: tNoPrePost,
@@ -101,9 +89,9 @@ const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
 		}
 		const relation: RelationObject = { id: uuidv4(), base, pre, post, separator };
 		setSavedRelation(relation);
-		if(_base) { _base.value = ""; }
-		if(_pre) { _pre.value = ""; }
-		if(_post) { _post.value = ""; }
+		getSetValue(addBaseRelation, "");
+		getSetValue(addPreRelation, "");
+		getSetValue(addPostRelation, "");
 		setIsOpen(false);
 		toaster({
 			message: tThingAdded,
@@ -112,135 +100,114 @@ const AddCustomSortRelation: FC<CustomSortModal> = (props) => {
 			duration: 2500,
 			toast
 		});
-	}, [doAlert, separator, setIsOpen, setSavedRelation, tNoBase, tNoPrePost, tOk, tThingAdded, toast]);
+	}, [
+		doAlert, separator, setIsOpen, setSavedRelation,
+		tNoBase, tNoPrePost, tOk, tThingAdded, toast,
+		addBaseRelation, addPreRelation, addPostRelation
+	]);
 	const maybeCancel = useCallback(() => {
-		const _base = $i<HTMLInputElement>("addBaseRelation");
-		const _pre = $i<HTMLInputElement>("addPreRelation");
-		const _post = $i<HTMLInputElement>("addPostRelation");
-		if(_base && _pre && _post && (_base.value + _pre.value + _post.value)) {
+		if(getSetValue(addBaseRelation) || getSetValue(addPreRelation) || getSetValue(addPostRelation)) {
 			return yesNoAlert({
 				header: tUnsaved,
 				message: tYouSure,
 				submit: tYesDisc,
 				cssClass: "warning",
 				handler: () => {
-					if(_base) { _base.value = ""; }
-					if(_pre) { _pre.value = ""; }
-					if(_post) { _post.value = ""; }
+					getSetValue(addBaseRelation, "");
+					getSetValue(addPreRelation, "");
+					getSetValue(addPostRelation, "");
 					setIsOpen(false);
 				},
 				doAlert
 			});
 		}
-		if(_base) { _base.value = ""; }
-		if(_pre) { _pre.value = ""; }
-		if(_post) { _post.value = ""; }
+		getSetValue(addBaseRelation, "");
+		getSetValue(addPreRelation, "");
+		getSetValue(addPostRelation, "");
 		setIsOpen(false);
-	}, [doAlert, setIsOpen, tUnsaved, tYesDisc, tYouSure]);
-	const opener = useCallback(() => openECM(true), [openECM]);
+	}, [
+		doAlert, setIsOpen, tUnsaved, tYesDisc, tYouSure,
+		addBaseRelation, addPreRelation, addPostRelation
+	]);
 	const doSetSeparator = useCallback((e: SelectCustomEvent) => setSeparator(e.detail.value), []);
 
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tAddThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={opener} aria-label={tExChar}>
-							<IonIcon icon={globeOutline} />
-						</IonButton>
-						<IonButton onClick={maybeCancel} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="full" className="hasSpecialLabels">
-					<IonItem>
-						<div
-							slot="start"
-							className="ion-margin-end"
-						>{tpBase}</div>
-						<IonInput
-							aria-label={tBase}
-							id="addBaseRelation"
-							placeholder={tTheBase}
-						/>
-					</IonItem>
-					<IonItem className="labelled" lines="none">
-						<IonLabel>{tpBefore}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tBeforeBase}
-							id="addPreRelation"
-							helperText={tEndBefore}
-						/>
-					</IonItem>
-					<IonItem className="labelled" lines="none">
-						<IonLabel>{tpAfter}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tAfterBase}
-							id="addPostRelation"
-							helperText={tStartAfter}
-						/>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSep}
-							value={separator}
-							onIonChange={doSetSeparator}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=""
-							>{tNoSep}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=" "
-							>{tSpace}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=","
-							>{tComma}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="."
-							>{tPeriod}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=";"
-							>{tSemi}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter className="modalBorderTop">
-				<IonToolbar>
-					<IonButton
-						color="warning"
+		<Modal
+			isOpen={isOpen}
+			closeFunc={maybeCancel}
+			enclosed
+			title={tAddThing}
+			bottomEnd={[{button: "add", action: maybeSaveRelation}]}
+			bottomStart={[{button: "cancel"}]}
+			extraChars
+		>
+			<IonList lines="full" className="hasSpecialLabels">
+				<IonItem>
+					<div
 						slot="start"
-						onClick={maybeCancel}
+						className="ion-margin-end"
+					>{tpBase}</div>
+					<IonInput
+						aria-label={tBase}
+						id="addBaseRelation"
+						placeholder={tTheBase}
+						ref={addBaseRelationRef}
+					/>
+				</IonItem>
+				<IonItem className="labelled" lines="none">
+					<IonLabel>{tpBefore}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tBeforeBase}
+						id="addPreRelation"
+						helperText={tEndBefore}
+						ref={addPreRelationRef}
+					/>
+				</IonItem>
+				<IonItem className="labelled" lines="none">
+					<IonLabel>{tpAfter}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tAfterBase}
+						id="addPostRelation"
+						helperText={tStartAfter}
+						ref={addPostRelationRef}
+					/>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSep}
+						value={separator}
+						onIonChange={doSetSeparator}
 					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={maybeSaveRelation}
-					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tSave}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=""
+						>{tNoSep}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=" "
+						>{tSpace}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=","
+						>{tComma}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="."
+						>{tPeriod}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=";"
+						>{tSemi}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

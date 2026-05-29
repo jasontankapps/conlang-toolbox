@@ -1,11 +1,14 @@
 import { TOptionsBase, InterpolationMap } from 'i18next';
-import { $Dictionary } from 'i18next/typescript/helpers';
 
 import i18n from "../i18n"
 
 // Sadly, will only return 'string' results, according to Typescript...
 
 // tc('word') - translates 'word' from the `common` namespace
+
+//From i18n/typescript/helpers.d.ts -> type $Dictionary<T = unknown> = { [key: string]: T };
+type $Dictionary = { [key: string]: unknown };
+
 export const tc =
 	(
 		input: string | string[],

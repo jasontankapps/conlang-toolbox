@@ -1,40 +1,27 @@
 import React, { useCallback, useState, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast,
 	IonSelect,
 	IonSelectOption,
 	SelectCustomEvent
 } from '@ionic/react';
-import {
-	closeCircleOutline,
-	saveOutline,
-	globeOutline,
-	trashOutline
-} from 'ionicons/icons';
 
-import { ExtraCharactersModalOpener, EqualityObject, SortSeparator, SetState } from '../../store/types';
+import { EqualityObject, SortSeparator, SetState, ModalProperties } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import toaster from '../../components/toaster';
-import { $i } from '../../components/DollarSignExports';
 import yesNoAlert from '../../components/yesNoAlert';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
+import getSetValue from '../../components/getSetValue';
+import Modal from '../../components/Modal';
 
-interface CustomSortModal extends ExtraCharactersModalOpener {
+interface CustomSortModal extends ModalProperties {
 	incomingEquality: EqualityObject | null
 	setOutgoingEquality: SetState<EqualityObject | null | string>
 }
@@ -50,14 +37,13 @@ const translations = [
 ]
 
 const commons = [
-	"Close", "Delete", "ExtraChars", "Ok", "Save",
-	"areYouSure", "emphasizedError"
+	"Ok", "areYouSure", "emphasizedError"
 ];
 
 const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 	const [ tc ] = useTranslator('common');
 	const [
-		tClose, tDelete, tExChar, tOk, tSave, tRUSure, tError
+		tOk, tRUSure, tError
 	] = useI18Memo(commons);
 	const [
 		tBase, tCharEqual, tCharsToBeEqual, tComma, tNoSep, tPeriod,
@@ -65,12 +51,12 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 		tpSep, tDelThing, tThingEdited, tEditThing
 	] = useI18Memo(translations, "settings");
 
-	const { isOpen, setIsOpen, openECM, incomingEquality, setOutgoingEquality } = props;
+	const { isOpen, setIsOpen, incomingEquality, setOutgoingEquality } = props;
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
 	const [separator, setSeparator] = useState<SortSeparator>("");
-	const [_base, setBase] = useState<HTMLInputElement | null>(null);
-	const [_equals, setEquals] = useState<HTMLInputElement | null>(null);
+	const [editBaseEquality, editBaseEqualityRef] = useElement<HTMLIonInputElement>();
+	const [editEqualsEquality, editEqualsEqualityRef] = useElement<HTMLIonInputElement>();
 	const onLoad = useCallback(() => {
 		const {
 			separator = ",",
@@ -78,20 +64,16 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 			equals = [tError]
 		} = incomingEquality || {};
 		setSeparator(separator);
-		const _base = $i<HTMLInputElement>("editBaseEquality");
-		const _equals = $i<HTMLInputElement>("editEqualsEquality");
-		setBase(_base);
-		setEquals(_equals);
-		if(_base) { _base.value = base; }
-		if(_equals) { _equals.value = equals.join(separator); }
-	}, [incomingEquality, tError]);
+		getSetValue(editBaseEquality, base);
+		getSetValue(editEqualsEquality, equals.join(separator));
+	}, [incomingEquality, tError, editBaseEquality, editEqualsEquality]);
 	const close = useCallback(() => {
-		if(_base) { _base.value = ""; }
-		if(_equals) { _equals.value = ""; }
+		getSetValue(editBaseEquality, "");
+		getSetValue(editEqualsEquality, "");
 		setIsOpen(false);
-	}, [setIsOpen, _base, _equals]);
+	}, [setIsOpen, editBaseEquality, editEqualsEquality]);
 	const maybeSaveEquality = useCallback(() => {
-		const base = (_base && _base.value) || "";
+		const base = getSetValue(editBaseEquality);
 		if(!base) {
 			doAlert({
 				message: tNoBase,
@@ -106,7 +88,7 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 			})
 			return;
 		}
-		const equals = _equals && _equals.value ? _equals.value.split(separator) : [];
+		const equals = getSetValue(editEqualsEquality).split(separator);
 		if(equals.length === 0) {
 			doAlert({
 				message: tNoEqual,
@@ -131,7 +113,11 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 			duration: 2000,
 			toast
 		});
-	}, [_base, _equals, close, doAlert, incomingEquality, separator, setOutgoingEquality, tNoBase, tNoEqual, tOk, tThingEdited, toast]);
+	}, [
+		close, doAlert, incomingEquality, separator,
+		setOutgoingEquality, tNoBase, tNoEqual, tOk,
+		tThingEdited, toast, editBaseEquality, editEqualsEquality
+	]);
 	const maybeDelete = useCallback(() => {
 		const handler = () => {
 			setOutgoingEquality(incomingEquality!.id);
@@ -146,102 +132,78 @@ const EditCustomSortEquality: FC<CustomSortModal> = (props) => {
 			doAlert
 		});
 	}, [close, doAlert, incomingEquality, setOutgoingEquality, tc, tDelThing, tRUSure]);
-	const openEx = useCallback(() => openECM(true), [openECM]);
 	const doSetSep = useCallback((e: SelectCustomEvent) => setSeparator(e.detail.value), []);
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false} onIonModalDidPresent={onLoad}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tEditThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={openEx} aria-label={tExChar}>
-							<IonIcon icon={globeOutline} />
-						</IonButton>
-						<IonButton onClick={close} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="full" className="hasSpecialLabels">
-					<IonItem>
-						<div
-							slot="start"
-							className="ion-margin-end"
-						>{tpBase}</div>
-						<IonInput
-							aria-label={tBase}
-							id="editBaseEquality"
-							placeholder={tTheBase}
-						/>
-					</IonItem>
-					<IonItem
-						className="labelled"
-						lines="none"
-					>
-						<IonLabel>{tpEqual}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tCharEqual}
-							id="editEqualsEquality"
-							placeholder={tCharsToBeEqual}
-						/>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSep}
-							value={separator}
-							onIonChange={doSetSep}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=""
-							>{tNoSep}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=" "
-							>{tSpace}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=","
-							>{tComma}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="."
-							>{tPeriod}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=";"
-							>{tSemi}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter className="modalBorderTop">
-				<IonToolbar>
-					<IonButton
-						color="danger"
+		<Modal
+			isOpen={isOpen}
+			closeFunc={close}
+			enclosed
+			onIonModalDidPresent={onLoad}
+			title={tEditThing}
+			bottomEnd={[{button: "save", action: maybeSaveEquality}]}
+			bottomStart={[{button: "delete", action: maybeDelete}]}
+			footerClass="modalBorderTop"
+			extraChars
+		>
+			<IonList lines="full" className="hasSpecialLabels">
+				<IonItem>
+					<div
 						slot="start"
-						onClick={maybeDelete}
+						className="ion-margin-end"
+					>{tpBase}</div>
+					<IonInput
+						aria-label={tBase}
+						id="editBaseEquality"
+						placeholder={tTheBase}
+						ref={editBaseEqualityRef}
+					/>
+				</IonItem>
+				<IonItem
+					className="labelled"
+					lines="none"
+				>
+					<IonLabel>{tpEqual}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tCharEqual}
+						id="editEqualsEquality"
+						placeholder={tCharsToBeEqual}
+						ref={editEqualsEqualityRef}
+					/>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSep}
+						value={separator}
+						onIonChange={doSetSep}
 					>
-						<IonIcon icon={trashOutline} slot="end" />
-						<IonLabel>{tDelete}</IonLabel>
-					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={maybeSaveEquality}
-					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tSave}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=""
+						>{tNoSep}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=" "
+						>{tSpace}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=","
+						>{tComma}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="."
+						>{tPeriod}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=";"
+						>{tSemi}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

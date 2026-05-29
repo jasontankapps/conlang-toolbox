@@ -12,7 +12,6 @@ import {
 import { informationCircle, settings } from 'ionicons/icons';
 import Markdown from 'react-markdown';
 
-import { PageData } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import Header from '../../components/Header';
@@ -25,7 +24,7 @@ const translations = [
 
 const joiner = { joinArrays: "\n" };
 
-const MSinfo: FC<PageData> = () => {
+const MSinfo: FC = () => {
 	const [ t ] = useTranslator('ms');
 	const [ tc ] = useTranslator('common');
 	const tWhat = useMemo(() => t("WhatIsMS"), [t]);

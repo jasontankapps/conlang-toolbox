@@ -1,18 +1,11 @@
 import React, { FC, useCallback, useMemo } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
-	IonButton,
-	IonModal,
-	IonFooter,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
-import { closeCircleSharp } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
 import WGPresets from '../../../store/wgPresets';
@@ -23,7 +16,7 @@ import useTranslator from '../../../store/translationHooks';
 import yesNoAlert from '../../../components/yesNoAlert';
 import toaster from '../../../components/toaster';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import Modal from '../../../components/Modal';
 
 const getSpecialValue: (x: string) => [string, ...[string, string][]] | [string] = (input) => {
 	let m = input.match(/^(.+?)((?:\[[^=]+=[^\]]+\])+)$/);
@@ -41,25 +34,28 @@ const getSpecialValue: (x: string) => [string, ...[string, string][]] | [string]
 };
 
 interface PresetItemProps {
-	title: string
-	onClick: () => void
+	pair: WGPresetArray[number]
+	maybeLoadPreset: (x: string, y: Base_WG) => void
 }
 const PresetItem: FC<PresetItemProps> = (props) => {
-	const { title, onClick } = props;
+	const [ t ] = useTranslator('wg');
+	const { pair, maybeLoadPreset } = props;
+	const [ title, object ] = pair;
+	const tTitle = t(title);
 	return (
-		<IonItem button={true} onClick={onClick}>
+		<IonItem button={true} onClick={() => maybeLoadPreset(tTitle, object)}>
 			<IonLabel>{title}</IonLabel>
 		</IonItem>
 
 	);
 };
 
-const commons = [ "Cancel", "LoadPreset", "confirmLoad" ];
+const commons = [ "LoadPreset", "confirmLoad" ];
 
 const MaybeLoadPresetModal: FC<ModalProperties> = (props) => {
 	const [ t ] = useTranslator('wg');
 	const [ tc ] = useTranslator('common');
-	const [ tCancel, tLoadPre, tConfLoad ] = useI18Memo(commons);
+	const [ tLoadPre, tConfLoad ] = useI18Memo(commons);
 	const tClearAll = useMemo(() => t("clearAllThingsMsg"), [t]);
 
 	const { isOpen, setIsOpen } = props;
@@ -117,30 +113,23 @@ const MaybeLoadPresetModal: FC<ModalProperties> = (props) => {
 			});
 		}
 	}, [disableConfirms, dispatch, doAlert, setIsOpen, t, tc, toast, tConfLoad, tClearAll]);
-	const presets = useMemo(() => WGPresets.map((pair: WGPresetArray[number]) => {
-		const [ title, object ] = pair;
-		const tTitle = t(title);
-		return <PresetItem title={tTitle} key={title} onClick={() => maybeLoadPreset(tTitle, object)} />;
-	}), [maybeLoadPreset, t]);
 	const closer = useCallback(() => setIsOpen(false), [setIsOpen]);
 
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer}>
-			<ModalHeader title={tLoadPre} closeModal={setIsOpen} />
-			<IonContent>
-				<IonList lines="none" className="buttonFilled">
-					{isOpen ? presets : <></>}
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="danger" slot="end" onClick={closer}>
-						<IonIcon icon={closeCircleSharp} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tLoadPre}
+			closeFunc={closer}
+			bottomEnd={[{button: "cancel"}]}
+		>
+			<IonList lines="none" className="buttonFilled">
+				{isOpen ? (
+					WGPresets.map((pair: WGPresetArray[number]) => {
+						return <PresetItem key={pair[0]} maybeLoadPreset={maybeLoadPreset} pair={pair} />;
+					}))
+				: <></>}
+			</IonList>
+		</Modal>
 	);
 };
 

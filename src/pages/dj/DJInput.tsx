@@ -1,4 +1,4 @@
-import React, { useState, useCallback, ChangeEventHandler, FC, useMemo } from 'react';
+import React, { useState, useCallback, ChangeEventHandler, FC, useMemo, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -16,15 +16,16 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject } from '../../store/types';
+import { StateObject } from '../../store/types';
 import { setInput } from '../../store/declenjugatorSlice';
 
-import { $i } from '../../components/DollarSignExports';
 import debounce from '../../components/Debounce';
 import yesNoAlert from '../../components/yesNoAlert';
 import ModalWrap from '../../components/ModalWrap';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import useI18Memo from '../../components/useI18Memo';
 import Header from '../../components/Header';
+import useElement from '../../components/useElement';
 
 import ExtraCharactersModal from '../modals/ExtraCharacters';
 import LexiconImporterModal from '../modals/ImportFromLexicon';
@@ -37,11 +38,11 @@ const commons = [
 	"MaybeClearEntireInput", "ImportFromLexicon"
 ];
 
-const DJInput: FC<PageData> = (props) => {
+const DJInput: FC = () => {
 	const [ tClear, tExChar, tHelp, tInput, tYes, tYouSure, tImportFrom ] = useI18Memo(commons);
 	const [ tEnterHere, tWords ] = useI18Memo(translations, "dj");
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -50,6 +51,7 @@ const DJInput: FC<PageData> = (props) => {
 	const { input } = useSelector((state: StateObject) => state.dj);
 	const { lexicon } = useSelector((state: StateObject) => state.lexicon);
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
+	const [djInput, djInputRef] = useElement<HTMLTextAreaElement>();
 
 	const updateInput = useCallback((value: string) => {
 		const trimmed = value.replace(/(?:\s*\r?\n\s*)+/g, "\n").trim();
@@ -60,20 +62,17 @@ const DJInput: FC<PageData> = (props) => {
 		if(e.target && e.target.value) {
 			value = String(e.target.value);
 		} else {
-			const el = $i<HTMLInputElement>("djInput");
-			value = el ? el.value : "";
+			value = djInput ? djInput.value! : "";
 		}
 		debounce<(x: string) => void, string>(updateInput, [value], 500, "DJInput");
-	}, [updateInput]);
+	}, [updateInput, djInput]);
 	const acceptImport = useCallback((value: string) => {
-		const el = $i<HTMLInputElement>("djInput");
-		if(el) { el.value = value; }
+		if(djInput) { djInput.value = value; }
 		updateInput(value);
-	}, [updateInput]);
+	}, [updateInput, djInput]);
 	const clearInput = useCallback(() => {
 		const handler = () => {
-			const el = $i<HTMLInputElement>("djInput");
-			if(el) { el.value = ""; }
+			if(djInput) { djInput.value = ""; }
 			updateInput("");
 		};
 		if(disableConfirms) {
@@ -88,8 +87,9 @@ const DJInput: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [disableConfirms, doAlert, updateInput, tClear, tYes, tYouSure]);
+	}, [disableConfirms, doAlert, updateInput, tClear, tYes, tYouSure, djInput]);
 	const openLex = useCallback(() => setIsOpenLexImport(true), []);
+	const openEx = useCallback(() => setIsOpenECM(true), [setIsOpenECM]);
 	const endButtons = useMemo(() => [
 		<IonButton key="dj-endbutton1" onClick={() => setIsOpenECM(true)} aria-label={tExChar}>
 			<IonIcon icon={globeOutline} />
@@ -101,15 +101,16 @@ const DJInput: FC<PageData> = (props) => {
 	return (
 		<IonPage>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
-			<ModalWrap {...props.modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
+			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<InputCard setIsOpenInfo={setIsOpenInfo} />
 			</ModalWrap>
-			<LexiconImporterModal
-				{...modalPropsMaker(isOpenLexImport, setIsOpenLexImport)}
-				openECM={setIsOpenECM}
-				currentInput={input}
-				importFunc={acceptImport}
-			/>
+			<ExCharContext value={openEx}>
+				<LexiconImporterModal
+					{...modalPropsMaker(isOpenLexImport, setIsOpenLexImport)}
+					currentInput={input}
+					importFunc={acceptImport}
+				/>
+			</ExCharContext>
 			<Header
 				title={tInput}
 				endButtons={endButtons}
@@ -120,6 +121,7 @@ const DJInput: FC<PageData> = (props) => {
 						spellCheck={false}
 						aria-label={tWords}
 						id="djInput"
+						ref={djInputRef}
 						placeholder={tEnterHere}
 						defaultValue={input}
 						onChange={inputUpdated}

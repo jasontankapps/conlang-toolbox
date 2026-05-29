@@ -18,7 +18,7 @@ import {
 } from 'ionicons/icons';
 import Markdown from 'react-markdown';
 
-import { PageData, SetBooleanState } from '../../store/types';
+import { SetBooleanState } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import Header from '../../components/Header';
@@ -126,7 +126,7 @@ export const OutputCard: FC<CardProps> = (props) => {
 	);
 }
 
-const DJinfo: FC<PageData> = () => {
+const DJinfo: FC = () => {
 	const [ t ] = useTranslator('dj');
 	const [ tc ] = useTranslator('common');
 	const main = useMemo(() => t("info.overview", { joinArrays: "\n"}), [t]);

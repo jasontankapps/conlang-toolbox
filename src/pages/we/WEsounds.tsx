@@ -1,4 +1,4 @@
-import React, { useState, FC, useCallback, useMemo } from 'react';
+import React, { useState, FC, useCallback, useMemo, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -32,17 +32,18 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject, WESoundChangeObject } from '../../store/types';
+import { StateObject, WESoundChangeObject } from '../../store/types';
 import { deleteSoundChangeWE, rearrangeSoundChangesWE } from '../../store/weSlice';
 import useTranslator from '../../store/translationHooks';
 
 import reorganize from '../../components/reorganizer';
 import ModalWrap from "../../components/ModalWrap";
-import { $q } from '../../components/DollarSignExports';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import ltr from '../../components/LTR';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
 import ExtraCharactersModal from '../modals/ExtraCharacters';
 import AddSoundChangeModal from './modals/AddSoundChange';
 import EditSoundChangeModal from './modals/EditSoundChange';
@@ -128,14 +129,14 @@ const commons = [
 	"AddNew", "deleteThisCannotUndo", "DeleteEverythingQ", "Delete", "Help"
 ];
 
-const WESChange: FC<PageData> = (props) => {
+const WESChange: FC = () => {
 	const [ t ] = useTranslator('we');
 	const [ tc ] = useTranslator('common');
 	const tSChs = useMemo(() => t("SoundChanges"), [t]);
 	const [ tAddNew, tYouSure, tClearAll, tDelete, tHelp ] = useI18Memo(commons);
 	const tThingDeleted = useMemo(() => t("changesDeleted", { count: 1 }), [t]);
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -146,16 +147,15 @@ const WESChange: FC<PageData> = (props) => {
 	const toast = useIonToast();
 	const {disableConfirms} = useSelector((state: StateObject) => state.appSettings);
 	const { soundChanges } = useSelector((state: StateObject) => state.we);
+	const [soundGroups, soundGroupsRef] = useElement<HTMLIonListElement>();
 	const editSoundChange = useCallback((change: WESoundChangeObject) => {
-		const groups = $q<HTMLIonListElement>(".soundChanges");
-		if(groups) { groups.closeSlidingItems(); }
+		soundGroups && soundGroups.closeSlidingItems();
 		setEditing(change)
 		setIsOpenEditSoundChange(true);
-	}, []);
+	}, [soundGroups]);
 	const arrow = (ltr() ? "⟶" : "⟵");
 	const maybeDeleteSoundChange = useCallback((change: WESoundChangeObject) => {
-		const groups = $q<HTMLIonListElement>(".soundChanges");
-		if(groups) { groups.closeSlidingItems(); }
+		soundGroups && soundGroups.closeSlidingItems();
 		const handler = () => {
 			dispatch(deleteSoundChangeWE(change.id));
 			toaster({
@@ -182,7 +182,7 @@ const WESChange: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [arrow, disableConfirms, dispatch, doAlert, toast, tYouSure, tc, tThingDeleted]);
+	}, [arrow, disableConfirms, dispatch, doAlert, toast, tYouSure, tc, tThingDeleted, soundGroups]);
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
 		const reorganized = reorganize<WESoundChangeObject>(soundChanges, ed.from, ed.to);
@@ -232,16 +232,14 @@ const WESChange: FC<PageData> = (props) => {
 	const doAddSC = useCallback(() => setIsOpenAddSoundChange(true), []);
 	return (
 		<IonPage>
-			<AddSoundChangeModal
-				{...props.modalPropsMaker(isOpenAddSoundChange, setIsOpenAddSoundChange)}
-				openECM={setIsOpenECM}
-			/>
-			<EditSoundChangeModal
-				{...props.modalPropsMaker(isOpenEditSoundChange, setIsOpenEditSoundChange)}
-				openECM={setIsOpenECM}
-				editing={editing}
-				setEditing={setEditing}
-			/>
+			<ExCharContext value={doOpenEx}>
+				<AddSoundChangeModal {...modalPropsMaker(isOpenAddSoundChange, setIsOpenAddSoundChange)} />
+				<EditSoundChangeModal
+					{...modalPropsMaker(isOpenEditSoundChange, setIsOpenEditSoundChange)}
+					editing={editing}
+					setEditing={setEditing}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<SChCard setIsOpenInfo={setIsOpenInfo} />
@@ -270,7 +268,7 @@ const WESChange: FC<PageData> = (props) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen className="hasFabButton">
-				<IonList className="soundChanges units dragArea" lines="none">
+				<IonList className="soundChanges units dragArea" lines="none" ref={soundGroupsRef}>
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"

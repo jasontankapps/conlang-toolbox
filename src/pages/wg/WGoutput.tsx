@@ -1,5 +1,5 @@
 /* eslint-disable no-constant-condition */
-import React, { useCallback, useMemo, useState, FC } from 'react';
+import React, { useCallback, useMemo, useState, FC, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -28,7 +28,6 @@ import { TFunction } from 'i18next';
 import {
 	WGTransformObject,
 	WGCharGroupObject,
-	PageData,
 	LexiconColumn,
 	StateObject,
 	SortObject,
@@ -38,7 +37,6 @@ import {
 import { addItemsToLexiconColumn } from '../../store/lexiconSlice';
 import useTranslator from '../../store/translationHooks';
 
-import { $a, $i } from '../../components/DollarSignExports';
 import ModalWrap from "../../components/ModalWrap";
 import calculateCharGroupReferenceRegex from '../../components/CharGroupRegex';
 import toaster from '../../components/toaster';
@@ -48,6 +46,7 @@ import PermanentInfo from '../../components/PermanentInfo';
 import log from '../../components/Logging';
 import copyText from '../../components/copyText';
 import useI18Memo from '../../components/useI18Memo';
+import { ModalMakingContext } from '../../components/contexts';
 
 import OutputOptionsModal from './modals/OutputOptions';
 import { OutCard } from "./WGinfo";
@@ -56,7 +55,7 @@ interface GeneratorResponse {
 	copy: string,
 	list?: string[],
 	string?: string,
-	html?: string[][],
+	html?: [string, string][],
 	error?: string
 }
 
@@ -67,13 +66,53 @@ const translations = [
 	"noSyllablesDefinedMsg"
 ];
 
-const WGOut: FC<PageData> = (props) => {
+type SaveFunc = (text: string, el?: HTMLSpanElement | HTMLDivElement | null) => void;
+
+interface WordPairProps {
+	copyWord: string
+	printWord: string
+	id: string
+	maybeSaveThisWord: SaveFunc
+	savedWordsObject: SavedWordsObject
+}
+interface WordProps {
+	word: string
+	id: string
+	maybeSaveThisWord: SaveFunc
+	savedWordsObject: SavedWordsObject
+}
+
+type SavedWordsObject = { [key: string]: boolean };
+
+const SpanWord: FC<WordPairProps> = ({copyWord, printWord, id, maybeSaveThisWord, savedWordsObject}) => {
+	const className = savedWordsObject[copyWord] ? "word saved" : "word";
+	return (
+		<React.Fragment><span
+			className={className}
+			id={id}
+			onClick={() => maybeSaveThisWord(copyWord)}
+		>{printWord}</span>{' '}</React.Fragment>
+	);
+};
+
+const DivWord: FC<WordProps> = ({word, id, maybeSaveThisWord, savedWordsObject}) => {
+	const className = savedWordsObject[word] ? "word saved" : "word";
+	return (
+		<div
+			className={className}
+			id={id}
+			onClick={() => maybeSaveThisWord(word)}
+		>{word}</div>
+	);
+};
+
+const WGOut: FC = () => {
 	const [ t ] = useTranslator('wg');
 	const [ tc ] = useTranslator('common');
 	const [ tGenerate, tCancel, tHelp, tLoad, tOutput, tSave ] = useI18Memo(commons);
 	const [ tMissing, tNoCG, tNoSyll ] = useI18Memo(translations, 'wg');
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
 	const [isOpenOptions, setIsOpenOptions] = useState<boolean>(false);
@@ -83,12 +122,13 @@ const WGOut: FC<PageData> = (props) => {
 	const [copyString, setCopyString] = useState<string>("");
 	const [errorString, setErrorString] = useState<string>("");
 	const [displayString, setDisplayString] = useState<string>("");
-	const [displayHTML, setDisplayHTML] = useState<string[][]>([]);
+	const [displayHTML, setDisplayHTML] = useState<[string, string][]>([]);
 	const [displayList, setDisplayList] = useState<string[]>([]);
 	const [colsNum, setColsNum] = useState<string>("auto");
 
 	const [savedWords, setSavedWords] = useState<string[]>([]);
-	const [savedWordsObject, setSavedWordsObject] = useState<{ [key: string]: boolean }>({});
+	const [savedWordsObject, setSavedWordsObject] = useState<SavedWordsObject>({});
+	const [htmlElements, setHTMLElements] = useState<{ [key: string]: HTMLDivElement | HTMLSpanElement | null }>({});
 
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
@@ -154,20 +194,16 @@ const WGOut: FC<PageData> = (props) => {
 		customSortLexObj || defaultCustomSortObj
 	), [ customSortLexObj, defaultCustomSortObj, sensitivity, sortLanguage, defaultSortLanguage ]);
 
-	const maybeSaveThisWord = useCallback((text: string, id: string = "") => {
+	const maybeSaveThisWord:SaveFunc = useCallback((text) => {
 		if(isPickingSaving) {
 			if(text) {
 				const newObj = {...savedWordsObject};
 				if(savedWordsObject[text]) {
 					setSavedWords(savedWords.filter(word => word !== text));
 					delete newObj[text];
-					const el = id && $i<HTMLElement>(id);
-					if(el) { el.classList.remove("saved"); }
 				} else {
 					setSavedWords([...savedWords, text]);
 					newObj[text] = true;
-					const el = id && $i<HTMLElement>(id);
-					if(el) { el.classList.add("saved"); }
 				}
 				setSavedWordsObject(newObj);
 			}
@@ -237,8 +273,10 @@ const WGOut: FC<PageData> = (props) => {
 			return;
 		}
 
-		const results = await generator(wg, charGroupMap, regExpMap, setIsGenerating, wgSorter, t);
-		const { string, copy, html, list, error } = results;
+		const {
+			string, copy,
+			html, list, error
+		} = await generator(wg, charGroupMap, regExpMap, setIsGenerating, wgSorter, t);
 		if(error) {
 			setCopyString(copy);
 			setErrorString(error);
@@ -301,7 +339,10 @@ const WGOut: FC<PageData> = (props) => {
 						setSavedWords([]);
 						setSavedWordsObject({});
 						setIsPickingSaving(false);
-						$a(".word.saved").forEach((obj) => obj.classList.remove("saved"));
+						Object.values(htmlElements).forEach(el => {
+							el && el.classList.remove("saved");
+						});
+						setHTMLElements({});
 						// Toast
 						toaster({
 							message: tc(
@@ -326,7 +367,7 @@ const WGOut: FC<PageData> = (props) => {
 				}
 			]
 		});
-	}, [dispatch, doAlert, lexColumns, lexSorter, navigator, tCancel, tSave, tc, toast]);
+	}, [dispatch, doAlert, lexColumns, lexSorter, navigator, tCancel, tSave, tc, toast, htmlElements]);
 	const donePickingAndSaving = useCallback(() => {
 		setIsPickingSaving(false);
 		if(savedWords.length > 0) {
@@ -357,37 +398,24 @@ const WGOut: FC<PageData> = (props) => {
 
 	const parsedWords = useMemo(() => {
 		return displayHTML.map((words: string[], i: number) => {
-			const id = `createdWord${i}`;
-			return <React.Fragment key={i}>
-				<span
-					className="word"
-					id={id}
-					onClick={() => maybeSaveThisWord(words[0], id)}
-				>{words[1]}</span>{' '}
-			</React.Fragment>;
+			const id = `spanCreatedWord${i}`;
+			return <SpanWord key={id} id={id} copyWord={words[0]} printWord={words[1]} maybeSaveThisWord={maybeSaveThisWord} savedWordsObject={savedWordsObject} />;
 		});
-	}, [displayHTML, maybeSaveThisWord]);
+	}, [displayHTML, maybeSaveThisWord, savedWordsObject]);
 	const parsedWordList = useMemo(() => {
 		return displayList.map((word: string, i: number) => {
-			const id = `createdWord${i}`;
-			return (
-				<div
-					className="word"
-					key={i}
-					id={id}
-					onClick={() => maybeSaveThisWord(word, id)}
-				>{word}</div>
-			);
+			const id = `divCreatedWord${i}`;
+			return <DivWord key={id} word={word} id={id} maybeSaveThisWord={maybeSaveThisWord} savedWordsObject={savedWordsObject} />;
 		});
-	}, [displayList, maybeSaveThisWord]);
+	}, [displayList, maybeSaveThisWord, savedWordsObject]);
 	const theOutput = useMemo(() => {
-		if(displayString) {
+		if(errorString) {
+			return <h2 color="danger" className="ion-text-center">{errorString}</h2>;
+		} else if(displayString) {
 			if(isPickingSaving) {
 				return parsedWords;
 			}
 			return [displayString];
-		} else if (errorString) {
-			return <h2 color="danger" className="ion-text-center">{errorString}</h2>;
 		} else if (displayList.length > 0) {
 			return parsedWordList;
 		}
@@ -527,7 +555,7 @@ const generator = async (
 	// Generate a psuedo-text
 	// // //
 	const generatePseudoText = async () => {
-		const textInfo: string[][] = [];
+		const textInfo: [string, string][] = [];
 		const text: string[] = [];
 		for(let sentenceNumber = 0; sentenceNumber < sentencesPerText; sentenceNumber++) {
 			const words: (string[])[] = [];
@@ -565,7 +593,7 @@ const generator = async (
 			}
 			text.push(full);
 			textInfo.push(...words.map((word: string[], i: number) => {
-				return [sentence[i], word.join('')];
+				return [sentence[i], word.join('')] as [string, string];
 			}));
 		}
 		const textString = text.join(" ");

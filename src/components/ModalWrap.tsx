@@ -15,7 +15,12 @@ import useI18Memo from './useI18Memo';
 
 const translations = ["Info", "Close"];
 
-const ModalWrap: FC<PropsWithChildren<{isOpen: boolean, setIsOpen: SetBooleanState}>> = (props) => {
+interface ModalWrapProps {
+	isOpen: boolean,
+	setIsOpen: SetBooleanState
+}
+
+const ModalWrap: FC<PropsWithChildren<ModalWrapProps>> = (props) => {
 	const {
 		isOpen,
 		setIsOpen,

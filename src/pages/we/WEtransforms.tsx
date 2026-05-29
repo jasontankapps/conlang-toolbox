@@ -1,4 +1,4 @@
-import React, { useState, FC, useCallback, useMemo } from 'react';
+import React, { useState, FC, useCallback, useMemo, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -32,18 +32,19 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject, WETransformObject } from '../../store/types';
+import { StateObject, WETransformObject } from '../../store/types';
 import { deleteTransformWE, rearrangeTransformsWE } from '../../store/weSlice';
 import useTranslator from '../../store/translationHooks';
 
 import ModalWrap from "../../components/ModalWrap";
-import { $q } from '../../components/DollarSignExports';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import ltr from '../../components/LTR';
 import ExtraCharactersModal from '../modals/ExtraCharacters';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import reorganize from '../../components/reorganizer';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
 import AddTransformModal from './modals/AddTransform';
 import EditTransformModal from './modals/EditTransform';
 import { TraCard } from "./WEinfo";
@@ -135,13 +136,13 @@ const commons = [
 	"DeleteEverythingQ", "deleteThisCannotUndo"
 ];
 
-const WERew: FC<PageData> = (props) => {
+const WERew: FC= () => {
 	const [ tc ] = useTranslator('common');
 	const [ tw ] = useTranslator('wgwe');
 	const tTransformations = useMemo(() => tw("Transformations"), [tw]);
 	const [ tAddNew, tDelete, tExChar, tHelp, tClearAll, tYouSure ] = useI18Memo(commons);
 	
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -152,15 +153,14 @@ const WERew: FC<PageData> = (props) => {
 	const toast = useIonToast();
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
 	const { transforms } = useSelector((state: StateObject) => state.we);
+	const [transformGroups, transformGroupsRef] = useElement<HTMLIonListElement>();
 	const editTransform = useCallback((transform: WETransformObject) => {
-		const groups = $q<HTMLIonListElement>((".transforms"));
-		if(groups) { groups.closeSlidingItems(); }
+		transformGroups && transformGroups.closeSlidingItems();
 		setEditing(transform);
 		setIsOpenEditTransform(true);
-	}, []);
+	}, [transformGroups]);
 	const maybeDeleteTransform = useCallback((trans: WETransformObject) => {
-		const groups = $q<HTMLIonListElement>((".transforms"));
-		if(groups) { groups.closeSlidingItems(); }
+		transformGroups && transformGroups.closeSlidingItems();
 		const handler = () => {
 			dispatch(deleteTransformWE(trans.id));
 			toaster({
@@ -184,7 +184,7 @@ const WERew: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [dispatch, tc, tw, toast, doAlert, disableConfirms, tYouSure]);
+	}, [dispatch, tc, tw, toast, doAlert, disableConfirms, tYouSure, transformGroups]);
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
 		const reorganized = reorganize<WETransformObject>(transforms, ed.from, ed.to);
@@ -230,16 +230,14 @@ const WERew: FC<PageData> = (props) => {
 	const doAddTr = useCallback(() => setIsOpenAddTransform(true), []);
 	return (
 		<IonPage>
-			<AddTransformModal
-				{...props.modalPropsMaker(isOpenAddTransform, setIsOpenAddTransform)}
-				openECM={setIsOpenECM}
-			/>
-			<EditTransformModal
-				{...props.modalPropsMaker(isOpenEditTransform, setIsOpenEditTransform)}
-				openECM={setIsOpenECM}
-				editing={editing}
-				setEditing={setEditing}
-			/>
+			<ExCharContext value={doOpenEx}>
+				<AddTransformModal {...modalPropsMaker(isOpenAddTransform, setIsOpenAddTransform)} />
+				<EditTransformModal
+					{...modalPropsMaker(isOpenEditTransform, setIsOpenEditTransform)}
+					editing={editing}
+					setEditing={setEditing}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<TraCard setIsOpenInfo={setIsOpenInfo} />
@@ -268,7 +266,7 @@ const WERew: FC<PageData> = (props) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen className="hasFabButton">
-				<IonList className="transforms units dragArea" lines="none">
+				<IonList className="transforms units dragArea" lines="none" ref={transformGroupsRef}>
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"

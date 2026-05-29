@@ -6,8 +6,9 @@ const doJSON = (
 	msInfo: MSState,
 	doDownload: (e: MouseEvent<HTMLIonItemElement, globalThis.MouseEvent>, x: string, y: string) => void
 ) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { id, lastSave, ...output } = msInfo;
+	const output: Partial<MSState> = {...msInfo};
+	delete output.id;
+	delete output.lastSave;
 	doDownload(e, JSON.stringify(output), "json");
 };
 

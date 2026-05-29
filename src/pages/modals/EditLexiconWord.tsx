@@ -1,39 +1,26 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
-import {
-	closeCircleOutline,
-	saveOutline,
-	trashOutline,
-	globeOutline
-} from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
 import { deleteLexiconItem, doEditLexiconItem } from '../../store/lexiconSlice';
-import { ExtraCharactersModalOpener, Lexicon, LexiconColumn, SorterFunc, StateObject } from '../../store/types';
+import { Lexicon, LexiconColumn, ModalProperties, SorterFunc, StateObject } from '../../store/types';
 import useTranslator from '../../store/translationHooks';
 
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
-import { $i } from '../../components/DollarSignExports';
 import useI18Memo from '../../components/useI18Memo';
+import useElement, { useElementList } from '../../components/useElement';
+import getSetValue from '../../components/getSetValue';
+import Modal from '../../components/Modal';
 
-interface LexItemProps extends ExtraCharactersModalOpener {
+interface LexItemProps extends ModalProperties {
 	itemToEdit: Lexicon | null
 	columnInfo: LexiconColumn[]
 	sorter: SorterFunc
@@ -58,9 +45,38 @@ const translations = [
 ];
 
 const commons = [
-	"deleteThisCannotUndo", "Close", "error",
-	"ExtraChars", "Ok", "areYouSure"
+	"deleteThisCannotUndo", "Close",
+	"error", "Ok", "areYouSure"
 ];
+
+interface ColumnInputProps {
+	col: LexiconColumn
+	index: number
+	value: string
+	getElement: (col: HTMLIonInputElement | null) => void
+}
+
+const ColumnInput: FC<ColumnInputProps> = ({col, value, index, getElement}) => {
+	const {id, label} = col;
+	const [, inputRef] = useElement<HTMLIonInputElement>(getElement);
+	return (
+		<React.Fragment>
+			<IonItem className="labelled">
+				<IonLabel>{label}</IonLabel>
+			</IonItem>
+			<IonItem>
+				<IonInput
+					aria-label={`${label} input`}
+					id={`edit_lex_input_${id}_${index}`}
+					className="ion-margin-top serifChars"
+					value={value}
+					ref={inputRef}
+				></IonInput>
+			</IonItem>
+		</React.Fragment>
+	);
+};
+
 
 const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 	const [ tc ] = useTranslator('common');
@@ -68,9 +84,9 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 		tExit, tUnsavedChanges, tNoInfo, tEditLexicon,
 		tDelThing, tSaveThing, tThingDel, tThingSaved
 	] = useI18Memo(translations, "lexicon");
-	const [ tYouSure, tClose, tError, tExChar, tOk, tRUSure ] = useI18Memo(commons);
+	const [ tYouSure, tClose, tError, tOk, tRUSure ] = useI18Memo(commons);
 
-	const { isOpen, setIsOpen, openECM, itemToEdit, columnInfo, sorter } = props;
+	const { isOpen, setIsOpen, itemToEdit, columnInfo, sorter } = props;
 	const dispatch = useDispatch();
 	const disableConfirms = useSelector((state: StateObject) => state.appSettings.disableConfirms);
 	const [ id, setId ] = useState<string>("");
@@ -78,25 +94,30 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 	const [ originalString, setOriginalString ] = useState<string>("");
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
-	const onLoad = useCallback(() => {
+	const columnInfoNumbered: [LexiconColumn, number][] = columnInfo.map((col, i) => [col, i]);
+	const getId = (duo: [LexiconColumn, number]) => `${duo[0].id}, ${duo[1]}`;
+	const [inputElements, updater]
+		= useElementList<[LexiconColumn, number], HTMLIonInputElement | null>(
+			columnInfoNumbered,
+			getId
+		);
+	const onLoad = () => {
 		const id = (itemToEdit ? itemToEdit.id : "");
 		const cols = (itemToEdit ? [...itemToEdit.columns] : []);
 		cols.forEach((col: string, i: number) => {
-			const el = $i<HTMLInputElement>(`edit_lex_input_${id}_${i}`);
-			if(el) { el.value = col; }
+			const id = getId(columnInfoNumbered[i]);
+			getSetValue(inputElements.current[id], col);
 		});
 		setOriginalString(cols.join(nonsense));
 		setId(id);
 		setCols(cols);
-	}, [itemToEdit]);
-	const currentInfo = useCallback(() => {
-		const cols = (itemToEdit ? [...itemToEdit.columns] : []);
-		return cols.map((col: string, i: number) => {
-			const el = $i<HTMLInputElement>(`edit_lex_input_${id}_${i}`);
-			return el ? el.value.trim() : "";
+	};
+	const currentInfo = () => {
+		return columnInfoNumbered.map((duo) => {
+			return getSetValue(inputElements.current[getId(duo)]);
 		});
-	}, [id, itemToEdit]);
-	const cancelEditing = useCallback(() => {
+	};
+	const cancelEditing = () => {
 		// If we're "open" and being closed by some other means, check and see if
 		//   1) we have disabled confirms
 		//   2) we haven't changed anything
@@ -114,8 +135,8 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 			handler: () => setIsOpen(false),
 			doAlert
 		});
-	}, [currentInfo, disableConfirms, doAlert, originalString, setIsOpen, tExit, tUnsavedChanges, tClose]);
-	const maybeSaveNewInfo = useCallback(() => {
+	};
+	const maybeSaveNewInfo = () => {
 		const cols = currentInfo();
 		if(cols.join("") === "") {
 			doAlert({
@@ -139,9 +160,10 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 			message: tThingSaved,
 			color: "success",
 			duration: 2500,
-			toast
+			toast,
+			position: "middle"
 		})
-	}, [currentInfo, dispatch, doAlert, id, setIsOpen, sorter, tError, tNoInfo, tOk, tThingSaved, toast]);
+	};
 	const delFromLex = useCallback(() => {
 		const handler = () => {
 			setIsOpen(false);
@@ -150,7 +172,8 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 				message: tThingDel,
 				duration: 2500,
 				color: "danger",
-				toast
+				toast,
+			position: "middle"
 			})
 		};
 		if(disableConfirms) {
@@ -166,57 +189,26 @@ const EditLexiconItemModal: FC<LexItemProps> = (props) => {
 			});
 		}
 	}, [disableConfirms, dispatch, doAlert, id, setIsOpen, tc, tRUSure, tThingDel, tYouSure, toast]);
-	const opener = useCallback(() => openECM(true), [openECM]);
-	const columnarInfo = useMemo(() => columnInfo.map((col: LexiconColumn, i: number) => {
-		return (
-			<React.Fragment key={`${id}:fragment:${i}`}>
-				<IonItem className="labelled">
-					<IonLabel>{col.label}</IonLabel>
-				</IonItem>
-				<IonItem>
-					<IonInput
-						aria-label={`${col.label} input`}
-						id={`edit_lex_input_${id}_${i}`}
-						className="ion-margin-top serifChars"
-						value={cols[i]}
-					></IonInput>
-				</IonItem>
-			</React.Fragment>
-		);
-	}), [cols, id, columnInfo]);
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false} onIonModalDidPresent={onLoad}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tEditLexicon}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={opener} aria-label={tExChar}>
-							<IonIcon icon={globeOutline} />
-						</IonButton>
-						<IonButton onClick={cancelEditing} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent className="hasSpecialLabels">
-				<IonList lines="none">
-					{columnarInfo}
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="tertiary" slot="end" onClick={maybeSaveNewInfo}>
-						<IonIcon icon={saveOutline} slot="start" />
-						<IonLabel>{tSaveThing}</IonLabel>
-					</IonButton>
-					<IonButton color="danger" slot="start" onClick={delFromLex}>
-						<IonIcon icon={trashOutline} slot="start" />
-						<IonLabel>{tDelThing}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tEditLexicon}
+			closeFunc={cancelEditing}
+			enclosed
+			onIonModalDidPresent={onLoad}
+			bottomStart={[{key: tDelThing, isText: true, icon: "delete", action: delFromLex}]}
+			bottomEnd={[{key: tSaveThing, isText: true, icon: "save", action: maybeSaveNewInfo}]}
+			contentClass="hasSpecialLabels"
+			extraChars
+		>
+			<IonList lines="none">
+				{columnInfoNumbered.map(duo => {
+					const [col, i] = duo;
+					const getElement = (node: HTMLIonInputElement | null) => updater(duo, node);
+					return <ColumnInput key={`edit_lex_input_${id}_${i}`} col={col} index={i} value={cols[i]} getElement={getElement} />
+				})}
+			</IonList>
+		</Modal>
 	);
 };
 

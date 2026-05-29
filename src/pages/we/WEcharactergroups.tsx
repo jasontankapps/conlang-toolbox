@@ -1,4 +1,4 @@
-import React, { useState, FC, useCallback, useMemo } from 'react';
+import React, { useState, FC, useCallback, useMemo, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -28,16 +28,17 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject, WECharGroupObject } from '../../store/types';
+import { StateObject, WECharGroupObject } from '../../store/types';
 import { copyCharacterGroupsFromElsewhere, deleteCharacterGroupWE } from '../../store/weSlice';
 import useTranslator from '../../store/translationHooks';
 
 import ModalWrap from "../../components/ModalWrap";
-import { $q } from '../../components/DollarSignExports';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
-import { CopyFromOtherIcon } from '../../components/icons';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
+import { CopyFromOtherIcon } from '../../components/icons';
 import AddCharGroupWEModal from './modals/AddCharGroupWE';
 import EditCharGroupWEModal from './modals/EditCharGroupWE';
 import ExtraCharactersModal from '../modals/ExtraCharacters';
@@ -104,14 +105,14 @@ const commons = [
 	"deleteThisCannotUndo", "AddNew", "Delete", "Help", "yesImport"
 ];
 
-const WECharGroup: FC<PageData> = (props) => {
+const WECharGroup: FC = () => {
 	const [ t ] = useTranslator('we');
 	const [ tw ] = useTranslator('wgwe');
 	const [ tc ] = useTranslator('common');
 	const tCharGroups = useMemo(() => tw("CharGroups"), [tw]);
 	const [ tYouSure, tAddNew, tDelete, tHelp, tYesImp ] = useI18Memo(commons);
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -123,15 +124,14 @@ const WECharGroup: FC<PageData> = (props) => {
 	const { characterGroups } = useSelector((state: StateObject) => state.we);
 	const { characterGroups: wgCharatcterGroups } = useSelector((state: StateObject) => state.wg);
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
+	const [charGroups, charGroupsRef] = useElement<HTMLIonListElement>();
 	const editCharGroup = useCallback((group: WECharGroupObject) => {
-		const groups = $q<HTMLIonListElement>(".charGroups");
-		if(groups) { groups.closeSlidingItems(); }
+		if(charGroups) { charGroups.closeSlidingItems(); }
 		setEditing(group);
 		setIsOpenEditCharGroupWE(true);
-	}, []);
+	}, [charGroups]);
 	const maybeDeleteCharGroup = useCallback((label: string, charGroup: WECharGroupObject) => {
-		const groups = $q<HTMLIonListElement>(".charGroups");
-		if(groups) { groups.closeSlidingItems(); }
+		if(charGroups) { charGroups.closeSlidingItems(); }
 		const { run } = charGroup;
 		const handler = () => {
 			dispatch(deleteCharacterGroupWE({...charGroup, label}));
@@ -155,7 +155,7 @@ const WECharGroup: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [disableConfirms, dispatch, doAlert, tc, toast, tw, tYouSure]);
+	}, [disableConfirms, dispatch, doAlert, tc, toast, tw, tYouSure, charGroups]);
 	const maybeClearEverything = useCallback(() => {
 		const count = characterGroups.length;
 		const handler = () => {
@@ -219,18 +219,17 @@ const WECharGroup: FC<PageData> = (props) => {
 
 	const helper = useCallback(() => setIsOpenInfo(true), [setIsOpenInfo]);
 	const opener = useCallback(() => setIsOpenAddCharGroupWE(true), []);
+	const doOpenEx = useCallback(() => setIsOpenECM(true), [setIsOpenECM]);
 	return (
 		<IonPage>
-			<AddCharGroupWEModal
-				{...props.modalPropsMaker(isOpenAddCharGroupWE, setIsOpenAddCharGroupWE)}
-				openECM={setIsOpenECM}
-			/>
-			<EditCharGroupWEModal
-				{...props.modalPropsMaker(isOpenEditCharGroupWE, setIsOpenEditCharGroupWE)}
-				editing={editing}
-				setEditing={setEditing}
-				openECM={setIsOpenECM}
-			/>
+			<ExCharContext value={doOpenEx}>
+				<AddCharGroupWEModal {...modalPropsMaker(isOpenAddCharGroupWE, setIsOpenAddCharGroupWE)} />
+				<EditCharGroupWEModal
+					{...modalPropsMaker(isOpenEditCharGroupWE, setIsOpenEditCharGroupWE)}
+					editing={editing}
+					setEditing={setEditing}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<CharGroupCard setIsOpenInfo={setIsOpenInfo} />
@@ -263,7 +262,7 @@ const WECharGroup: FC<PageData> = (props) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen className="hasFabButton">
-				<IonList className="charGroups units" lines="none">
+				<IonList className="charGroups units" lines="none" ref={charGroupsRef}>
 					{cgroups}
 				</IonList>
 				<IonFab vertical="bottom" horizontal="end" slot="fixed">

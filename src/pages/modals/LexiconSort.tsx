@@ -4,21 +4,11 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	IonReorderGroup,
 	IonReorder,
 	IonItemDivider
 } from '@ionic/react';
 import {
-	closeCircleOutline,
-	saveOutline,
 	reorderTwo,
 	checkmarkCircle
 } from 'ionicons/icons';
@@ -29,6 +19,7 @@ import { ModalProperties, SorterFunc, StateObject } from '../../store/types';
 import { updateLexiconSort } from '../../store/lexiconSlice';
 import reorganize from '../../components/reorganizer';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
 interface EditSortModal extends ModalProperties {
 	sorter: SorterFunc
@@ -36,10 +27,8 @@ interface EditSortModal extends ModalProperties {
 
 const translations = [ "LexiconSorting", "sortLexDescription" ];
 
-const EditLexiconSortModal: FC<EditSortModal> = (props) => {
+const LexiconSortModal: FC<EditSortModal> = (props) => {
 	const [ t ] = useTranslator('lexicon');
-	const [ tc ] = useTranslator('common');
-	const tClose = useMemo(() => tc("Close"), [tc]);
 	const [ tLexSorting, tSortLexDesc ] = useI18Memo(translations, "lexicon");
 	const tSaveChanges = useMemo(() => t("SaveChanges"), [t]);
 
@@ -82,38 +71,25 @@ const EditLexiconSortModal: FC<EditSortModal> = (props) => {
 	}), [columns, sorting]);
 	const closer = useCallback(() => setIsOpen(false), [setIsOpen]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer} backdropDismiss={false}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tLexSorting}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={closer} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent id="editLexiconItemOrder">
-				<IonList lines="full">
-					<IonItem>
-						<IonLabel className="ion-text-wrap">{tSortLexDesc}</IonLabel>
-					</IonItem>
-					<IonItemDivider>{tLexSorting}</IonItemDivider>
-					<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
-						{sortPatterns}
-					</IonReorderGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter id="footerElement">
-				<IonToolbar color="darker">
-					<IonButton color="tertiary" slot="end" onClick={doneSorting}>
-						<IonIcon icon={saveOutline} slot="start" />
-						<IonLabel>{tSaveChanges}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tLexSorting}
+			closeFunc={closer}
+			enclosed={closer}
+			contentProps={{id: "editLexiconItemOrder"}}
+			bottomEnd={[{key: tSaveChanges, isText: true, icon: "save", action: doneSorting}]}
+		>
+			<IonList lines="full">
+				<IonItem>
+					<IonLabel className="ion-text-wrap">{tSortLexDesc}</IonLabel>
+				</IonItem>
+				<IonItemDivider>{tLexSorting}</IonItemDivider>
+				<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
+					{sortPatterns}
+				</IonReorderGroup>
+			</IonList>
+		</Modal>
 	);
 };
 
-export default EditLexiconSortModal;
+export default LexiconSortModal;

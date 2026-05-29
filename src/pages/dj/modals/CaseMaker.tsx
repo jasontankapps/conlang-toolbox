@@ -7,7 +7,6 @@ import {
 	IonContent,
 	IonToolbar,
 	IonButton,
-	IonModal,
 	IonFooter,
 	useIonAlert,
 	useIonToast,
@@ -19,7 +18,7 @@ import {
 } from 'ionicons/icons';
 
 import {
-	ExtraCharactersModalOpener,
+	ModalProperties,
 	SetState
 } from '../../../store/types';
 import useTranslator from '../../../store/translationHooks';
@@ -28,8 +27,9 @@ import toaster from '../../../components/toaster';
 import yesNoAlert from '../../../components/yesNoAlert';
 import ModalHeader from '../../../components/ModalHeader';
 import useI18Memo from '../../../components/useI18Memo';
+import Modal from '../../../components/Modal';
 
-interface CaseMakerModal extends ExtraCharactersModalOpener {
+interface CaseMakerModal extends ModalProperties {
 	setSavedTitle: SetState<string>
 }
 
@@ -124,7 +124,6 @@ const CaseMaker: FC<CaseMakerModal> = (props) => {
 	const {
 		isOpen,
 		setIsOpen,
-		openECM,
 		setSavedTitle
 	} = props;
 	const [doAlert] = useIonAlert();
@@ -208,8 +207,16 @@ const CaseMaker: FC<CaseMakerModal> = (props) => {
 	}), [remove, titleParts]);
 
 	return (
-		<IonModal isOpen={isOpen} backdropDismiss={false} onIonModalDidPresent={onLoad}>
-			<ModalHeader title={tTitle} closeModal={maybeCancel} openECM={openECM} />
+		<Modal
+			isOpen={isOpen}
+			closeFunc={maybeCancel}
+			title={tTitle}
+			bottomStart={[{button: "cancel"}]}
+			bottomEnd={[{button: "save", action: maybeSaveTitle}]}
+			enclosed
+			onIonModalDidPresent={onLoad}
+		>
+			<ModalHeader title={tTitle} closeModal={maybeCancel} />
 			<IonContent>
 				<IonList lines="full" id="makingTitle" className="hasSpecialLabels">
 					<IonItem>
@@ -243,7 +250,7 @@ const CaseMaker: FC<CaseMakerModal> = (props) => {
 					</IonButton>
 				</IonToolbar>
 			</IonFooter>
-		</IonModal>
+		</Modal>
 	);
 };
 

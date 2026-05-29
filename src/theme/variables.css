@@ -263,8 +263,8 @@ body {
 
 
 
-body.SolarizedLightTheme,
-div.SolarizedLightTheme {
+ion-app.SolarizedLight,
+div.SolarizedLight {
 	--ion-color-primary: #cb4b16;
 	--ion-color-primary-rgb: 203,75,22;
 	--ion-color-primary-contrast: #ffffff;
@@ -372,8 +372,8 @@ div.SolarizedLightTheme {
 	--ion-color-step-950: #0d353f;
 }
 
-body.SolarizedDarkTheme,
-div.SolarizedDarkTheme {
+ion-app.SolarizedDark,
+div.SolarizedDark {
 	--ion-color-primary: #cb4b16;
 	--ion-color-primary-rgb: 203,75,22;
 	--ion-color-primary-contrast: #ffffff;
@@ -480,8 +480,8 @@ div.SolarizedDarkTheme {
 	--ion-color-step-900: #e4e2d2;
 	--ion-color-step-950: #f0ecda;
 }
-body.DarkTheme,
-div.DarkTheme {
+ion-app.Dark,
+div.Dark {
 	--ion-color-primary: #bb86fc;
 	--ion-color-primary-rgb: 187,134,252;
 	--ion-color-primary-contrast: #000000;
@@ -588,8 +588,8 @@ div.DarkTheme {
 	--ion-color-step-900: #b9b9b9;
 	--ion-color-step-950: #c3c3c3;
 }
-body.LightTheme,
-div.LightTheme {
+ion-app.Light,
+div.Light {
 	--ion-color-primary: #1b1bf8;
 	--ion-color-primary-rgb: 27,27,248;
 	--ion-color-primary-contrast: #ffffff;
@@ -697,12 +697,12 @@ div.LightTheme {
 	--ion-color-step-900: #2a2a2a;
 	--ion-color-step-950: #1e1e1e;
 }
-body.LightTheme ion-card ion-item,
-div.LightTheme ion-card ion-item {
+ion-app.Light ion-card ion-item,
+div.Light ion-card ion-item {
 	--ion-item-background: var(--ion-card-background);
 }
-body.LightTheme ion-menu ion-content,
-div.LightTheme ion-menu ion-content {
+ion-app.Light ion-menu ion-content,
+div.Light ion-menu ion-content {
 	--ion-item-background: #ffffff;
 }
 

@@ -1,43 +1,30 @@
 import React, { useCallback, useMemo, useState, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
-	IonButton,
-	IonModal,
 	IonInput,
-	IonFooter,
 	IonItemDivider,
 	IonRadioGroup,
 	IonRadio,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
-import { addOutline } from 'ionicons/icons';
 import { useDispatch } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
 
-import { WETransformDirection, ExtraCharactersModalOpener } from '../../../store/types';
+import { WETransformDirection, ModalProperties } from '../../../store/types';
 import { addTransformWE } from '../../../store/weSlice';
 import useTranslator from '../../../store/translationHooks';
 
-import { $q, $a, $i } from '../../../components/DollarSignExports';
 import toaster from '../../../components/toaster';
-import ModalHeader from '../../../components/ModalHeader';
 import useI18Memo from '../../../components/useI18Memo';
-
-function resetError() {
-	// Remove danger color if present
-	// Debounce means this sometimes doesn't exist by the time this is called.
-	const where = $q(".seekLabel");
-	if(where) { where.classList.remove("invalidValue"); }
-}
+import useElement from '../../../components/useElement';
+import getSetValue from '../../../components/getSetValue';
+import Modal from '../../../components/Modal';
 
 const commons = [
-	"AddAndClose", "Cancel", "error", "optional"
+	"Cancel", "error", "optional"
 ];
 const translations = [
 	"DescOfTheTransformation", "noSearchMsg",
@@ -54,18 +41,23 @@ const presentations = [
 const formal = { context: "formal" };
 const context = { context: "presentation" };
 
-const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
+const AddTransformModal: FC<ModalProperties> = (props) => {
 	const [ t ] = useTranslator('we');
 	const [ tw ] = useTranslator('wgwe');
-	const [ tAddClose, tCancel, tError, tOptional ] = useI18Memo(commons);
+	const [ tCancel, tError, tOptional ] = useI18Memo(commons);
 	const [ tDesc, tNoSeek, tReplace, tSeek, tThingAdd, tAddThing ] = useI18Memo(translations, "wgwe");
 	const tpTrDir = useMemo(() => t("TransformationDirection"), [t]);
 	const [ tInOut, tIn, tInUnOut, tOut ] = useI18Memo(formals, "we", formal);
 	const [ tInEx, tOutEx ] = useI18Memo(presentations, "we");
 	const [ tpInEx, tpOutEx ] = useI18Memo(presentations, "we", context);
 	const tpDesc = useMemo(() => tw("DescOfTheTransformation", context), [tw]);
+	const [seekLabel, seekLabelRef] = useElement<HTMLIonLabelElement>();
+	const [searchExWE, searchExWERef] = useElement<HTMLIonInputElement>();
+	const [replaceExWE, replaceExWERef] = useElement<HTMLIonInputElement>();
+	const [optDescWE, optDescWERef] = useElement<HTMLIonInputElement>();
+	const [radioGroup, radioGroupRef] = useElement<HTMLIonRadioGroupElement>();
 
-	const { isOpen, setIsOpen, openECM } = props;
+	const { isOpen, setIsOpen } = props;
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
@@ -73,12 +65,10 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 
 	const maybeSaveNewTransform = useCallback((close: boolean = true) => {
 		const err: string[] = [];
-		const seekEl = $i<HTMLInputElement>("searchExWE");
-		const seek = seekEl ? seekEl.value : "";
+		const seek = getSetValue(searchExWE);
 		// Test info for validness, then save if needed and reset the newTransform
 		if(seek === "") {
-			const el = $q(".seekLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			seekLabel && seekLabel.classList.add("invalidValue")
 			err.push(tNoSeek);
 		}
 		try {
@@ -103,10 +93,8 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 			return;
 		}
 		// Everything ok!
-		const replaceEl = $i<HTMLInputElement>("replaceExWE");
-		const replace = replaceEl ? replaceEl.value : "";
-		const descriptionEl = $i<HTMLInputElement>("optDescWE");
-		const description = descriptionEl ? descriptionEl.value : "";
+		const replace = getSetValue(replaceExWE);
+		const description = getSetValue(optDescWE).trim();
 		if(close) { setIsOpen(false); }
 		dispatch(addTransformWE({
 			id: uuidv4(),
@@ -115,9 +103,10 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 			direction,
 			description
 		}));
-		$a<HTMLInputElement>("ion-list.weAddTransform ion-input").forEach((input) => input.value = "");
-		const el = $q<HTMLInputElement>("ion-list.weAddTransform ion-radio-group");
-		if(el) { el.value = "both"; }
+		getSetValue(searchExWE, "");
+		getSetValue(replaceExWE, "");
+		getSetValue(optDescWE, "");
+		radioGroup && (radioGroup.value = "both");
 		toaster({
 			message: tThingAdd,
 			duration: 2500,
@@ -125,108 +114,102 @@ const AddTransformModal: FC<ExtraCharactersModalOpener> = (props) => {
 			position: "top",
 			toast
 		});
-	}, [direction, dispatch, doAlert, setIsOpen, tCancel, tError, tNoSeek, tThingAdd, toast]);
+	}, [
+		direction, dispatch, doAlert, setIsOpen, tCancel,
+		tError, tNoSeek, tThingAdd, toast, seekLabel,
+		searchExWE, replaceExWE, optDescWE, radioGroup
+	]);
 	const saveClose = useCallback(() => maybeSaveNewTransform(), [maybeSaveNewTransform]);
 	const saveAdd = useCallback(() => maybeSaveNewTransform(false), [maybeSaveNewTransform]);
 	const closer = useCallback(() => setIsOpen(false), [setIsOpen]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer}>
-			<ModalHeader title={tAddThing} openECM={openECM} closeModal={setIsOpen} />
-			<IonContent>
-				<IonList lines="none" className="hasSpecialLabels weAddTransform">
-					<IonItem className="labelled">
-						<IonLabel className="seekLabel">{tpInEx}</IonLabel>
+		<Modal
+			isOpen={isOpen}
+			closeFunc={closer}
+			title={tAddThing}
+			extraChars
+			bottomEnd={[
+				{ button: "add", action: saveAdd, color: "secondary" },
+				{ button: "add+close", action: saveClose }
+			]}
+		>
+			<IonList lines="none" className="hasSpecialLabels weAddTransform">
+				<IonItem className="labelled">
+					<IonLabel className="seekLabel" ref={seekLabelRef}>{tpInEx}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tInEx}
+						id="searchExWE"
+						ref={searchExWERef}
+						className="ion-margin-top serifChars"
+						helperText={tSeek}
+						onIonChange={() => seekLabel && seekLabel.classList.remove("invalidValue")}
+					></IonInput>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel className="replaceLabel">{tpOutEx}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tOutEx}
+						id="replaceExWE"
+						ref={replaceExWERef}
+						className="ion-margin-top serifChars"
+						helperText={tReplace}
+					></IonInput>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel>{tpDesc}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tDesc}
+						id="optDescWE"
+						ref={optDescWERef}
+						className="ion-margin-top"
+						placeholder={tOptional}
+					></IonInput>
+				</IonItem>
+				<IonItemDivider>
+					<IonLabel>{tpTrDir}</IonLabel>
+				</IonItemDivider>
+				<IonRadioGroup
+					value={direction}
+					onIonChange={e => setDirection(e.detail.value as WETransformDirection)}
+					ref={radioGroupRef}
+				>
+					<IonItem>
+						<IonRadio
+							value="both"
+							labelPlacement="end"
+							justify="start"
+						>{tInUnOut}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tInEx}
-							id="searchExWE"
-							className="ion-margin-top serifChars"
-							helperText={tSeek}
-							onIonChange={resetError}
-						></IonInput>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel className="replaceLabel">{tpOutEx}</IonLabel>
+						<IonRadio
+							value="double"
+							labelPlacement="end"
+							justify="start"
+						>{tInOut}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tOutEx}
-							id="replaceExWE"
-							className="ion-margin-top serifChars"
-							helperText={tReplace}
-						></IonInput>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel>{tpDesc}</IonLabel>
+						<IonRadio
+							value="in"
+							labelPlacement="end"
+							justify="start"
+						>{tIn}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tDesc}
-							id="optDescWE"
-							className="ion-margin-top"
-							placeholder={tOptional}
-						></IonInput>
+						<IonRadio
+							value="out"
+							labelPlacement="end"
+							justify="start"
+						>{tOut}</IonRadio>
 					</IonItem>
-					<IonItemDivider>
-						<IonLabel>{tpTrDir}</IonLabel>
-					</IonItemDivider>
-					<IonRadioGroup
-						value={direction}
-						onIonChange={e => setDirection(e.detail.value as WETransformDirection)}
-					>
-						<IonItem>
-							<IonRadio
-								value="both"
-								labelPlacement="end"
-								justify="start"
-							>{tInUnOut}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="double"
-								labelPlacement="end"
-								justify="start"
-							>{tInOut}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="in"
-								labelPlacement="end"
-								justify="start"
-							>{tIn}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="out"
-								labelPlacement="end"
-								justify="start"
-							>{tOut}</IonRadio>
-						</IonItem>
-					</IonRadioGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton
-						color="tertiary"
-						slot="end"
-						onClick={saveAdd}
-					>
-						<IonIcon icon={addOutline} slot="start" />
-						<IonLabel>{tAddThing}</IonLabel>
-					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={saveClose}
-					>
-						<IonIcon icon={addOutline} slot="start" />
-						<IonLabel>{tAddClose}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonRadioGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

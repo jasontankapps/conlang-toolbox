@@ -44,8 +44,7 @@ const doExport = async (
 			directory: Docs
 		});
 //		console.log('Read dir', ret);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	} catch(e) {
+	} catch {
 		try {
 			/*const ret =*/ await Filesystem.mkdir({
 				path,

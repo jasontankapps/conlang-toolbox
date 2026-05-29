@@ -24,7 +24,7 @@ const appinfo = {
 		"[the Github repository](https://github.com/jasontankapps/conlang-toolbox/issues).",
 		"In order to diagnose errors, you need to include information from the",
 		"tool or tools that are causing you problems. **This will include the raw",
-		"data you've currently have loaded up in the app.** Choose the tools you",
+		"data you currently have loaded up in the app.** Choose the tools you",
 		"are having problems with, then copy the information that appears in the",
 		"box below and submit it to the GitHub."
 	],
@@ -37,6 +37,7 @@ const appinfo = {
 	changelog: {
 
 		v0130: [
+			"- Visual change to the Concepts text-alignment button",
 			"- Clarified how to make bug reports",
 			"- Other minor bugfixes and improvements"
 		],

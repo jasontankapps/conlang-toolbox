@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, FC } from 'react';
+import React, { useCallback, useMemo, useState, FC, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -33,19 +33,20 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from 'react-i18next';
 
-import { DJCustomInfo, DJGroup, Declenjugation, PageData, StateObject } from '../../store/types';
+import { DJCustomInfo, DJGroup, Declenjugation, StateObject } from '../../store/types';
 import { deleteGroup, reorderGroups } from '../../store/declenjugatorSlice';
 import useTranslator from '../../store/translationHooks';
 
-import { $q } from '../../components/DollarSignExports';
 import ltr from '../../components/LTR';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import log from '../../components/Logging';
 import Header from '../../components/Header';
 import ModalWrap from '../../components/ModalWrap';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import { DeclenjugatorStorage } from '../../components/PersistentInfo';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
 
 import ManageCustomInfo from './modals/CustomInfoDJ';
 import ExtraCharactersModal from '../modals/ExtraCharacters';
@@ -231,13 +232,13 @@ const commons = [
 ];
 
 
-const DJGroups: FC<PageData> = (props) => {
+const DJGroups: FC = () => {
 	const [ t ] = useTranslator('dj');
 	const [ tc ] = useTranslator('common');
 	const [ tAddNew, tDel, tHelp, tWait, tSave, tEdit, tYouSure, tCannotUndo ] = useI18Memo(commons);
 	const [ tClear, tConj, tDecl, tGroups, tOther, tDelGroup, tGroupDeleted  ] = useI18Memo(translations, "dj");
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 
 	// main modals
@@ -274,15 +275,14 @@ const DJGroups: FC<PageData> = (props) => {
 	const editDeclenjugationModalInfo = modalPropsMaker(editDeclenjugationOpen, setEditDeclenjugationOpen);
 	const caseMakerModalInfo = modalPropsMaker(caseMakerOpen, setCaseMakerOpen);
 
+	const [djGroupsList, djGroupsListRef] = useElement<HTMLIonListElement>();
 	const editGroup = useCallback((type: keyof DJCustomInfo, group: DJGroup) => {
-		const groups = $q<HTMLIonListElement>(".djGroups");
-		if(groups) { groups.closeSlidingItems(); }
+		if(djGroupsList) { djGroupsList.closeSlidingItems(); }
 		setEditingGroup([type, group]);
 		setIsOpenEditGroup(true);
-	}, []);
+	}, [djGroupsList]);
 	const maybeDeleteGroup = useCallback((type: keyof DJCustomInfo, group: DJGroup) => {
-		const groups = $q<HTMLIonListElement>(".djGroups");
-		if(groups) { groups.closeSlidingItems(); }
+		if(djGroupsList) { djGroupsList.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteGroup([type, group.id]));
 			toaster({
@@ -305,7 +305,7 @@ const DJGroups: FC<PageData> = (props) => {
 			return;
 		}
 		handler();
-	}, [disableConfirms, dispatch, doAlert, tc, tDelGroup, tGroupDeleted, tYouSure, toast]);
+	}, [disableConfirms, dispatch, doAlert, tc, tDelGroup, tGroupDeleted, tYouSure, toast, djGroupsList]);
 	const maybeClearEverything = useCallback(() => {
 		const handler = () => {
 			dispatch(deleteGroup(null));
@@ -392,70 +392,67 @@ const DJGroups: FC<PageData> = (props) => {
 
 	const setLoader = useCallback(() => setLoadingOpen(false), []);
 	const opener = useCallback(() => setIsOpenAddGroup(true), []);
+	const openEx = useCallback(() => setIsOpenECM(false), []);
 	return (
 		<IonPage>
-			<AddGroup
-				{...modalPropsMaker(isOpenAddGroup, setIsOpenAddGroup)}
-				openECM={setIsOpenECM}
+			<ExCharContext value={openEx}>
+				<AddGroup
+					{...modalPropsMaker(isOpenAddGroup, setIsOpenAddGroup)}
 
-				addDeclenjugationModalInfo={addDeclenjugationModalInfo}
-				savedDeclenjugation={savedDeclenjugation}
-				setSavedDeclenjugation={setSavedDeclenjugation}
-				setDeclenjugationType={setDeclenjugationTypeString}
+					addDeclenjugationModalInfo={addDeclenjugationModalInfo}
+					savedDeclenjugation={savedDeclenjugation}
+					setSavedDeclenjugation={setSavedDeclenjugation}
+					setDeclenjugationType={setDeclenjugationTypeString}
 
-				editDeclenjugationModalInfo={editDeclenjugationModalInfo}
-				setIncomingDeclenjugation={setIncomingDeclenjugation}
-				outgoingDeclenjugation={outgoingDeclenjugation}
-				setOutgoingDeclenjugation={setOutgoingDeclenjugation}
-			/>
-			<EditGroup
-				{...modalPropsMaker(isOpenEditGroup, setIsOpenEditGroup)}
-				openECM={setIsOpenECM}
+					editDeclenjugationModalInfo={editDeclenjugationModalInfo}
+					setIncomingDeclenjugation={setIncomingDeclenjugation}
+					outgoingDeclenjugation={outgoingDeclenjugation}
+					setOutgoingDeclenjugation={setOutgoingDeclenjugation}
+				/>
+				<EditGroup
+					{...modalPropsMaker(isOpenEditGroup, setIsOpenEditGroup)}
 
-				editingGroupInfo={editingGroup}
+					editingGroupInfo={editingGroup}
 
-				addDeclenjugationModalInfo={addDeclenjugationModalInfo}
-				savedDeclenjugation={savedDeclenjugation}
-				setSavedDeclenjugation={setSavedDeclenjugation}
-				setDeclenjugationType={setDeclenjugationTypeString}
+					addDeclenjugationModalInfo={addDeclenjugationModalInfo}
+					savedDeclenjugation={savedDeclenjugation}
+					setSavedDeclenjugation={setSavedDeclenjugation}
+					setDeclenjugationType={setDeclenjugationTypeString}
 
-				editDeclenjugationModalInfo={editDeclenjugationModalInfo}
-				setIncomingDeclenjugation={setIncomingDeclenjugation}
-				outgoingDeclenjugation={outgoingDeclenjugation}
-				setOutgoingDeclenjugation={setOutgoingDeclenjugation}
-			/>
+					editDeclenjugationModalInfo={editDeclenjugationModalInfo}
+					setIncomingDeclenjugation={setIncomingDeclenjugation}
+					outgoingDeclenjugation={outgoingDeclenjugation}
+					setOutgoingDeclenjugation={setOutgoingDeclenjugation}
+				/>
 
-			<AddDeclenjugation
-				{...addDeclenjugationModalInfo}
-				openECM={setIsOpenECM}
-				setSavedDeclenjugation={setSavedDeclenjugation}
-				caseMakerModalInfo={caseMakerModalInfo}
-				savedTitle={savedTitle}
-				setSavedTitle={setSavedTitle}
-				typeString={declenjugationTypeString}
-			/>
-			<EditDeclenjugation
-				{...editDeclenjugationModalInfo}
-				openECM={setIsOpenECM}
-				incomingDeclenjugation={incomingDeclenjugation}
-				setOutgoingDeclenjugation={setOutgoingDeclenjugation}
-				caseMakerModalInfo={caseMakerModalInfo}
-				savedTitle={savedTitle}
-				setSavedTitle={setSavedTitle}
-				typeString={declenjugationTypeString}
-			/>
-			<CaseMaker
-				{...caseMakerModalInfo}
-				openECM={setIsOpenECM}
-				setSavedTitle={setSavedTitle}
-			/>
+				<AddDeclenjugation
+					{...addDeclenjugationModalInfo}
+					setSavedDeclenjugation={setSavedDeclenjugation}
+					caseMakerModalInfo={caseMakerModalInfo}
+					savedTitle={savedTitle}
+					setSavedTitle={setSavedTitle}
+					typeString={declenjugationTypeString}
+				/>
+				<EditDeclenjugation
+					{...editDeclenjugationModalInfo}
+					incomingDeclenjugation={incomingDeclenjugation}
+					setOutgoingDeclenjugation={setOutgoingDeclenjugation}
+					caseMakerModalInfo={caseMakerModalInfo}
+					savedTitle={savedTitle}
+					setSavedTitle={setSavedTitle}
+					typeString={declenjugationTypeString}
+				/>
+				<CaseMaker
+					{...caseMakerModalInfo}
+					setSavedTitle={setSavedTitle}
+				/>
 
-			<ManageCustomInfo
-				{...modalPropsMaker(isOpenManageCustom, setIsOpenManageCustom)}
-				openECM={setIsOpenECM}
-				titles={infoModalTitles}
-				setTitles={setInfoModalTitles}
-			/>
+				<ManageCustomInfo
+					{...modalPropsMaker(isOpenManageCustom, setIsOpenManageCustom)}
+					titles={infoModalTitles}
+					setTitles={setInfoModalTitles}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<GroupCard setIsOpenInfo={setIsOpenInfo} />
@@ -474,7 +471,7 @@ const DJGroups: FC<PageData> = (props) => {
 				endButtons={headerButtons}
 			/>
 			<IonContent className="hasFabButton">
-				<IonList className="djGroups units dragArea" lines="full">
+				<IonList className="djGroups units dragArea" lines="full" ref={djGroupsListRef}>
 					<Grouping
 						groups={declensions}
 						label={tDecl}

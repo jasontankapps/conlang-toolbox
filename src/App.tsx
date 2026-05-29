@@ -59,79 +59,12 @@ import './theme/variables.css';
 import './theme/App.css';
 
 import { StateStorage } from './components/PersistentInfo';
+import { ModalMakingContext } from './components/contexts';
 import modalPropertiesFunc from './components/ModalProperties';
 import yesNoAlert from './components/yesNoAlert';
 import getLanguage from './components/getLanguage';
 
 function isOldState (object: OldStateObject): asserts object is OldStateObject {}
-
-export const MainOutlet = memo(() => {
-	const [modals, setModals] = useState<SetBooleanState[]>([]);
-	const [doAlert] = useIonAlert();
-	const { t } = useTranslation();
-	const dispatch = useDispatch();
-	const modalPropsMaker = useMemo(() => modalPropertiesFunc(modals, setModals), [modals, setModals]);
-	const defaultProps = {
-		modalPropsMaker
-	};
-	useEffect(() => {
-		getLanguage().then(result => {
-			if(result) {
-				dispatch(setDefaultSortLanguage(result.slice(0, 2) as LanguageCode));
-			}
-		});
-	}, [dispatch]);
-	const navigator = useIonRouter();
-	useEffect((): (() => void) => {
-		// NOTE: Back Button will automatically go back in history for us.
-		let running = true;
-		Capacitor.addListener('backButton', () => {
-			if(!running) {
-				return;
-			} else if(modals.length) {
-				// Close an open modal
-//				dispatch(addToLog("Attempting to close modal."));
-				// Get last modal
-				const [last, ...rest] = modals;
-				// Save remaining modals
-				setModals(rest);
-				// Close last modal
-				last(false);
-/*			} else if (pages.length > 0) {
-				dispatch(addToLog("Navigating backward?"));
-				// go back
-				history.go(-1);
-				console.log("!back");
-			} else {*/
-			} else if (!navigator.canGoBack()) {
-				// Are we trying to exit the app?
-				yesNoAlert({
-					header: t("ExitAppQHead"),
-					message: t("ExitAppQ"),
-					cssClass: "warning",
-					submit: t("YesExit"),
-					handler: Capacitor.exitApp,
-					doAlert
-				});
-			}
-		});
-		return () => { running = false; };
-	}, [modals, navigator, dispatch, doAlert, t]);
-	return (
-		<IonRouterOutlet>
-			<Route path="/wg" component={() => <WG {...defaultProps} />} />
-			<Route path="/we" component={() => <WE {...defaultProps} />} />
-			<Route path="/dj" component={() => <DJ {...defaultProps} />} />
-			<Route path="/lex" component={() => <Lexicon {...defaultProps} />} />
-			<Route path="/ms" component={() => <MS {...defaultProps} />} />
-			<Route path="/appinfo" exact component={() => <Info {...defaultProps} />} />
-			<Route path="/settings" component={() => <Settings {...defaultProps} />} />
-			<Route path="/sortSettings" component={() => <SortSettings {...defaultProps} />} />
-			<Route path="/wordlists" component={() => <ConceptsPage {...defaultProps} />} />
-			<Route path="/" exact component={() => <About {...defaultProps} />} />
-		</IonRouterOutlet>
-	);
-});
 
 const MS = lazy(() => import("./pages/MS"));
 const WG = lazy(() => import("./pages/WG"));
@@ -144,6 +77,7 @@ const App = memo(() => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { lastClean } = useSelector((state: StateObject) => state.internals)
+	const { theme = "Default" } = useSelector((state: StateObject) => state.appSettings);
 	const [hasSet, setHasSet] = useState(false);
 
 	if (!hasSet) {
@@ -172,9 +106,6 @@ const App = memo(() => {
 	const [modals, setModals] = useState<SetBooleanState[]>([]);
 	const [doAlert] = useIonAlert();
 	const modalPropsMaker = useMemo(() => modalPropertiesFunc(modals, setModals), [modals, setModals]);
-	const defaultProps = {
-		modalPropsMaker
-	};
 	// Check for default sort language
 	useEffect(() => {
 		getLanguage().then(result => {
@@ -221,28 +152,30 @@ const App = memo(() => {
 		return () => { running = false; };
 	}, [modals, navigator, dispatch, doAlert, t]);
 	return (
-		<IonApp>
-			<IonReactRouter>
-				<IonSplitPane contentId="main" when="xl">
-					<Menu />
-					<IonRouterOutlet id="main">
-						<Route path="/wg" render={() => <Suspense fallback={<Loading />}><WG {...defaultProps} /></Suspense>} />
-						<Route path="/we" render={() => <Suspense fallback={<Loading />}><WE {...defaultProps} /></Suspense>} />
-						<Route path="/dj" render={() => <Suspense fallback={<Loading />}><DJ {...defaultProps} /></Suspense>} />
-						<Route path="/lex" render={
-							() => <Suspense fallback={<Loading />}><Lexicon {...defaultProps} /></Suspense>
-						} />
-						<Route path="/ms" render={() => <Suspense fallback={<Loading />}><MS {...defaultProps} /></Suspense>} />
-						<Route path="/appinfo" exact render={() => <Info {...defaultProps} />} />
-						<Route path="/settings" exact render={() => <Settings {...defaultProps} />} />
-						<Route path="/sortSettings" exact render={() => <SortSettings {...defaultProps} />} />
-						<Route path="/wordlists" exact render={
-							() => <Suspense fallback={<Loading />}><ConceptsPage {...defaultProps} /></Suspense>
-						} />
-						<Route path="/" exact render={() => <About {...defaultProps} />} />
-					</IonRouterOutlet>
-				</IonSplitPane>
-			</IonReactRouter>
+		<IonApp className={theme}>
+			<ModalMakingContext value={modalPropsMaker}>
+				<IonReactRouter>
+					<IonSplitPane contentId="main" when="xl">
+						<Menu />
+						<IonRouterOutlet id="main">
+							<Route path="/wg" render={() => <Suspense fallback={<Loading />}><WG /></Suspense>} />
+							<Route path="/we" render={() => <Suspense fallback={<Loading />}><WE /></Suspense>} />
+							<Route path="/dj" render={() => <Suspense fallback={<Loading />}><DJ /></Suspense>} />
+							<Route path="/lex" render={
+								() => <Suspense fallback={<Loading />}><Lexicon /></Suspense>
+							} />
+							<Route path="/ms" render={() => <Suspense fallback={<Loading />}><MS /></Suspense>} />
+							<Route path="/appinfo" exact render={() => <Info />} />
+							<Route path="/settings" exact render={() => <Settings />} />
+							<Route path="/sortSettings" exact render={() => <SortSettings />} />
+							<Route path="/wordlists" exact render={
+								() => <Suspense fallback={<Loading />}><ConceptsPage /></Suspense>
+							} />
+							<Route path="/" exact render={() => <About />} />
+						</IonRouterOutlet>
+					</IonSplitPane>
+				</IonReactRouter>
+			</ModalMakingContext>
 		</IonApp>
 	);
 });

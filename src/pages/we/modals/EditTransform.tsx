@@ -1,15 +1,9 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
-	IonButton,
-	IonModal,
 	IonInput,
-	IonFooter,
 	IonRadioGroup,
 	IonRadio,
 	IonItemDivider,
@@ -17,33 +11,23 @@ import {
 	useIonToast,
 	RadioGroupCustomEvent
 } from '@ionic/react';
-import {
-	saveOutline,
-	trashOutline
-} from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { ExtraCharactersModalOpener, SetState, StateObject, WETransformDirection, WETransformObject } from '../../../store/types';
+import { ModalProperties, SetState, StateObject, WETransformDirection, WETransformObject } from '../../../store/types';
 import { editTransformWE, deleteTransformWE } from '../../../store/weSlice';
 import useTranslator from '../../../store/translationHooks';
 
-import { $i, $q } from '../../../components/DollarSignExports';
 import ltr from '../../../components/LTR';
 import yesNoAlert from '../../../components/yesNoAlert';
 import toaster from '../../../components/toaster';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import useElement from '../../../components/useElement';
+import getSetValue from '../../../components/getSetValue';
+import Modal from '../../../components/Modal';
 
-interface ModalProps extends ExtraCharactersModalOpener {
+interface ModalProps extends ModalProperties {
 	editing: null | WETransformObject
 	setEditing: SetState<null | WETransformObject>
-}
-
-function resetError() {
-	// Remove danger color if present
-	// Debounce means this sometimes doesn't exist by the time this is called.
-	const where = $q(".seekLabel");
-	if(where) { where.classList.remove("invalidValue"); }
 }
 
 const commons = [
@@ -52,8 +36,8 @@ const commons = [
 const translations = [
 	"DescOfTheTransformation", "noSearchMsg",
 	"WhatItChangesTo", "WhatToChange",
-	"SaveTrans", "TransSaved", "EditTrans",
-	"DeleteTrans", "TransDeleted"
+	"TransSaved", "EditTrans",
+	"TransDeleted"
 ];
 const formals = [
 	"atInputAtOutput", "atInput",
@@ -71,44 +55,39 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 	const [ tw ] = useTranslator('wgwe');
 	const [ tCancel, tError, tOptional ] = useI18Memo(commons);
 	const [
-		tDesc, tNoSeek, tReplace, tSeek, tSaveThing,
-		tThingSave, tEditThing, tDelThing, tThingDel
+		tDesc, tNoSeek, tReplace, tSeek,
+		tThingSave, tEditThing, tThingDel
 	] = useI18Memo(translations, "wgwe");
 	const tpTrDir = useMemo(() => t("TransformationDirection"), [t]);
 	const [ tInOut, tIn, tInUnOut, tOut ] = useI18Memo(formals, "we", formal);
 	const [ tInEx, tOutEx ] = useI18Memo(presentations, "we");
 	const [ tpInEx, tpOutEx ] = useI18Memo(presentations, "we", context);
 	const tpDesc = useMemo(() => tw("DescOfTheTransformation", context), [tw]);
+	const [seekLabel, seekLabelRef] = useElement<HTMLIonLabelElement>();
+	const [editSearchExWE, editSearchExWERef] = useElement<HTMLIonInputElement>();
+	const [editReplaceExWE, editReplaceExWERef] = useElement<HTMLIonInputElement>();
+	const [editOptDescWE, editOptDescWERef] = useElement<HTMLIonInputElement>();
 
-	const { isOpen, setIsOpen, openECM, editing, setEditing } = props;
+	const { isOpen, setIsOpen, editing, setEditing } = props;
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
 
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings)
 	const [ direction, setDirection ] = useState<WETransformDirection>("both");
-	const [searchEl, setSearchEl] = useState<HTMLInputElement | null>(null);
-	const [replaceEl, setReplaceEl] = useState<HTMLInputElement | null>(null);
-	const [descEl, setDescEl] = useState<HTMLInputElement | null>(null);
 	const onLoad = useCallback(() => {
-		const _searchEl = $i<HTMLInputElement>("editSearchExWE");
-		const _replaceEl = $i<HTMLInputElement>("editReplaceExWE");
-		const _descEl = $i<HTMLInputElement>("editOptDescWE");
 		if(editing) {
 			const { seek, replace, description, direction } = editing;
-			if(_searchEl) { _searchEl.value = seek; }
-			if(_replaceEl) { _replaceEl.value = replace; }
-			if(_descEl) { _descEl.value = description; }
+			getSetValue(editSearchExWE, seek);
+			getSetValue(editReplaceExWE, replace);
+			getSetValue(editOptDescWE, description);
 			setDirection(direction);
 		} else {
-			if(_searchEl) { _searchEl.value = ""; }
-			if(_replaceEl) { _replaceEl.value = ""; }
-			if(_descEl) { _descEl.value = ""; }
+			getSetValue(editSearchExWE, "");
+			getSetValue(editReplaceExWE, "");
+			getSetValue(editOptDescWE, "");
 		}
-		setSearchEl(_searchEl);
-		setReplaceEl(_replaceEl);
-		setDescEl(_descEl);
-	}, [editing]);
+	}, [editing, editSearchExWE, editReplaceExWE, editOptDescWE]);
 
 	const cancelEditing = useCallback(() => {
 		setIsOpen(false);
@@ -117,10 +96,9 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 	const maybeSaveNewTransformInfo = useCallback(() => {
 		const err: string[] = [];
 		// Test info for validness, then save if needed and reset the editingTransform
-		const seek = (searchEl && searchEl.value) || "";
+		const seek = getSetValue(editSearchExWE);
 		if(seek === "") {
-			const el = $q(".seekLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			seekLabel && seekLabel.classList.add("invalidValue");
 			err.push(tNoSeek);
 		}
 		try {
@@ -145,8 +123,8 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 			return;
 		}
 		// Everything ok!
-		const replace = (replaceEl && replaceEl.value) || "";
-		const description = (descEl && descEl.value.trim()) || "";
+		const replace = getSetValue(editReplaceExWE);
+		const description = getSetValue(editOptDescWE).trim();
 		dispatch(editTransformWE({
 			id: editing!.id,
 			seek,
@@ -162,7 +140,12 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 			position: "top",
 			toast
 		});
-	}, [cancelEditing, descEl, direction, dispatch, doAlert, editing, replaceEl, searchEl, tCancel, tError, tNoSeek, tThingSave, toast]);
+	}, [
+		cancelEditing, direction, dispatch, doAlert,
+		editing, tCancel, tError, tNoSeek, tThingSave,
+		toast, editSearchExWE, editReplaceExWE,
+		editOptDescWE, seekLabel
+	]);
 	const maybeDeleteTransform = useCallback(() => {
 		const makeArrow = (dir: string) => (
 			dir === "both" ?
@@ -170,8 +153,6 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 			:
 				((ltr() ? dir === "in" : dir === "out") ? "⟶" : "⟵")
 		);
-		const groups = $q<HTMLIonListElement>((".transforms"));
-		if(groups) { groups.closeSlidingItems(); }
 		const handler = () => {
 			dispatch(deleteTransformWE(editing!.id));
 			cancelEditing();
@@ -200,107 +181,91 @@ const EditTransformModal: FC<ModalProps> = (props) => {
 	const setDir = useCallback((e: RadioGroupCustomEvent) => setDirection(e.detail.value as WETransformDirection), []);
 
 	return (
-		<IonModal
+		<Modal
 			isOpen={isOpen}
-			onDidDismiss={cancelEditing}
+			title={tEditThing}
+			closeFunc={cancelEditing}
 			onIonModalDidPresent={onLoad}
+			bottomStart={[{button: "delete", action: maybeDeleteTransform}]}
+			bottomEnd={[{button: "save", action: maybeSaveNewTransformInfo}]}
+			extraChars
 		>
-			<ModalHeader title={tEditThing} openECM={openECM} closeModal={cancelEditing} />
-			<IonContent>
-				<IonList lines="none" className="hasSpecialLabels">
-					<IonItem className="labelled">
-						<IonLabel className="seekLabel">{tpInEx}</IonLabel>
+			<IonList lines="none" className="hasSpecialLabels">
+				<IonItem className="labelled">
+					<IonLabel className="seekLabel" ref={seekLabelRef}>{tpInEx}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tInEx}
+						helperText={tSeek}
+						id="editSearchExWE"
+						ref={editSearchExWERef}
+						className="ion-margin-top serifChars"
+						onIonChange={() => seekLabel && seekLabel.classList.remove("invalidValue")}
+					></IonInput>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel className="replaceLabel">{tpOutEx}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tOutEx}
+						helperText={tReplace}
+						id="editReplaceExWE"
+						ref={editReplaceExWERef}
+						className="ion-margin-top serifChars"
+					></IonInput>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel>{tpDesc}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tDesc}
+						id="editOptDescWE"
+						className="ion-margin-top"
+						ref={editOptDescWERef}
+						placeholder={tOptional}
+					></IonInput>
+				</IonItem>
+				<IonItemDivider>
+					<IonLabel>{tpTrDir}</IonLabel>
+				</IonItemDivider>
+				<IonRadioGroup
+					value={direction}
+					onIonChange={setDir}
+				>
+					<IonItem>
+						<IonRadio
+							value="both"
+							labelPlacement="end"
+							justify="start"
+						>{tInUnOut}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tInEx}
-							helperText={tSeek}
-							id="editSearchExWE"
-							className="ion-margin-top serifChars"
-							onIonChange={resetError}
-						></IonInput>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel className="replaceLabel">{tpOutEx}</IonLabel>
+						<IonRadio
+							value="double"
+							labelPlacement="end"
+							justify="start"
+						>{tInOut}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tOutEx}
-							helperText={tReplace}
-							id="editReplaceExWE"
-							className="ion-margin-top serifChars"
-						></IonInput>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel>{tpDesc}</IonLabel>
+						<IonRadio
+							value="in"
+							labelPlacement="end"
+							justify="start"
+						>{tIn}</IonRadio>
 					</IonItem>
 					<IonItem>
-						<IonInput
-							aria-label={tDesc}
-							id="editOptDescWE"
-							className="ion-margin-top"
-							placeholder={tOptional}
-						></IonInput>
+						<IonRadio
+							value="out"
+							labelPlacement="end"
+							justify="start"
+						>{tOut}</IonRadio>
 					</IonItem>
-					<IonItemDivider>
-						<IonLabel>{tpTrDir}</IonLabel>
-					</IonItemDivider>
-					<IonRadioGroup
-						value={direction}
-						onIonChange={setDir}
-					>
-						<IonItem>
-							<IonRadio
-								value="both"
-								labelPlacement="end"
-								justify="start"
-							>{tInUnOut}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="double"
-								labelPlacement="end"
-								justify="start"
-							>{tInOut}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="in"
-								labelPlacement="end"
-								justify="start"
-							>{tIn}</IonRadio>
-						</IonItem>
-						<IonItem>
-							<IonRadio
-								value="out"
-								labelPlacement="end"
-								justify="start"
-							>{tOut}</IonRadio>
-						</IonItem>
-					</IonRadioGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton
-						color="tertiary"
-						slot="end"
-						onClick={maybeSaveNewTransformInfo}
-					>
-						<IonIcon icon={saveOutline} slot="start" />
-						<IonLabel>{tSaveThing}</IonLabel>
-					</IonButton>
-					<IonButton
-						color="danger"
-						slot="start"
-						onClick={maybeDeleteTransform}
-					>
-						<IonIcon icon={trashOutline} slot="start" />
-						<IonLabel>{tDelThing}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonRadioGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

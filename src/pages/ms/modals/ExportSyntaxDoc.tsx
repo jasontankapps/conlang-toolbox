@@ -4,16 +4,10 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
-	IonButton,
-	IonModal,
-	IonFooter,
 	useIonToast,
 	IonToggle
 } from '@ionic/react';
 import {
-	closeCircleOutline,
 	codeOutline,
 	documentOutline,
 	documentTextOutline
@@ -24,7 +18,6 @@ import Markdown from 'react-markdown';
 import { ModalProperties, SetBooleanState, StateObject } from '../../../store/types';
 import useTranslator from '../../../store/translationHooks';
 
-import ModalHeader from '../../../components/ModalHeader';
 import logger from '../../../components/Logging';
 import doExport from '../../../components/ExportServices';
 import doText from './Ex-Text';
@@ -38,6 +31,7 @@ import { saveAs } from 'file-saver';
 import { isPlatform } from "@ionic/react";
 import toaster from "../../../components/toaster";
 import useI18Memo from '../../../components/useI18Memo';
+import Modal from '../../../components/Modal';
 // FOR BROWSER TESTING ONLY
 
 interface ExportModalProps extends ModalProperties {
@@ -47,14 +41,14 @@ interface ExportModalProps extends ModalProperties {
 type IonItemEvent = MouseEvent<HTMLIonItemElement, globalThis.MouseEvent>;
 
 const commons = [
-	"Cancel", "fileJson", "fileMd", "filePlain",
+	"fileJson", "fileMd", "filePlain",
 	"fileDocx", "fileXml", "Untitled"
 ];
 
 const ExportSyntaxModal: FC<ExportModalProps> = (props) => {
 	const [ t ] = useTranslator('ms');
 	const [ tc ] = useTranslator('common');
-	const [ tCancel, tJSON, tMD, tPlain, tDocx, tXML, tUntitled ] = useI18Memo(commons);
+	const [ tJSON, tMD, tPlain, tDocx, tXML, tUntitled ] = useI18Memo(commons);
 	const tUnusedDesc = useMemo(() => t("showUnused", { joinArrays: "\n" }), [t]);
 	const tChooseFormat = useMemo(() => tc("ChooseFormat", { context: "presentation" }), [tc]);
 
@@ -121,70 +115,65 @@ const ExportSyntaxModal: FC<ExportModalProps> = (props) => {
 		[msInfo, showUnused, doClose, setLoading, toast, log]
 	);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doClose}>
-			<ModalHeader title={tExportTitle} closeModal={doClose} />
-			<IonContent id="exportSyntaxModal">
-				<IonList lines="none" className="buttonFilled multiLinePossible">
-					<IonItem lines="full" className="wrappableInnards">
-						<IonToggle
-							labelPlacement="start"
-							enableOnOffLabels
-							checked={showUnused}
-							onIonChange={toggleUnused}
-						>
-							<Markdown>{tUnusedDesc}</Markdown>
-						</IonToggle>
-					</IonItem>
-					<IonItem>{tChooseFormat}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doPlainText}
-						className="striped"
+		<Modal
+			isOpen={isOpen}
+			title={tExportTitle}
+			closeFunc={doClose}
+			contentProps={{id: "exportSyntaxModal"}}
+			bottomEnd={[{button: "cancel"}]}
+		>
+			<IonList lines="none" className="buttonFilled multiLinePossible">
+				<IonItem lines="full" className="wrappableInnards">
+					<IonToggle
+						labelPlacement="start"
+						enableOnOffLabels
+						checked={showUnused}
+						onIonChange={toggleUnused}
 					>
-						<IonIcon icon={documentTextOutline} className="ion-padding-start" slot="start" />
-						<IonLabel className="ion-text-wrap">{tPlain}</IonLabel>
-					</IonItem>
-					<IonItem
-						button={true}
-						onClick={doMarkdown}
-					>
-						<IonIcon icon={documentTextOutline} className="ion-padding-start" slot="start" />
-						<IonLabel className="ion-text-wrap">{tMD}</IonLabel>
-					</IonItem>
-					<IonItem
-						button={true}
-						onClick={doExDocx}
-						className="striped"
-					>
-						<IonIcon icon={documentOutline} className="ion-padding-start" slot="start" />
-						<IonLabel className="ion-text-wrap">{tDocx}</IonLabel>
-					</IonItem>
-					<IonItem
-						button={true}
-						onClick={doExJSON}
-					>
-						<IonIcon icon={codeOutline} className="ion-padding-start" slot="start" />
-						<IonLabel className="ion-text-wrap">{tJSON}</IonLabel>
-					</IonItem>
-					<IonItem
-						button={true}
-						onClick={doExXML}
-						className="striped"
-					>
-						<IonIcon icon={codeOutline} className="ion-padding-start" slot="start" />
-						<IonLabel className="ion-text-wrap">{tXML}</IonLabel>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="warning" slot="end" onClick={doClose}>
-						<IonIcon icon={closeCircleOutline} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+						<Markdown>{tUnusedDesc}</Markdown>
+					</IonToggle>
+				</IonItem>
+				<IonItem>{tChooseFormat}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doPlainText}
+					className="striped"
+				>
+					<IonIcon icon={documentTextOutline} className="ion-padding-start" slot="start" />
+					<IonLabel className="ion-text-wrap">{tPlain}</IonLabel>
+				</IonItem>
+				<IonItem
+					button={true}
+					onClick={doMarkdown}
+				>
+					<IonIcon icon={documentTextOutline} className="ion-padding-start" slot="start" />
+					<IonLabel className="ion-text-wrap">{tMD}</IonLabel>
+				</IonItem>
+				<IonItem
+					button={true}
+					onClick={doExDocx}
+					className="striped"
+				>
+					<IonIcon icon={documentOutline} className="ion-padding-start" slot="start" />
+					<IonLabel className="ion-text-wrap">{tDocx}</IonLabel>
+				</IonItem>
+				<IonItem
+					button={true}
+					onClick={doExJSON}
+				>
+					<IonIcon icon={codeOutline} className="ion-padding-start" slot="start" />
+					<IonLabel className="ion-text-wrap">{tJSON}</IonLabel>
+				</IonItem>
+				<IonItem
+					button={true}
+					onClick={doExXML}
+					className="striped"
+				>
+					<IonIcon icon={codeOutline} className="ion-padding-start" slot="start" />
+					<IonLabel className="ion-text-wrap">{tXML}</IonLabel>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

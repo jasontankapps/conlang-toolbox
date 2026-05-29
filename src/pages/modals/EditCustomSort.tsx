@@ -4,15 +4,8 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
 	IonButton,
-	IonTitle,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast,
 	IonSelect,
@@ -26,9 +19,6 @@ import {
 	SelectCustomEvent
 } from '@ionic/react';
 import {
-	closeCircleOutline,
-	saveOutline,
-	globeOutline,
 	addOutline,
 	trash,
 	reorderThree
@@ -38,7 +28,6 @@ import { LanguageCode } from 'iso-639-1';
 
 import {
 	EqualityObject,
-	ExtraCharactersModalOpener,
 	ModalProperties,
 	RelationObject,
 	SetState,
@@ -50,13 +39,15 @@ import {
 import { deleteCustomSort, editCustomSort } from '../../store/sortingSlice';
 import useTranslator from '../../store/translationHooks';
 
-import { $i } from '../../components/DollarSignExports';
 import toaster from '../../components/toaster';
 import yesNoAlert from '../../components/yesNoAlert';
 import PermanentInfo from '../../components/PermanentInfo';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
+import getSetValue from '../../components/getSetValue';
+import Modal from '../../components/Modal';
 
-interface CustomSortModal extends ExtraCharactersModalOpener {
+interface CustomSortModal extends ModalProperties {
 	langObj: {[key: string]: string}
 	languages: LanguageCode[]
 
@@ -95,21 +86,21 @@ const translations = [
 	"noEnteredInfoMsg",
 	"needTitleMsg", "alternateAlphabetExplanation",
 	"SortLanguage", "SortSensitivity", "AlphabetSeparator",
-	"DeleteSortButton", "DeleteSort", "SortEdited", "EditSort",
+	"DeleteSort", "SortEdited", "EditSort",
 	"SortDeleted"
 ];
 
 const commons = [
-	"AddNew", "Close", "defaultSort", "Delete", "Edit", "ExtraChars",
-	"Ok", "Save", "Title", "areYouSure", "emphasizedError",
+	"AddNew", "defaultSort", "Delete", "Edit",
+	"Ok", "Title", "areYouSure", "emphasizedError",
 	"deleteThisCannotUndo",
 ];
 
 const EditCustomSort: FC<CustomSortModal> = (props) => {
 	const [ tc ] = useTranslator('common');
 	const [
-		tAddNew, tClose, tDefSort, tDelete, tEdit, tExChar, tOk,
-		tSave, tTitle, tRUSure, tError, tYouSure
+		tAddNew, tDefSort, tDelete, tEdit,tOk,
+		tTitle, tRUSure, tError, tYouSure
 	] = useI18Memo(commons);
 	const [
 		tNone, tBase, tBlank, tCharsEqual, tComma, tCustomAlpha, tDefSens,
@@ -124,7 +115,6 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 	const {
 		isOpen,
 		setIsOpen,
-		openECM,
 		editingCustomSort,
 
 		langObj,
@@ -157,6 +147,9 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 	const [usingAlpha, setUsingAlpha] = useState<boolean>(false);
 	const [separator, setSeparator] = useState<SortSeparator>("");
 	const [customizations, setCustomizations] = useState<(RelationObject | EqualityObject)[]>([]);
+	const [editSortTitle, editSortTitleRef] = useElement<HTMLIonInputElement>();
+	const [editCustomAlphabet, editCustomAlphabetRef] = useElement<HTMLIonInputElement>();
+	const [editingCustomSortList, editingCustomSortListRef] = useElement<HTMLIonListElement>();
 	const onLoad = useCallback(() => {
 		const {
 			id = "ERROR",
@@ -168,31 +161,27 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 			customizations = []
 		} = editingCustomSort || {};
 		setId(id);
-		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		if(editSortTitle) { editSortTitle.value = title; }
+		getSetValue(editSortTitle, title);
 		setSortLang(sortLanguage);
 		setSortSensitivity(sensitivity);
 		if(customAlphabet.length > 0) {
 			setUsingAlpha(true);
 		}
-		const editCustomAlphabet = $i<HTMLInputElement>("editCustomAlphabet");
-		if(editCustomAlphabet) { editCustomAlphabet.value = customAlphabet.join(separator); }
+		getSetValue(editCustomAlphabet, customAlphabet.join(separator));
 		setSeparator(separator);
 		setCustomizations(customizations);
-	}, [editingCustomSort, tError]);
+	}, [editingCustomSort, tError, editSortTitle, editCustomAlphabet]);
 	const closeModal = useCallback(() => {
 		setIsOpen(false);
 		setId("");
-		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		if(editSortTitle) { editSortTitle.value = ""; }
+		getSetValue(editSortTitle, "");
 		setSortLang("default");
 		setSortSensitivity("default");
 		setUsingAlpha(false);
-		const editCustomAlphabet = $i<HTMLInputElement>("editCustomAlphabet");
-		if(editCustomAlphabet) { editCustomAlphabet.value = ""; }
+		getSetValue(editCustomAlphabet, "");
 		setSeparator(",");
 		setCustomizations([]);
-	}, [setIsOpen]);
+	}, [setIsOpen, editSortTitle, editCustomAlphabet]);
 	// Accept new relation from other modal
 	useEffect(() => {
 		if(isOpen && savedRelation) {
@@ -275,8 +264,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 				]
 			});
 		}
-		const editSortTitle = $i<HTMLInputElement>("editSortTitle");
-		const title = editSortTitle ? editSortTitle.value.trim() : "";
+		const title = getSetValue(editSortTitle).trim();
 		if(!title) {
 			doAlert({
 				message: tNoTitle,
@@ -297,8 +285,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 			title
 		};
 		if(usingAlpha) {
-			const editCustomAlphabet = $i<HTMLInputElement>("editCustomAlphabet");
-			const alpha: string[] = (editCustomAlphabet ? editCustomAlphabet.value : "")
+			const alpha: string[] = getSetValue(editCustomAlphabet)
 				.split(separator)
 				.filter((char: string) => char);
 			if(alpha.length === 0) {
@@ -354,7 +341,12 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 			duration: 2000,
 			toast
 		});
-	}, [closeModal, customizations, dispatch, doAlert, id, separator, sortLang, sortSensitivity, toast, usingAlpha, tBlank, tNoInfo, tNoTitle, tOk, tThingSaved]);
+	}, [
+		closeModal, customizations, dispatch, doAlert, id,
+		separator, sortLang, sortSensitivity, toast,
+		usingAlpha, tBlank, tNoInfo, tNoTitle, tOk,
+		tThingSaved, editSortTitle, editCustomAlphabet
+	]);
 	const maybeDeleteSort = useCallback(() => {
 		const message = permanents[id];
 		if(message) {
@@ -400,11 +392,10 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		addEqualityModalInfo.setIsOpen(true);
 	}, [addEqualityModalInfo, setSavedEquality]);
 	const editRelation = useCallback((relation: RelationObject) => {
-		const el = $i<HTMLIonListElement>("editingCustomSortList");
-		if(el) { el.closeSlidingItems(); }
+		if(editingCustomSortList) { editingCustomSortList.closeSlidingItems(); }
 		setIncomingRelation(relation);
 		editRelationModalInfo.setIsOpen(true);
-	}, [editRelationModalInfo, setIncomingRelation]);
+	}, [editRelationModalInfo, setIncomingRelation, editingCustomSortList]);
 	const maybeDeleteRelation = useCallback((id: string) => {
 		yesNoAlert({
 			header: tDelThisSort,
@@ -416,12 +407,12 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		});
 	}, [customizations, doAlert, tDelThisSort, tc, tRUSure]);
 	const editEquality = useCallback((relation: EqualityObject) => {
-		const el = $i<HTMLIonListElement>("editingCustomSortList");
-		if(el) { el.closeSlidingItems(); }
+		if(editingCustomSortList) { editingCustomSortList.closeSlidingItems(); }
 		setIncomingEquality(relation);
 		editEqualityModalInfo.setIsOpen(true);
-	}, [editEqualityModalInfo, setIncomingEquality]);
+	}, [editEqualityModalInfo, setIncomingEquality, editingCustomSortList]);
 	const maybeDeleteEquality = useCallback((id: string) => {
+		if(editingCustomSortList) { editingCustomSortList.closeSlidingItems(); }
 		yesNoAlert({
 			header: tDelThisSort,
 			message: tRUSure,
@@ -430,7 +421,7 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 			handler: () => setCustomizations(customizations.filter(obj => obj.id !== id)),
 			doAlert
 		});
-	}, [customizations, doAlert, tDelThisSort, tc, tRUSure]);
+	}, [customizations, doAlert, tDelThisSort, tc, tRUSure, editingCustomSortList]);
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
 		// move things around
@@ -443,7 +434,6 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 		setCustomizations(final);
 		ed.complete();
 	}, [customizations]);
-	const opener = useCallback(() => openECM(true), [openECM]);
 	const allLanguages = useMemo(() => languages.map((language) => (
 		<IonSelectOption
 			key={`knownLang:${language}`}
@@ -601,192 +591,165 @@ const EditCustomSort: FC<CustomSortModal> = (props) => {
 	const doSetSortLang = useCallback((e: SelectCustomEvent) => setSortLang(e.detail.value), []);
 	const doSetSortSens = useCallback((e: SelectCustomEvent) => setSortSensitivity(e.detail.value), []);
 	return (
-		<IonModal
+		<Modal
 			isOpen={isOpen}
-			backdropDismiss={false}
+			closeFunc={closeModal}
+			title={tEditThing}
+			enclosed
 			onIonModalDidPresent={onLoad}
+			bottomEnd={[{button: "save", action: maybeSaveEditedSort}]}
+			bottomStart={[{key: tDelSort, icon: "delete", isText: true, action: maybeDeleteSort}]}
+			footerClass="modalBorderTop"
+			extraChars
 		>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tEditThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={opener} aria-label={tExChar}>
-							<IonIcon icon={globeOutline} />
-						</IonButton>
-						<IonButton onClick={closeModal} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="full" id="editingCustomSortList">
-					<IonItem>
-					<div slot="start" className="ion-margin-end">{tpTitle}</div>
-						<IonInput
-							aria-label={tTitle}
-							id="editSortTitle"
-							helperText={tTitleSort}
-						/>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSortLang}
-							value={sortLang}
-							onIonChange={doSetSortLang}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="default"
-							>{tDefSort}</IonSelectOption>
-							{allLanguages}
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="unicode"
-							>{tUnicode}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem className="wrappableInnards">
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpSortSens}
-							value={sortSensitivity}
-							onIonChange={doSetSortSens}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="default"
-							>{tDefSens}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="base"
-							>{tBase}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="accent"
-							>{tDia}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="case"
-							>{tUppLow}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="variant"
-							>{tDiaPlus}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem
-						className="wrappableInnards"
-						lines={usingAlpha ? "none" : undefined}
+			<IonList lines="full" id="editingCustomSortList" ref={editingCustomSortListRef}>
+				<IonItem>
+				<div slot="start" className="ion-margin-end">{tpTitle}</div>
+					<IonInput
+						aria-label={tTitle}
+						id="editSortTitle"
+						helperText={tTitleSort}
+						ref={editSortTitleRef}
+					/>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSortLang}
+						value={sortLang}
+						onIonChange={doSetSortLang}
 					>
-						<IonToggle
-							labelPlacement="start"
-							enableOnOffLabels
-							checked={usingAlpha}
-							onIonChange={toggleUsingAlpha}
-						>
-							<h2>{tUseAlph}</h2>
-							<p>{tAltAlphaExpl}</p>
-						</IonToggle>
-					</IonItem>
-					<IonItem
-						lines="none"
-						style={usingAlpha ? {} : {display: "none"}}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="default"
+						>{tDefSort}</IonSelectOption>
+						{allLanguages}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="unicode"
+						>{tUnicode}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem className="wrappableInnards">
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpSortSens}
+						value={sortSensitivity}
+						onIonChange={doSetSortSens}
 					>
-						<IonInput
-							aria-label={tCustomAlpha}
-							id="editCustomAlphabet"
-							helperText={tWriteAlpha}
-						/>
-					</IonItem>
-					<IonItem
-						className="wrappableInnards"
-						style={usingAlpha ? {} : {display: "none"}}
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="default"
+						>{tDefSens}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="base"
+						>{tBase}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="accent"
+						>{tDia}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="case"
+						>{tUppLow}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="variant"
+						>{tDiaPlus}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem
+					className="wrappableInnards"
+					lines={usingAlpha ? "none" : undefined}
+				>
+					<IonToggle
+						labelPlacement="start"
+						enableOnOffLabels
+						checked={usingAlpha}
+						onIonChange={toggleUsingAlpha}
 					>
-						<IonSelect
-							color="primary"
-							className="ion-text-wrap settings"
-							label={tpAlphaSep}
-							value={separator}
-							onIonChange={doSetSeparator}
-						>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=""
-							>{tNoSep}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=" "
-							>{tSpace}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=","
-							>{tComma}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value="."
-							>{tPeriod}</IonSelectOption>
-							<IonSelectOption
-								className="ion-text-wrap ion-text-align-end"
-								value=";"
-							>{tSemi}</IonSelectOption>
-						</IonSelect>
-					</IonItem>
-					<IonItem className="wrappableInnards" lines="none">
-						<IonLabel>
-							<h2>{tRelations}</h2>
-							<p>{tCharsSepar}</p>
-						</IonLabel>
-						<IonButton color="secondary" slot="end" onClick={maybeAddNewRelation}>
-							<IonIcon icon={addOutline} slot="end" />
-							<IonLabel>{tAddNew}</IonLabel>
-						</IonButton>
-					</IonItem>
-					<IonItem className="wrappableInnards" lines="none">
-						<IonLabel>
-							<h2>{tEqualities}</h2>
-							<p>{tCharsEqual}</p>
-						</IonLabel>
-						<IonButton color="secondary" slot="end" onClick={maybeAddNewEquality}>
-							<IonIcon icon={addOutline} slot="end" />
-							<IonLabel>{tAddNew}</IonLabel>
-						</IonButton>
-					</IonItem>
-					<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
-						{customizations.length > 0 ?
-							allCustomizations
-						:
-							<IonItem>
-								<IonLabel className="ion-text-align-end"><em>{tNone}</em></IonLabel>
-							</IonItem>
-						}
-					</IonReorderGroup>
-				</IonList>
-			</IonContent>
-			<IonFooter className="modalBorderTop">
-				<IonToolbar>
-					<IonButton
-						color="danger"
-						slot="start"
-						onClick={maybeDeleteSort}
+						<h2>{tUseAlph}</h2>
+						<p>{tAltAlphaExpl}</p>
+					</IonToggle>
+				</IonItem>
+				<IonItem
+					lines="none"
+					style={usingAlpha ? {} : {display: "none"}}
+				>
+					<IonInput
+						aria-label={tCustomAlpha}
+						id="editCustomAlphabet"
+						helperText={tWriteAlpha}
+						ref={editCustomAlphabetRef}
+					/>
+				</IonItem>
+				<IonItem
+					className="wrappableInnards"
+					style={usingAlpha ? {} : {display: "none"}}
+				>
+					<IonSelect
+						color="primary"
+						className="ion-text-wrap settings"
+						label={tpAlphaSep}
+						value={separator}
+						onIonChange={doSetSeparator}
 					>
-						<IonIcon icon={trash} slot="end" />
-						<IonLabel>{tDelSort}</IonLabel>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=""
+						>{tNoSep}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=" "
+						>{tSpace}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=","
+						>{tComma}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value="."
+						>{tPeriod}</IonSelectOption>
+						<IonSelectOption
+							className="ion-text-wrap ion-text-align-end"
+							value=";"
+						>{tSemi}</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				<IonItem className="wrappableInnards" lines="none">
+					<IonLabel>
+						<h2>{tRelations}</h2>
+						<p>{tCharsSepar}</p>
+					</IonLabel>
+					<IonButton color="secondary" slot="end" onClick={maybeAddNewRelation}>
+						<IonIcon icon={addOutline} slot="end" />
+						<IonLabel>{tAddNew}</IonLabel>
 					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={maybeSaveEditedSort}
-					>
-						<IonIcon icon={saveOutline} slot="end" />
-						<IonLabel>{tSave}</IonLabel>
+				</IonItem>
+				<IonItem className="wrappableInnards" lines="none">
+					<IonLabel>
+						<h2>{tEqualities}</h2>
+						<p>{tCharsEqual}</p>
+					</IonLabel>
+					<IonButton color="secondary" slot="end" onClick={maybeAddNewEquality}>
+						<IonIcon icon={addOutline} slot="end" />
+						<IonLabel>{tAddNew}</IonLabel>
 					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonItem>
+				<IonReorderGroup disabled={false} onIonReorderEnd={doReorder}>
+					{customizations.length > 0 ?
+						allCustomizations
+					:
+						<IonItem>
+							<IonLabel className="ion-text-align-end"><em>{tNone}</em></IonLabel>
+						</IonItem>
+					}
+				</IonReorderGroup>
+			</IonList>
+		</Modal>
 	);
 };
 

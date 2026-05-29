@@ -10,8 +10,13 @@ const updateConceptsDisplayFunc = (state: ConceptsState, action: PayloadAction<C
 	return state;
 };
 
-const toggleConceptsBooleanFunc = (state: ConceptsState, action: PayloadAction<"textCenter" | "showingCombos">) => {
-	state[action.payload] = !state[action.payload];
+const toggleTextCenteredFunc = (state: ConceptsState, action: PayloadAction<boolean>) => {
+	state.textCenter = action.payload;
+	return state;
+};
+
+const toggleCombosFunc = (state: ConceptsState) => {
+	state.showingCombos = !state.showingCombos;
 	return state;
 };
 
@@ -53,7 +58,8 @@ const conceptsSlice = createSlice({
 	initialState,
 	reducers: {
 		updateConceptsDisplay: updateConceptsDisplayFunc,
-		toggleConceptsBoolean: toggleConceptsBooleanFunc,
+		toggleTextCentered: toggleTextCenteredFunc,
+		toggleCombos: toggleCombosFunc,
 		addCustomHybridMeaning: addCustomHybridMeaningFunc,
 		deleteCustomHybridMeanings: removeCustomHybridMeaningsFunc,
 		loadStateConcepts: loadStateConceptsFunc,
@@ -63,7 +69,8 @@ const conceptsSlice = createSlice({
 
 export const {
 	updateConceptsDisplay,
-	toggleConceptsBoolean,
+	toggleTextCentered,
+	toggleCombos,
 	addCustomHybridMeaning,
 	deleteCustomHybridMeanings,
 	loadStateConcepts,

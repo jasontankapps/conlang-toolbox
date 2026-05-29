@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, FC } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, FC, useContext } from 'react';
 import {
 	IonPage,
 	IonContent,
@@ -26,20 +26,19 @@ import Markdown from 'react-markdown';
 
 import {
 	updateConceptsDisplay,
-	toggleConceptsBoolean,
+	toggleTextCentered,
+	toggleCombos,
 	addCustomHybridMeaning,
 	deleteCustomHybridMeanings
 } from '../store/conceptsSlice';
 import {
 	LexiconColumn,
-	PageData,
 	Concept,
 	ConceptCombo,
 	StateObject,
 	SortObject,
 	ConceptDisplay,
-	ConceptDisplayObject,
-	ModalPropsMaker
+	ConceptDisplayObject
 } from '../store/types';
 import { addItemsToLexiconColumn } from '../store/lexiconSlice';
 import useTranslator from '../store/translationHooks';
@@ -48,6 +47,7 @@ import { Concepts, ConceptsSources } from '../components/Concepts';
 import { ConceptsOutlineIcon, LexiconIcon, LexiconOutlineIcon } from '../components/icons';
 import Header from '../components/Header';
 import ModalWrap from "../components/ModalWrap";
+import { ModalMakingContext } from '../components/contexts';
 import yesNoAlert from '../components/yesNoAlert';
 import toaster from '../components/toaster';
 import makeSorter from '../components/stringSorter';
@@ -59,26 +59,49 @@ interface SavedWord { id: string, word: string, parts?: Concept[] }
 interface InnerHeaderProps {
 	textCenter: boolean
 	pickAndSave: boolean
-	modalPropsMaker: ModalPropsMaker
 }
 
 const pair = ["Concepts", "Help"];
 const InnerHeader: FC<InnerHeaderProps> = (props) => {
-	const { textCenter, pickAndSave, modalPropsMaker } = props;
+	const { textCenter, pickAndSave } = props;
 	const dispatch = useDispatch();
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
 	const [tConcepts, tHelp] = useI18Memo(pair);
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const endButtons = useMemo(() => {
 		return [
-			<IonButton key="conceptsTextCenterButton" onClick={() => dispatch(toggleConceptsBoolean("textCenter"))}>
+			<IonButton
+				key="conceptsTextStartAlignButton"
+				fill="outline"
+				className={textCenter ? "duoTogglebutton buttonOff" : "duoTogglebutton"}
+				onClick={() => dispatch(toggleTextCentered(false))}
+			>
 				<IonIcon
 					flipRtl
 					size="small"
-					slot="end"
-					src={`svg/align-${textCenter ? "left" : "center" }-material.svg`}
+					slot="icon-only"
+					src={`svg/align-left-material.svg`}
 				/>
 			</IonButton>,
-			<IonButton key="conceptsHelpButton" aria-label={tHelp} disabled={pickAndSave} onClick={() => setIsOpenInfo(true)}>
+			<IonButton
+				key="conceptsTextCenterAlignButton"
+				fill="outline"
+				className={textCenter ? "duoTogglebutton" : "duoTogglebutton buttonOff"}
+				onClick={() => dispatch(toggleTextCentered(true))}
+			>
+				<IonIcon
+					size="small"
+					slot="icon-only"
+					src={`svg/align-center-material.svg`}
+				/>
+			</IonButton>,
+			<IonButton
+				key="conceptsHelpButton"
+				aria-label={tHelp}
+				disabled={pickAndSave}
+				onClick={() => setIsOpenInfo(true)}
+				className="conceptsHelpButton"
+			>
 				<IonIcon icon={helpCircleOutline} />
 			</IonButton>
 		];
@@ -86,6 +109,7 @@ const InnerHeader: FC<InnerHeaderProps> = (props) => {
 	return (<>
 		<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}><ConceptCard /></ModalWrap>
 		<Header
+			id="conceptsHeader"
 			title={tConcepts}
 			endButtons={endButtons}
 		/>
@@ -177,10 +201,9 @@ const getChips = (
 	return <GroupChip key={prop} title={title} isDisplayed={display[prop]} index={i} toggleFunc={toggleFunc} />;
 });
 
-const ConceptsPage: FC<PageData> = (props) => {
+const ConceptsPage: FC = () => {
 	const [ t ] = useTranslator('concepts');
 	const [ tc ] = useTranslator('common');
-	const { modalPropsMaker } = props;
 	const [pickAndSave, setPickAndSave] = useState<boolean>(false);
 	const [linking, setLinking] = useState<boolean>(false);
 	const [unlinking, setUnlinking] = useState<boolean>(false);
@@ -489,8 +512,8 @@ const ConceptsPage: FC<PageData> = (props) => {
 	// // //
 
 	const header = useMemo(
-		() => <InnerHeader textCenter={textCenter} pickAndSave={pickAndSave} modalPropsMaker={modalPropsMaker} />,
-		[ textCenter, pickAndSave, modalPropsMaker ]
+		() => <InnerHeader textCenter={textCenter} pickAndSave={pickAndSave} />,
+		[ textCenter, pickAndSave ]
 	);
 	const wordsShowing = useMemo(
 		() => getItems(shown, savedWordsObject, maybeSaveThisWord),
@@ -520,7 +543,7 @@ const ConceptsPage: FC<PageData> = (props) => {
 		tc("Save")
 	], [ t, tc ]);
 
-	const toggleBool = useCallback(() => dispatch(toggleConceptsBoolean("showingCombos")), [dispatch]);
+	const toggleBool = useCallback(() => dispatch(toggleCombos()), [dispatch]);
 	const savedWordsList = useMemo(() => savedWords.map(word => word.word).join("; "), [savedWords]);
 
 	return (

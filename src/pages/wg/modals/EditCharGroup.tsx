@@ -4,12 +4,8 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
 	IonButton,
-	IonModal,
 	IonInput,
-	IonFooter,
 	IonToggle,
 	IonRange,
 	useIonAlert,
@@ -17,34 +13,25 @@ import {
 	RangeCustomEvent
 } from '@ionic/react';
 import {
-	chevronBackOutline,
-	saveOutline,
-	trashOutline
+	chevronBackOutline
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { WGCharGroupObject, Zero_Fifty, ExtraCharactersModalOpener, StateObject, SetState } from '../../../store/types';
+import { WGCharGroupObject, Zero_Fifty, StateObject, SetState, ModalProperties } from '../../../store/types';
 import { editCharacterGroupWG, deleteCharGroupWG } from '../../../store/wgSlice';
 import useTranslator from '../../../store/translationHooks';
 
-import { $q, $i } from '../../../components/DollarSignExports';
 import yesNoAlert from '../../../components/yesNoAlert';
 import toaster from '../../../components/toaster';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
+import useElement from '../../../components/useElement';
+import getSetValue from '../../../components/getSetValue';
+import Modal from '../../../components/Modal';
 
-interface ModalProps extends ExtraCharactersModalOpener {
+interface ModalProps extends ModalProperties {
 	editing: null | WGCharGroupObject
 	setEditing: SetState<null | WGCharGroupObject>
 }
-
-function resetError (prop: keyof WGCharGroupObject) {
-	// Remove danger color if present
-	// Debounce means this sometimes doesn't exist by the time this is called.
-	const where = $q("." + prop + "LabelEdit");
-	if(where) { where.classList.remove("invalidValue"); }
-}
-
 
 const commons = [ "deleteThisCannotUndo", "Cancel", "error" ];
 
@@ -52,8 +39,8 @@ const translations = [
 	"OneCharOnly", "enterCharsInGroupHere",
 	"LettersCharacters", "noLabelMsg", "noRunMsg",
 	"noTitleMsg", "ShortLabel", "Suggest", "TitleOrDesc",
-	"cantMakeLabelMsg", "DeleteCharGroup", "EditCharGroup",
-	"SaveCharGroup", "CharGroupDeleted", "CharGroupSaved"
+	"cantMakeLabelMsg", "EditCharGroup",
+	"CharGroupDeleted", "CharGroupSaved"
 ];
 
 const presentations = [
@@ -69,12 +56,12 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 	const [ tYouSure, tCancel, tError ] = useI18Memo(commons);
 	const [
 		t1Char, tEnterHere, tLettChar, tNoLabel, tNoRun, tNoTitle,
-		tShort, tSuggest, tTitleDesc, tNoSuggest, tDelThing,
-		tEditThing, tSaveThing, tThingDel, tThingSaved
+		tShort, tSuggest, tTitleDesc, tNoSuggest,
+		tEditThing, tThingDel, tThingSaved
 	] = useI18Memo(translations, 'wgwe');
 	const [ tpTitleDesc, tpShort, tpLettChar ] = useI18Memo(presentations, 'wgwe', context);
 
-	const { isOpen, setIsOpen, openECM, editing, setEditing } = props;
+	const { isOpen, setIsOpen, editing, setEditing } = props;
 	const dispatch = useDispatch();
 	const { characterGroups, characterGroupDropoff } = useSelector((state: StateObject) => state.wg);
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
@@ -83,18 +70,18 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 	const [hasDropoff, setHasDropoff] = useState<boolean>(false);
 	const [dropoff, setDropoff] = useState<Zero_Fifty>(characterGroupDropoff);
 	const [charGroupMap, setCharGroupMap] = useState<{ [ key: string]: boolean }>({});
-	const [titleEl, setTitleEl] = useState<HTMLInputElement | null>(null);
-	const [labelEl, setLabelEl] = useState<HTMLInputElement | null>(null);
-	const [runEl, setRunEl] = useState<HTMLInputElement | null>(null);
+	const [titleLabel, titleLabelRef] = useElement<HTMLIonLabelElement>();
+	const [labelLabel, labelLabelRef] = useElement<HTMLDivElement>();
+	const [runLabel, runLabelRef] = useElement<HTMLIonLabelElement>();
+	const [editingWGCharGroupTitle, editingWGCharGroupTitleRef] = useElement<HTMLIonInputElement>();
+	const [editingWGShortLabel, editingWGShortLabelRef] = useElement<HTMLIonInputElement>();
+	const [editingWGCharGroupRun, editingWGCharGroupRunRef] = useElement<HTMLIonInputElement>();
 	const onLoad = useCallback(() => {
-		const _titleEl = $i<HTMLInputElement>("editingWGCharGroupTitle");
-		const _labelEl = $i<HTMLInputElement>("editingWGShortLabel");
-		const _runEl = $i<HTMLInputElement>("editingWGCharGroupRun");
 		if(editing) {
 			const { title, run, dropoffOverride, label } = editing;
-			if(_titleEl) { _titleEl.value = title; }
-			if(_labelEl) { _labelEl.value = label; }
-			if(_runEl) { _runEl.value = run; }
+			getSetValue(editingWGCharGroupTitle, title);
+			getSetValue(editingWGShortLabel, label);
+			getSetValue(editingWGCharGroupRun, run);
 			if(dropoffOverride !== undefined) {
 				setHasDropoff(true);
 				setDropoff(dropoffOverride);
@@ -108,22 +95,15 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 			});
 			setCharGroupMap(newMap);
 		} else {
-			if(_titleEl) { _titleEl.value = ""; }
-			if(_labelEl) { _labelEl.value = ""; }
-			if(_runEl) { _runEl.value = ""; }
+			getSetValue(editingWGCharGroupTitle, "");
+			getSetValue(editingWGShortLabel, "");
+			getSetValue(editingWGCharGroupRun, "");
 		}
-		setTitleEl(_titleEl);
-		setLabelEl(_labelEl);
-		setRunEl(_runEl);
-	}, [characterGroupDropoff, characterGroups, editing]);
-
-	const resetLabel = useCallback(() => resetError("label"), []);
-	const resetTitle = useCallback(() => resetError("title"), []);
-	const resetRun = useCallback(() => resetError("run"), []);
+	}, [characterGroupDropoff, characterGroups, editing, editingWGCharGroupTitle, editingWGShortLabel, editingWGCharGroupRun]);
 
 	const generateLabel = useCallback(() => {
 		//let invalid = "^$\\[]{}.*+()?|";
-		const words = (titleEl!.value as string) // Get the title/description
+		const words = getSetValue(editingWGCharGroupTitle) // Get the title/description
 			.trim() // trim leading/trailing whitespace
 			.replace(/[$\\[\]{}.*+()?^|]/g, "") // remove invalid characters
 			.toUpperCase() // uppercase everything
@@ -151,10 +131,13 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 			});
 		} else {
 			// Suitable label found
-			labelEl!.value = label;
-			resetError("label");
+			getSetValue(editingWGShortLabel, label);
+			labelLabel && labelLabel.classList.remove("invalidValue");
 		}
-	}, [charGroupMap, editing, labelEl, titleEl, toast, tNoSuggest]);
+	}, [
+		charGroupMap, editing, labelLabel, toast, tNoSuggest,
+		editingWGCharGroupTitle, editingWGShortLabel
+	]);
 	const cancelEditing = useCallback(() => {
 		setIsOpen(false);
 		setEditing(null);
@@ -162,33 +145,28 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 	const maybeSaveNewInfo = useCallback(() => {
 		const err: string[] = [];
 		// Test info for validness, then save if needed and reset the editingWGCharGroup
-		const title = titleEl!.value.trim(),
-			label = labelEl!.value.trim(),
-			run = runEl!.value.trim();
+		const title = getSetValue(editingWGCharGroupTitle).trim(),
+			label = getSetValue(editingWGShortLabel).trim(),
+			run = getSetValue(editingWGCharGroupRun).trim();
 		if(title === "") {
-			const el = $q(".titleLabelEdit");
-			if(el) { el.classList.add("invalidValue"); }
+			if(titleLabel) { titleLabel.classList.add("invalidValue"); }
 			err.push(tNoTitle);
 		}
 		if(!label) {
-			const el = $q(".labelLabelEdit");
-			if(el) { el.classList.add("invalidValue"); }
+			if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 			err.push(tNoLabel);
 		} else if (editing!.label !== label && charGroupMap[label]) {
-			const el = $q(".labelLabelEdit");
-			if(el) { el.classList.add("invalidValue"); }
+			if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 			err.push(tw("duplicateLabel", { label }));
 		} else {
 			const invalid = "^$\\[]{}.*+()?|";
 			if (invalid.indexOf(label as string) !== -1) {
-				const el = $q(".labelLabelEdit");
-				if(el) { el.classList.add("invalidValue"); }
+				if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 				err.push(tw("invalidLabel", { label }));
 			}
 		}
 		if(run === "") {
-			const el = $q(".runLabelEdit");
-			if(el) { el.classList.add("invalidValue"); }
+			if(runLabel) { runLabel.classList.add("invalidValue"); }
 			err.push(tNoRun);
 		}
 		if(err.length > 0) {
@@ -226,13 +204,14 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 			toast
 		});
 	}, [cancelEditing, charGroupMap, dispatch, doAlert, dropoff,
-		editing, hasDropoff, labelEl, runEl, titleEl, toast, tw,
-		tCancel, tError, tNoLabel, tNoRun, tNoTitle, tThingSaved
+		editing, hasDropoff, labelLabel, runLabel, titleLabel, toast, tw,
+		tCancel, tError, tNoLabel, tNoRun, tNoTitle, tThingSaved,
+		editingWGCharGroupTitle, editingWGShortLabel, editingWGCharGroupRun
 	]);
 	const maybeDeleteCharGroup = useCallback(() => {
-		const title = titleEl!.value.trim(),
-			label = labelEl!.value.trim(),
-			run = runEl!.value.trim();
+		const title = getSetValue(editingWGCharGroupTitle).trim(),
+			label = getSetValue(editingWGShortLabel).trim(),
+			run = getSetValue(editingWGCharGroupRun).trim();
 		const handler = () => {
 			cancelEditing();
 			dispatch(deleteCharGroupWG({
@@ -261,90 +240,91 @@ const EditCharGroupModal: FC<ModalProps> = (props) => {
 				doAlert
 			});
 		}
-	}, [cancelEditing, disableConfirms, dispatch, doAlert, dropoff, hasDropoff,
-		labelEl, runEl, titleEl, toast, tc, tThingDel, tYouSure]);
+	}, [
+		cancelEditing, disableConfirms, dispatch, doAlert,
+		dropoff, hasDropoff, editingWGCharGroupTitle,
+		editingWGCharGroupRun, editingWGShortLabel, toast, tc,
+		tThingDel, tYouSure
+	]);
 	const toggleDropoff = useCallback(() => setHasDropoff(!hasDropoff), [hasDropoff]);
 	const doDropoff = useCallback((e: RangeCustomEvent) => {setDropoff(e.detail.value as Zero_Fifty)}, []);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={cancelEditing} onIonModalDidPresent={onLoad}>
-			<ModalHeader title={tEditThing} openECM={openECM} closeModal={cancelEditing} />
-			<IonContent>
-				<IonList lines="none" class="hasSpecialLabels">
-					<IonItem className="labelled">
-						<IonLabel className="titleLabelEdit">{tpTitleDesc}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tTitleDesc}
-							id="editingWGCharGroupTitle"
-							className="ion-margin-top"
-							onIonChange={resetTitle}
-							autocomplete="on"
-						/>
-					</IonItem>
-					<IonItem className="margin-top-quarter">
-						<div
-							slot="start"
-							className="ion-margin-end labelLabel"
-						>{tpShort}</div>
-						<IonInput
-							aria-label={tShort}
-							id="editingWGShortLabel"
-							className="serifChars"
-							helperText={t1Char}
-							onIonChange={resetLabel}
-							maxlength={1}
-						/>
-						<IonButton slot="end" onClick={generateLabel}>
-							<IonIcon icon={chevronBackOutline} />{tSuggest}
-						</IonButton>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel className="runLabelEdit">{tpLettChar}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tLettChar}
-							id="editingWGCharGroupRun"
-							className="ion-margin-top serifChars"
-							helperText={tEnterHere}
-							onIonChange={resetRun}
-						/>
-					</IonItem>
-					<IonItem>
-						<IonToggle enableOnOffLabels
-							onClick={toggleDropoff}
-							labelPlacement="start"
-							checked={hasDropoff}
-						>{tUseSep}</IonToggle>
-					</IonItem>
-					<IonItem id="charGroupDropoffEditC" className={hasDropoff ? "" : "hide"}>
-						<IonRange
-							min={0}
-							max={50}
-							pin={true}
-							value={dropoff}
-							onIonChange={doDropoff}
-						>
-							<IonIcon size="small" slot="start" src="svg/flatAngle.svg" />
-							<IonIcon size="small" slot="end" src="svg/steepAngle.svg" />
-						</IonRange>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="secondary" slot="end" onClick={maybeSaveNewInfo}>
-						<IonIcon icon={saveOutline} slot="start" />
-						<IonLabel>{tSaveThing}</IonLabel>
+		<Modal
+			isOpen={isOpen}
+			title={tEditThing}
+			closeFunc={cancelEditing}
+			onIonModalDidPresent={onLoad}
+			bottomStart={[{button: "delete", action: maybeDeleteCharGroup}]}
+			bottomEnd={[{button: "save", action: maybeSaveNewInfo}]}
+			extraChars
+		>
+			<IonList lines="none" class="hasSpecialLabels">
+				<IonItem className="labelled">
+					<IonLabel className="titleLabelEdit" ref={titleLabelRef}>{tpTitleDesc}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tTitleDesc}
+						id="editingWGCharGroupTitle"
+						ref={editingWGCharGroupTitleRef}
+						className="ion-margin-top"
+						onIonChange={() => titleLabel && titleLabel.classList.remove("invalidValue")}
+						autocomplete="on"
+					/>
+				</IonItem>
+				<IonItem className="margin-top-quarter">
+					<div
+						slot="start"
+						className="ion-margin-end labelLabel"
+						ref={labelLabelRef}
+					>{tpShort}</div>
+					<IonInput
+						aria-label={tShort}
+						id="editingWGShortLabel"
+						ref={editingWGShortLabelRef}
+						className="serifChars"
+						helperText={t1Char}
+						onIonChange={() => labelLabel && labelLabel.classList.remove("invalidValue")}
+						maxlength={1}
+					/>
+					<IonButton slot="end" onClick={generateLabel}>
+						<IonIcon icon={chevronBackOutline} />{tSuggest}
 					</IonButton>
-					<IonButton color="danger" slot="start" onClick={maybeDeleteCharGroup}>
-						<IonIcon icon={trashOutline} slot="start" />
-						<IonLabel>{tDelThing}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel className="runLabelEdit" ref={runLabelRef}>{tpLettChar}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tLettChar}
+						id="editingWGCharGroupRun"
+						ref={editingWGCharGroupRunRef}
+						className="ion-margin-top serifChars"
+						helperText={tEnterHere}
+						onIonChange={() => runLabel && runLabel.classList.remove("invalidValue")}
+					/>
+				</IonItem>
+				<IonItem>
+					<IonToggle enableOnOffLabels
+						onClick={toggleDropoff}
+						labelPlacement="start"
+						checked={hasDropoff}
+					>{tUseSep}</IonToggle>
+				</IonItem>
+				<IonItem id="charGroupDropoffEditC" className={hasDropoff ? "" : "hide"}>
+					<IonRange
+						min={0}
+						max={50}
+						pin={true}
+						value={dropoff}
+						onIonChange={doDropoff}
+					>
+						<IonIcon size="small" slot="start" src="svg/flatAngle.svg" />
+						<IonIcon size="small" slot="end" src="svg/steepAngle.svg" />
+					</IonRange>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

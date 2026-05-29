@@ -1,20 +1,11 @@
 import React, { useCallback, useMemo, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonNote,
 	IonList,
-	IonContent,
-	IonToolbar,
-	IonButton,
-	IonModal,
-	IonFooter,
 	useIonAlert,
 } from '@ionic/react';
-import {
-	closeCircleOutline
-} from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
 import { MSState, MSBool, ModalProperties, StateObject, SetState } from '../../../store/types';
@@ -22,7 +13,7 @@ import { loadStateMS } from '../../../store/msSlice';
 import useTranslator from '../../../store/translationHooks';
 
 import yesNoAlert from '../../../components/yesNoAlert';
-import ModalHeader from '../../../components/ModalHeader';
+import Modal from '../../../components/Modal';
 
 
 interface MSmodalProps extends ModalProperties {
@@ -33,11 +24,25 @@ interface OldStyleSave extends MSState {
 	boolStrings?: MSBool[]
 }
 
+const SavedDoc: FC<{ pair: [string, MSState], loadThis: (x: string) => void}> = ({ pair, loadThis }) => {
+	const [key, ms] = pair;
+	const time = new Date(ms.lastSave);
+	const [ tc ] = useTranslator('common');
+	return (
+		<IonItem key={key} button={true} onClick={() => loadThis(key)}>
+			<IonLabel className="ion-text-wrap">{ms.title}</IonLabel>
+			<IonNote
+				className="ion-text-wrap ital"
+				slot="end"
+			>{tc("SavedAt", { time: time.toLocaleString() })}</IonNote>
+		</IonItem>
+	);
+};
+
 const LoadMSModal: FC<MSmodalProps> = (props) => {
 	const [ t ] = useTranslator('ms');
 	const [ tc ] = useTranslator('common');
 	const tLoadDoc = useMemo(() => t("LoadMorphoSyntaxInfo"), [t]);
-	const tCancel = useMemo(() => tc("Cancel"), [tc]);
 
 	const { isOpen, setIsOpen, storedInfo, setStoredInfo } = props;
 	const dispatch = useDispatch();
@@ -76,39 +81,22 @@ const LoadMSModal: FC<MSmodalProps> = (props) => {
 			return false;
 		});
 	}, [data, disableConfirms, dispatch, doAlert, setIsOpen, t, tc]);
-	const savedDocs = useMemo(() => data.length > 0 ? data.map((pair: [string, MSState]) => {
-		const key = pair[0];
-		const ms = pair[1];
-		const time = new Date(ms.lastSave);
-		return (
-			<IonItem key={key} button={true} onClick={() => loadThis(key)}>
-				<IonLabel className="ion-text-wrap">{ms.title}</IonLabel>
-				<IonNote
-					className="ion-text-wrap ital"
-					slot="end"
-				>{tc("SavedAt", { time: time.toLocaleString() })}</IonNote>
-			</IonItem>
-		);
-	}) : (
-		<h1>{t("NoSavedMorphoSyntaxDocuments")}</h1>
-	), [data, loadThis, t, tc]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doClose}>
-			<ModalHeader title={tLoadDoc} closeModal={doClose} />
-			<IonContent>
-				<IonList lines="none" className="buttonFilled">
-					{savedDocs}
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar className={data.length > 0 ? "" : "hide"}>
-					<IonButton color="warning" slot="end" onClick={doClose}>
-						<IonIcon icon={closeCircleOutline} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			title={tLoadDoc}
+			closeFunc={doClose}
+			isOpen={isOpen}
+			footerToolbarClass={data.length > 0 ? "" : "hide"}
+			bottomEnd={[{button: "cancel"}]}
+		>
+			<IonList lines="none" className="buttonFilled">
+				{data.length > 0 ? data.map((pair: [string, MSState]) => 
+					<SavedDoc key={pair[0]} pair={pair} loadThis={loadThis} />
+				) : (
+					<h1>{t("NoSavedMorphoSyntaxDocuments")}</h1>
+				)}
+			</IonList>
+		</Modal>
 	);
 };
 

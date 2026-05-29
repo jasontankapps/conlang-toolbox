@@ -434,7 +434,7 @@ Each character in Extra Characters has an official Unicode name. You can find th
 |  | credit2 | \[ "$t(common:WordGen) and $t(common:WordEvolve) are heavily inspired by \[Gen\]\(https:/\/www.zompist.com/gen.html\) and \[SCA²\]\(https:/\/www.zompist.com/sca2.html\) by Mark Rosenfelder" \] | *This is an array of strings in Markdown format.* |
 |  | credit3 | \[ "MorphoSyntax is based on an outline presented throughout \_Describing Morphosyntax: A Guide for Field Linguists\_ by Thomas E. Paine, and it also uses some foreign-language examples presented therein" \] | *This is an array of strings in Markdown format.* |
 | 🟥 | BugReports | Bug Reports |  |
-|  | bugReportMsg | \[ "Please report bugs and errors to \[the Github repository\]\(https:\//github.com/jasontankapps/conlang-toolbox/issues\). In order to diagnose errors, you need to include information from the tool or tools that are causing you problems. \*\*This will include the raw data you've currently have loaded up in the app.\*\* Choose the tools you are having problems with, then copy the information that appears in the box below and submit it to the GitHub." \] | *This is an array of strings in Markdown format.* |
+|  | bugReportMsg | \[ "Please report bugs and errors to \[the Github repository\]\(https:\//github.com/jasontankapps/conlang-toolbox/issues\). In order to diagnose errors, you need to include information from the tool or tools that are causing you problems. \*\*This will include the raw data you currently have loaded up in the app.\*\* Choose the tools you are having problems with, then copy the information that appears in the box below and submit it to the GitHub." \] | *This is an array of strings in Markdown format.* |
 | 🟨 | EntireState | Entire State | 'State' refers to the info saved by the app that is used to display info, create info, etc. |
 | 🟥 | Changelog | Changelog | A list of changes made to the app |
 | 🔴 | HideOlderChanges | Hide Older Changes |  |
@@ -1010,7 +1010,7 @@ This is an array of two objects. Each object has a `title` property as a header 
 |  | UsuallyLangName | Usually the language name. |  |
 |  | ShortDescriptionMsg | A short description of this document. |  |
 | 🔴 | DeleteSavedMorphoSyntaxInfo | Delete Saved MorphoSyntax Info |  |
-| 🟦2.5 | SavedMorphoSyntaxInfoDeleted | Saved MorphoSyntax info deleted. |  |
+| 🟦2.5 | SavedMorphoSyntaxInfoDeleted | The saved MorphoSyntax info has been deleted. |  |
 | 🟥 🔴 | ExportMorphoSyntaxInfo | Export MorphoSyntax Info |  |
 | 🔴 | SaveMorphoSyntaxInfo | Save MorphoSyntax Info |  |
 | 🟥 🔴 | LoadMorphoSyntaxInfo | Load MorphoSyntax Info |  |

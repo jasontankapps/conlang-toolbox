@@ -1,25 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	IonItemDivider,
 	IonSelect,
 	IonSelectOption
 } from '@ionic/react';
-import {
-	closeCircleOutline,
-	saveOutline
-} from 'ionicons/icons';
 import {
 	useSelector,
 	useDispatch
@@ -29,6 +16,7 @@ import { Lexicon, LexiconColumn, ModalProperties, SorterFunc, StateObject } from
 import { mergeLexiconItems } from '../../store/lexiconSlice';
 import useTranslator from '../../store/translationHooks';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
 interface MergeProps extends ModalProperties {
 	merging: string[]
@@ -122,7 +110,6 @@ const translations = [
 
 const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 	const [ t ] = useTranslator('lexicon');
-	const [ tc ] = useTranslator('common');
 	const methodDescriptions: MethodDescriptions = useMemo(() => ({
 		first: t("merge.first"),
 		last: t("merge.last"),
@@ -132,7 +119,6 @@ const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 		mergeAll: t("merge.mergeAll"),
 		blank: t("merge.blank")
 	}), [t]);
-	const tClose = useMemo(() => tc("Close"), [tc]);
 	const [
 		tCancelMerge, tHowTo, tMergeItems, tSaveMerge, tLexMergeIns, tMergeResult
 	] = useI18Memo(translations, "lexicon");
@@ -244,43 +230,29 @@ const MergeLexiconItemsModal: FC<MergeProps> = (props) => {
 	}), [columns, mergedResult]);
 
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer} backdropDismiss={false}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tMergeItems}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={closer} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent id="mergeLexiconItems">
-				<IonList lines="full">
-					<IonItem>
-						<IonLabel className="ion-text-wrap">
-							{tLexMergeIns}
-						</IonLabel>
-					</IonItem>
-					<IonItemDivider>{tHowTo}</IonItemDivider>
-					{howToMerge}
-					<IonItemDivider>{tMergeResult}</IonItemDivider>
-					{currentMergeResult}
-				</IonList>
-			</IonContent>
-			<IonFooter id="footerElement">
-				<IonToolbar color="darker">
-					<IonButton color="warning" slot="end" onClick={cancelMergingAndClose}>
-						<IonIcon icon={closeCircleOutline} slot="start" />
-						<IonLabel>{tCancelMerge}</IonLabel>
-					</IonButton>
-					<IonButton color="tertiary" slot="end" onClick={saveMergedResultAndClose}>
-						<IonIcon icon={saveOutline} slot="start" />
-						<IonLabel>{tSaveMerge}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tMergeItems}
+			closeFunc={closer}
+			enclosed={closer}
+			contentProps={{ id: "mergeLexiconItems" }}
+			footerProps={{ id: "footerElement" }}
+			footerToolbarProps={{ color: "darker" }}
+			bottomStart={[{key: tCancelMerge, isText: true, action: cancelMergingAndClose, icon: "cancel"}]}
+			bottomEnd={[{key: tSaveMerge, isText: true, action: saveMergedResultAndClose, icon: "save"}]}
+		>
+			<IonList lines="full">
+				<IonItem>
+					<IonLabel className="ion-text-wrap">
+						{tLexMergeIns}
+					</IonLabel>
+				</IonItem>
+				<IonItemDivider>{tHowTo}</IonItemDivider>
+				{howToMerge}
+				<IonItemDivider>{tMergeResult}</IonItemDivider>
+				{currentMergeResult}
+			</IonList>
+		</Modal>
 	);
 };
 

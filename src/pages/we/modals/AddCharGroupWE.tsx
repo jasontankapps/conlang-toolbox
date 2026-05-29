@@ -4,44 +4,30 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonToolbar,
 	IonButton,
-	IonModal,
 	IonInput,
-	IonFooter,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
 import {
-	addOutline,
 	chevronBackOutline
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { WECharGroupObject, ExtraCharactersModalOpener, StateObject } from '../../../store/types';
+import { WECharGroupObject, StateObject, ModalProperties } from '../../../store/types';
 import { addCharacterGroupWE } from '../../../store/weSlice';
 import useTranslator from '../../../store/translationHooks';
 
-import { $q, $a, $i } from '../../../components/DollarSignExports';
 import toaster from '../../../components/toaster';
 import useI18Memo from '../../../components/useI18Memo';
-import ModalHeader from '../../../components/ModalHeader';
-
-function resetError(prop: string) {
-	// Remove danger color if present
-	// Debounce means this sometimes doesn't exist by the time this is called.
-	const where = $q(`.${prop}Label`);
-	if(where) { where.classList.remove("invalidValue"); }
-}
-const resetTitle = () => resetError("title");
-const resetLabel = () => resetError("label");
-const resetRun = () => resetError("run");
+import useElement from '../../../components/useElement';
+import getSetValue from '../../../components/getSetValue';
+import Modal from '../../../components/Modal';
 
 const presentations = [ "LettersCharacters", "ShortLabel", "TitleOrDesc" ];
 const context = { context: "presentation" };
 
-const commons = [ "AddAndClose", "Cancel", "error" ];
+const commons = [ "Cancel", "error" ];
 
 const translations = [
 	"OneCharOnly", "enterCharsInGroupHere", "LettersCharacters",
@@ -50,20 +36,26 @@ const translations = [
 	"CharGroupSaved"
 ];
 
-const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
+const AddCharGroupWEModal: FC<ModalProperties> = (props) => {
 	const [ tw ] = useTranslator('wgwe');
-	const [ tAddClose, tCancel, tError ] = useI18Memo(commons);
+	const [ tCancel, tError ] = useI18Memo(commons);
 	const [
 		t1Char, tEnter, tLetChar, tNoLabel, tNoRun, tNoTitle,
 		tShort, tSuggest, tTitle, tNoSuggest, tAdding, tCGSaved
 	] = useI18Memo(translations, "wgwe");
 	const [ tpLetChar, tpShort, tpTitle ] = useI18Memo(presentations, "wgwe", context);
 
-	const { isOpen, setIsOpen, openECM } = props;
+	const { isOpen, setIsOpen } = props;
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	const toast = useIonToast();
 	const { characterGroups } = useSelector((state: StateObject) => state.we);
+	const [newWECharGroupTitle, newWECharGroupTitleRef] = useElement<HTMLIonInputElement>();
+	const [newWEShortLabel, newWEShortLabelRef] = useElement<HTMLIonInputElement>();
+	const [newWECharGroupRun, newWECharGroupRunRef] = useElement<HTMLIonInputElement>();
+	const [titleLabel, titleLabelRef] = useElement<HTMLIonLabelElement>();
+	const [runLabel, runLabelRef] = useElement<HTMLIonLabelElement>();
+	const [labelLabel, labelLabelRef] = useElement<HTMLDivElement>();
 	const charGroupMap = useMemo(() => {
 		const charGroupMap: { [key: string]: boolean } = {};
 		characterGroups.forEach((cg: WECharGroupObject) => {
@@ -72,8 +64,7 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 		return charGroupMap
 	}, [characterGroups]);
 	const generateLabel = useCallback(() => {
-		const el = $i<HTMLInputElement>("newWECharGroupTitle");
-		const words = (el ? el.value as string : "") // Get the title/description
+		const words = getSetValue(newWECharGroupTitle) // Get the title/description
 			.trim() // trim leading/trailing whitespace
 			.replace(/[$\\[\]{}.*+()?^|]/g, "") // remove invalid characters
 			.toUpperCase() // uppercase everything
@@ -100,44 +91,35 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 			});
 		} else {
 			// Suitable label found
-			const el = $i<HTMLInputElement>("newWEShortLabel");
-			if(el) { el.value = label; }
-			resetError("label");
+			getSetValue(newWEShortLabel, label);
+			labelLabel && labelLabel.classList.remove("invalidValue");
 		}
-	}, [charGroupMap, toast, tNoSuggest]);
+	}, [charGroupMap, toast, tNoSuggest, newWECharGroupTitle, newWEShortLabel, labelLabel]);
 	const maybeSaveNewCharGroup = useCallback((close: boolean = true) => {
 		const err: string[] = [];
 		// Test info for validness, then save if needed and reset the info
-		const titleEl = $i<HTMLInputElement>("newWECharGroupTitle");
-		const title = titleEl ? titleEl.value.trim() : "";;
-		const labelEl = $i<HTMLInputElement>("newWEShortLabel");
-		const label = labelEl ? labelEl.value.trim() : "";;
-		const runEl = $i<HTMLInputElement>("newWECharGroupRun");
-		const run = runEl ? runEl.value.trim() : "";;
+		const title = getSetValue(newWECharGroupTitle).trim();
+		const label = getSetValue(newWEShortLabel).trim();
+		const run = getSetValue(newWECharGroupRun).trim();
 		if(title === "") {
-			const el = $q(".titleLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			if(titleLabel) { titleLabel.classList.add("invalidValue"); }
 			err.push(tNoTitle);
 		}
 		if(label === "") {
-			const el = $q(".labelLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 			err.push(tNoLabel);
 		} else if (charGroupMap[label]) {
-			const el = $q(".labelLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 			err.push(tw("duplicateLabel", { label }));
 		} else {
 			const invalid = "^$\\[]{}.*+()?|";
 			if (invalid.indexOf(label as string) !== -1) {
-				const el = $q(".labelLabel");
-				if(el) { el.classList.add("invalidValue"); }
+				if(labelLabel) { labelLabel.classList.add("invalidValue"); }
 				err.push(tw("invalidLabel", { label }));
 			}
 		}
 		if(run === "") {
-			const el = $q(".runLabel");
-			if(el) { el.classList.add("invalidValue"); }
+			if(runLabel) { runLabel.classList.add("invalidValue"); }
 			err.push(tNoRun);
 		}
 		if(err.length > 0) {
@@ -159,9 +141,9 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 		// Everything ok!
 		if(close) { setIsOpen(false); }
 		dispatch(addCharacterGroupWE({title, label, run}));
-		$a<HTMLInputElement>("ion-list.addWECharGroup ion-input").forEach(
-			(input) => input.value = ""
-		);
+		getSetValue(newWECharGroupTitle, "");
+		getSetValue(newWEShortLabel, "");
+		getSetValue(newWECharGroupRun, "");
 		toaster({
 			message: tCGSaved,
 			duration: 2500,
@@ -169,80 +151,76 @@ const AddCharGroupWEModal: FC<ExtraCharactersModalOpener> = (props) => {
 			position: "top",
 			toast
 		});
-	}, [charGroupMap, dispatch, doAlert, setIsOpen, tCancel, tError, tNoLabel, tNoRun, tNoTitle, toast, tw, tCGSaved]);
+	}, [
+		charGroupMap, dispatch, doAlert, setIsOpen,
+		tCancel, tError, tNoLabel, tNoRun, tNoTitle,
+		toast, tw, tCGSaved,
+		newWECharGroupTitle, newWEShortLabel, newWECharGroupRun,
+		titleLabel, runLabel, labelLabel
+	]);
 	const closer = useCallback(() => setIsOpen(false), [setIsOpen]);
 	const adder = useCallback(() => maybeSaveNewCharGroup(false), [maybeSaveNewCharGroup]);
 	const addAndCloser = useCallback(() => maybeSaveNewCharGroup(), [maybeSaveNewCharGroup]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer}>
-			<ModalHeader title={tAdding} closeModal={setIsOpen} openECM={openECM} />
-			<IonContent>
-				<IonList lines="none" className="hasSpecialLabels addWECharGroup">
-					<IonItem className="labelled">
-						<IonLabel className="titleLabel">{tpTitle}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							aria-label={tTitle}
-							id="newWECharGroupTitle"
-							className="ion-margin-top"
-							autocomplete="on"
-							onIonChange={resetTitle}
-						></IonInput>
-					</IonItem>
-					<IonItem className="margin-top-quarter">
-						<div
-							slot="start"
-							className="ion-margin-end labelLabel"
-						>{tpShort}</div>
-						<IonInput
-							id="newWEShortLabel"
-							aria-label={tShort}
-							labelPlacement="start"
-							className="serifChars labelLabel"
-							helperText={t1Char}
-							maxlength={1}
-							onIonChange={resetLabel}
-						></IonInput>
-						<IonButton slot="end" onClick={generateLabel}>
-							<IonIcon icon={chevronBackOutline} />{tSuggest}
-						</IonButton>
-					</IonItem>
-					<IonItem className="labelled">
-						<IonLabel className="runLabel">{tpLetChar}</IonLabel>
-					</IonItem>
-					<IonItem>
-						<IonInput
-							id="newWECharGroupRun"
-							aria-label={tLetChar}
-							className="importantElement ion-margin-top serifChars"
-							helperText={tEnter}
-							onIonChange={resetRun}
-						></IonInput>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton
-						color="secondary"
-						slot="end"
-						onClick={adder}
-					>
-						<IonIcon icon={addOutline} slot="start" />
-						<IonLabel>{tAdding}</IonLabel>
+		<Modal
+			isOpen={isOpen}
+			closeFunc={closer}
+			extraChars
+			title={tAdding}
+			bottomEnd={[
+				{ button: "add", action: adder, color: "secondary" },
+				{ button: "add+close", action: addAndCloser }
+			]}
+		>
+			<IonList lines="none" className="hasSpecialLabels addWECharGroup">
+				<IonItem className="labelled">
+					<IonLabel className="titleLabel" ref={titleLabelRef}>{tpTitle}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						aria-label={tTitle}
+						id="newWECharGroupTitle"
+						className="ion-margin-top"
+						autocomplete="on"
+						onIonChange={() => titleLabel && titleLabel.classList.remove("invalidValue")}
+						ref={newWECharGroupTitleRef}
+					></IonInput>
+				</IonItem>
+				<IonItem className="margin-top-quarter">
+					<div
+						slot="start"
+						className="ion-margin-end labelLabel"
+						ref={labelLabelRef}
+					>{tpShort}</div>
+					<IonInput
+						id="newWEShortLabel"
+						aria-label={tShort}
+						labelPlacement="start"
+						className="serifChars labelLabel"
+						helperText={t1Char}
+						maxlength={1}
+						onIonChange={() => labelLabel && labelLabel.classList.remove("invalidValue")}
+						ref={newWEShortLabelRef}
+					></IonInput>
+					<IonButton slot="end" onClick={generateLabel}>
+						<IonIcon icon={chevronBackOutline} />{tSuggest}
 					</IonButton>
-					<IonButton
-						color="success"
-						slot="end"
-						onClick={addAndCloser}
-					>
-						<IonIcon icon={addOutline} slot="start" />
-						<IonLabel>{tAddClose}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+				</IonItem>
+				<IonItem className="labelled">
+					<IonLabel className="runLabel" ref={runLabelRef}>{tpLetChar}</IonLabel>
+				</IonItem>
+				<IonItem>
+					<IonInput
+						id="newWECharGroupRun"
+						aria-label={tLetChar}
+						className="importantElement ion-margin-top serifChars"
+						helperText={tEnter}
+						onIonChange={() => runLabel && runLabel.classList.remove("invalidValue")}
+						ref={newWECharGroupRunRef}
+					></IonInput>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

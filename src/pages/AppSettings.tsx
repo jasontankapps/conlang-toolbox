@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, FC } from 'react';
+import React, { useCallback, useMemo, useState, FC, useContext } from 'react';
 import {
 	IonLabel,
 	IonPage,
@@ -10,15 +10,16 @@ import {
 } from '@ionic/react';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject } from '../store/types';
+import { StateObject } from '../store/types';
 import { setDisableConfirms } from '../store/settingsSlice';
 import useTranslator from '../store/translationHooks';
 
 import Header from '../components/Header';
+import { ModalMakingContext } from '../components/contexts';
+import useI18Memo from '../components/useI18Memo';
 import ChooseThemeModal from './modals/Theme';
 import ExportAllData from './modals/ExportAllData';
 import ImportData from './modals/ImportData';
-import useI18Memo from '../components/useI18Memo';
 
 const translations =  [
 	"ChangeTheme", "DisableConfPrompts",
@@ -27,8 +28,7 @@ const translations =  [
 	"exportAppInfo"
 ];
 
-const AppSettings: FC<PageData> = (props) => {
-	const { modalPropsMaker } = props;
+const AppSettings: FC = () => {
 	const dispatch = useDispatch();
 	const [isOpenTheme, setIsOpenTheme] = useState<boolean>(false);
 	const [isOpenExportAll, setIsOpenExportAll] = useState<boolean>(false);
@@ -40,6 +40,7 @@ const AppSettings: FC<PageData> = (props) => {
 	const openTheme = useCallback(() => setIsOpenTheme(true), []);
 	const openExportAll = useCallback(() => setIsOpenExportAll(true), []);
 	const openImport = useCallback(() => setIsOpenImport(true), []);
+	const modalPropsMaker = useContext(ModalMakingContext);
 
 	const [ t ] = useTranslator('settings');
 	const [ tc ] = useTranslator('common');
@@ -54,7 +55,7 @@ const AppSettings: FC<PageData> = (props) => {
 			<ChooseThemeModal {...modalPropsMaker(isOpenTheme, setIsOpenTheme)} />
 			<ExportAllData {...modalPropsMaker(isOpenExportAll, setIsOpenExportAll)} />
 			<ImportData {...modalPropsMaker(isOpenImport, setIsOpenImport)} />
-			<Header title={tAppSettings} />
+			<Header title={tAppSettings} id="settingsPageHeader" />
 			<IonContent fullscreen>
 				<IonList lines="full">
 					<IonItem className="wrappableInnards">

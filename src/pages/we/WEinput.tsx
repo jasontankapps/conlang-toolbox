@@ -1,4 +1,4 @@
-import React, { useState, useCallback, ChangeEventHandler, FC } from 'react';
+import React, { useState, useCallback, FC, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -19,14 +19,15 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject } from '../../store/types';
+import { StateObject } from '../../store/types';
 import { setInputWE } from '../../store/weSlice';
 
 import ModalWrap from "../../components/ModalWrap";
-import { $i } from '../../components/DollarSignExports';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import debounce from '../../components/Debounce';
 import yesNoAlert from '../../components/yesNoAlert';
 import useI18Memo from '../../components/useI18Memo';
+import useElement from '../../components/useElement';
 import ExtraCharactersModal from '../modals/ExtraCharacters';
 import LexiconImporterModal from '../modals/ImportFromLexicon';
 import { InpCard } from "./WEinfo";
@@ -41,11 +42,11 @@ const translations = [
 	"WordsToEvolve", "EnterWordsHere", "ClearInput"
 ];
 
-const WEInput: FC<PageData> = (props) => {
+const WEInput: FC = () => {
 	const [ tWordsToEvolve, tOnePerLine, tClearInput ] = useI18Memo(translations, "we");
 	const [ tYouSure, tClear, tExChar, tHelp, tInput, tYesClear, tImpFromLex ] = useI18Memo(commons);
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -54,29 +55,22 @@ const WEInput: FC<PageData> = (props) => {
 	const { lexicon } = useSelector((state: StateObject) => state.lexicon);
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
 	const { input } = useSelector((state: StateObject) => state.we);
+	const [weInput, weInputRef] = useElement<HTMLTextAreaElement>();
 	const updateInput = useCallback((value: string) => {
 		const trimmed = value.replace(/(?:\s*\r?\n\s*)+/g, "\n").trim();
 		dispatch(setInputWE(trimmed));
 	}, [dispatch]);
-	const inputUpdated: ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
-		let value: string;
-		if(e.target && e.target.value !== undefined) {
-			value = (e.target.value);
-		} else {
-			const el = $i<HTMLInputElement>("weInput");
-			value = el ? el.value : "";
-		}
-		debounce<(x: string) => void, string>(updateInput, [value], 500, "WEinput");
-	}, [updateInput]);
+	const inputUpdated = useCallback(() => {
+		const value = (weInput ? weInput.value : "").replace(/(?:\s*\r?\n\s*)+/g, "\n").trim();
+		debounce<(x: string) => void, string>(updateInput, [value], 100, "WEinput");
+	}, [updateInput, weInput]);
 	const acceptImport = useCallback((value: string) => {
-		const el = $i<HTMLInputElement>("weInput");
-		if(el) { el.value = value; }
+		weInput && (weInput.value = value);
 		updateInput(value);
-	}, [updateInput]);
+	}, [updateInput, weInput]);
 	const clearInput = useCallback(() => {
 		const handler = () => {
-			const el = $i<HTMLInputElement>("weInput");
-			if(el) { el.value = ""; }
+			weInput && (weInput.value = "");
 			updateInput("");
 		};
 		if(disableConfirms) {
@@ -91,23 +85,25 @@ const WEInput: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [disableConfirms, doAlert, tClearInput, tYesClear, tYouSure, updateInput]);
+	}, [disableConfirms, doAlert, tClearInput, tYesClear, tYouSure, updateInput, weInput]);
 
 	const openExChar = useCallback(() => setIsOpenECM(true), [setIsOpenECM]);
 	const openInfo = useCallback(() => setIsOpenInfo(true), [setIsOpenInfo]);
 	const openLexImport = useCallback(() => setIsOpenLexImport(true), []);
+	const doOpenEx = useCallback(() => setIsOpenECM(true), [setIsOpenECM]);
 	return (
 		<IonPage>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<InpCard setIsOpenInfo={setIsOpenInfo} />
 			</ModalWrap>
-			<LexiconImporterModal
-				{...modalPropsMaker(isOpenLexImport, setIsOpenLexImport)}
-				openECM={setIsOpenECM}
-				currentInput={input}
-				importFunc={acceptImport}
-			/>
+			<ExCharContext value={doOpenEx}>
+				<LexiconImporterModal
+					{...modalPropsMaker(isOpenLexImport, setIsOpenLexImport)}
+					currentInput={input}
+					importFunc={acceptImport}
+				/>
+			</ExCharContext>
 			<IonHeader>
 				<IonToolbar>
 					<IonButtons slot="start">
@@ -133,6 +129,7 @@ const WEInput: FC<PageData> = (props) => {
 						placeholder={tOnePerLine}
 						defaultValue={input}
 						onChange={inputUpdated}
+						ref={weInputRef}
 					/>
 				</div>
 				<IonToolbar>

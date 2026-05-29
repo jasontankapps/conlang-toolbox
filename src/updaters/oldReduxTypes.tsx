@@ -1,6 +1,4 @@
 import {
-	ModalPropsMaker,
-	SetBooleanState,
 	Zero_OneHundred,
 	Two_Fifteen,
 	Zero_Fifty,
@@ -343,24 +341,3 @@ export interface StateObject {
 	extraCharactersState: ExtraCharactersState
 	conceptsState: ConceptsState
 }
-// Be sure to change stateObjectProps in ReducksDucks, too.
-// Be sure to change stateObjectProps in ReducksDucks, too.
-// Be sure to change stateObjectProps in ReducksDucks, too.
-// Be sure to change stateObjectProps in ReducksDucks, too.
-// Be sure to change stateObjectProps in ReducksDucks, too.
-
-export interface PageData {
-	modalPropsMaker: ModalPropsMaker
-}
-
-export interface ModalProperties {
-	isOpen: boolean
-	setIsOpen: SetBooleanState
-}
-
-export interface ExtraCharactersModalOpener {
-	isOpen: boolean
-	setIsOpen: SetBooleanState
-	openECM: SetBooleanState
-}
-

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, FC } from 'react';
+import React, { useCallback, useState, FC, useContext } from 'react';
 import {
 	IonPage,
 	IonIcon,
@@ -17,7 +17,7 @@ import {
 import { helpCircle } from 'ionicons/icons';
 import { useSelector } from "react-redux";
 
-import { PageData, StateObject } from '../store/types';
+import { StateObject } from '../store/types';
 import { currentVersion } from '../store/blankAppState';
 
 import {
@@ -31,6 +31,7 @@ import {
 import Header from '../components/Header';
 import { AppPage, appPagesObject } from '../components/appPagesInfo';
 import ModalWrap from '../components/ModalWrap';
+import { ModalMakingContext } from '../components/contexts';
 import useI18Memo from '../components/useI18Memo';
 import ExtraCharactersModal from './modals/ExtraCharacters';
 import { ConceptCard } from './Concepts';
@@ -56,7 +57,7 @@ const translations =  [
 	"Lexicon", "MorphoSyntax", "WordEvolve", "WordGen"
 ];
 
-const Home: FC<PageData> = (props) => {
+const Home: FC = () => {
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
 	const [isOpenConcepts, setIsOpenConcepts] = useState<boolean>(false);
 	const [isOpenLexicon, setIsOpenLexicon] = useState<boolean>(false);
@@ -69,13 +70,14 @@ const Home: FC<PageData> = (props) => {
 	] = useI18Memo(translations);
 	const openLex = useCallback(() => setIsOpenLexicon(true), []);
 	const openConcepts = useCallback(() => setIsOpenConcepts(true), []);
+	const modalPropsMaker = useContext(ModalMakingContext);
 
 	return (
 		<IonPage className={theme}>
-			<ExtraCharactersModal {...props.modalPropsMaker(isOpenECM, setIsOpenECM)} />
-			<ModalWrap {...props.modalPropsMaker(isOpenConcepts, setIsOpenConcepts)}><ConceptCard /></ModalWrap>
-			<ModalWrap {...props.modalPropsMaker(isOpenLexicon, setIsOpenLexicon)}><LexCard /></ModalWrap>
-			<Header title={tConlangToolbox} />
+			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
+			<ModalWrap {...modalPropsMaker(isOpenConcepts, setIsOpenConcepts)}><ConceptCard /></ModalWrap>
+			<ModalWrap {...modalPropsMaker(isOpenLexicon, setIsOpenLexicon)}><LexCard /></ModalWrap>
+			<Header title={tConlangToolbox} id="aboutPageHeader" />
 			<IonContent className="containedCards" id="about">
 				<IonGrid>
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, FC, useMemo, ReactElement } from 'react';
+import React, { useCallback, useState, FC, useMemo, ReactElement, useContext } from 'react';
 import {
 	IonContent,
 	IonPage,
@@ -27,18 +27,19 @@ import {
 } from 'ionicons/icons';
 import { useSelector, useDispatch } from "react-redux";
 
-import { PageData, StateObject, WGTransformObject } from '../../store/types';
+import { StateObject, WGTransformObject } from '../../store/types';
 import { deleteTransformWG, rearrangeTransformsWG } from '../../store/wgSlice';
 import useTranslator from '../../store/translationHooks';
 
 import ModalWrap from "../../components/ModalWrap";
-import { $q } from '../../components/DollarSignExports';
+import { ExCharContext, ModalMakingContext } from '../../components/contexts';
 import ltr from '../../components/LTR';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import reorganize from '../../components/reorganizer';
 import useI18Memo from '../../components/useI18Memo';
 import Header from '../../components/Header';
+import useElement from '../../components/useElement';
 
 import AddTransformModal from './modals/AddTransform';
 import EditTransformModal from './modals/EditTransform';
@@ -97,13 +98,14 @@ const TransformItem: FC<TransformProps> = (props) => {
 
 const commons = [ "AddNew", "Delete", "Help" ];
 
-const WGRew: FC<PageData> = (props) => {
+const WGRew: FC = () => {
 	const [ tw ] = useTranslator('wgwe');
 	const [ tc ] = useTranslator('common');
 	const tTransformations = useMemo(() => tw("Transformations"), [tw]);
 	const [ tAddNew, tDelete, tHelp ] = useI18Memo(commons);
+	const [transformGroup, transformGroupRef] = useElement<HTMLIonListElement>();
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
@@ -116,14 +118,12 @@ const WGRew: FC<PageData> = (props) => {
 	const { disableConfirms } = useSelector((state: StateObject) => state.appSettings);
 	const arrow = (ltr() ? "⟶" : "⟵");
 	const editTransform = useCallback((transform: WGTransformObject) => {
-		const groups = $q<HTMLIonListElement>((".transforms"));
-		if(groups) { groups.closeSlidingItems(); }
+		transformGroup && transformGroup.closeSlidingItems();
 		setEditing(transform);
 		setIsOpenEditTransform(true);
-	}, []);
+	}, [transformGroup]);
 	const maybeDeleteTransform = useCallback((transform: WGTransformObject) => {
-		const groups = $q<HTMLIonListElement>((".transforms"));
-		if(groups) { groups.closeSlidingItems(); }
+		transformGroup && transformGroup.closeSlidingItems();
 		const handler = () => {
 			dispatch(deleteTransformWG(transform.id));
 			toaster({
@@ -147,7 +147,7 @@ const WGRew: FC<PageData> = (props) => {
 				doAlert
 			});
 		}
-	}, [dispatch, tc, tw, toast, doAlert, disableConfirms, arrow]);
+	}, [dispatch, tc, tw, toast, doAlert, disableConfirms, arrow, transformGroup]);
 	const doReorder = useCallback((event: CustomEvent) => {
 		const ed = event.detail;
 		const reorganized = reorganize<WGTransformObject>(transforms, ed.from, ed.to);
@@ -215,15 +215,14 @@ const WGRew: FC<PageData> = (props) => {
 
 	return (
 		<IonPage>
-			<AddTransformModal {...props.modalPropsMaker(isOpenAddTransform, setIsOpenAddTransform)}
-				openECM={setIsOpen}
-			/>
-			<EditTransformModal
-				{...props.modalPropsMaker(isOpenEditTransform, setIsOpenEditTransform)}
-				openECM={setIsOpen}
-				editing={editing}
-				setEditing={setEditing}
-			/>
+			<ExCharContext value={openEx}>
+				<AddTransformModal {...modalPropsMaker(isOpenAddTransform, setIsOpenAddTransform)} />
+				<EditTransformModal
+					{...modalPropsMaker(isOpenEditTransform, setIsOpenEditTransform)}
+					editing={editing}
+					setEditing={setEditing}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpen, setIsOpen)} />
 			<ModalWrap {...modalPropsMaker(isOpenInfo, setIsOpenInfo)}>
 				<TransCard setIsOpenInfo={setIsOpenInfo} />
@@ -233,7 +232,7 @@ const WGRew: FC<PageData> = (props) => {
 				endButtons={endButtons}
 			/>
 			<IonContent fullscreen className="hasFabButton">
-				<IonList className="transforms units dragArea" lines="none">
+				<IonList className="transforms units dragArea" lines="none" ref={transformGroupRef}>
 					<IonReorderGroup
 						disabled={false}
 						className="hideWhileAdding"

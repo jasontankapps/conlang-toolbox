@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, FC } from 'react';
+import React, { useCallback, useMemo, useState, FC, useContext } from 'react';
 import {
 	IonItem,
 	IonIcon,
@@ -31,7 +31,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import ISO6391, { LanguageCode } from "iso-639-1";
 
-import { EqualityObject, PageData, RelationObject, SortObject, StateObject } from '../store/types';
+import { EqualityObject, RelationObject, SortObject, StateObject } from '../store/types';
 import { deleteCustomSort, setDefaultCustomSort, setSortLanguageCustom, setSortSensitivity } from '../store/sortingSlice';
 import useTranslator from '../store/translationHooks';
 
@@ -42,10 +42,11 @@ import AddCustomSortEquality from './modals/AddCustomSortEquality';
 import EditCustomSortRelation from './modals/EditCustomSortRelation';
 import EditCustomSortEquality from './modals/EditCustomSortEquality';
 import EditCustomSort from './modals/EditCustomSort';
+import useElement from '../components/useElement';
 import yesNoAlert from '../components/yesNoAlert';
-import { $i } from '../components/DollarSignExports';
 import PermanentInfo from '../components/PermanentInfo';
 import useI18Memo from '../components/useI18Memo';
+import { ExCharContext, ModalMakingContext } from '../components/contexts';
 
 const codes = ISO6391.getAllCodes();
 const names = ISO6391.getAllNativeNames();
@@ -71,7 +72,7 @@ const commons = [
 	"Close", "Delete", "Edit", "Ok", "Done", "deleteThisCannotUndo"
 ];
 
-const SortSettings: FC<PageData> = (props) => {
+const SortSettings: FC = () => {
 	const [ t ] = useTranslator('settings');
 	const [ tc ] = useTranslator('common');
 	const [ tClose, tDelete, tEdit, tOk, tDone, tYouSure ] = useI18Memo(commons);
@@ -81,11 +82,12 @@ const SortSettings: FC<PageData> = (props) => {
 		tpUsing, tpSens
 	] = useI18Memo(translations, 'settings');
 
-	const { modalPropsMaker } = props;
+	const modalPropsMaker = useContext(ModalMakingContext);
 	const dispatch = useDispatch();
 	const [doAlert] = useIonAlert();
 	// main modals
 	const [isOpenECM, setIsOpenECM] = useState<boolean>(false);
+	const openEx = useCallback(() => setIsOpenECM(true), [setIsOpenECM]);
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
 	const [editingCustomSort, setEditingCustomSort] = useState<SortObject | null>(null);
@@ -116,12 +118,12 @@ const SortSettings: FC<PageData> = (props) => {
 	const addEqualityModalInfo = modalPropsMaker(addEqualityOpen, setAddEqualityOpen);
 	const editRelationModalInfo = modalPropsMaker(editRelationOpen, setEditRelationOpen);
 	const editEqualityModalInfo = modalPropsMaker(editEqualityOpen, setEditEqualityOpen);
-	const openEditor = (sorter: SortObject) => {
-		const el = $i<HTMLIonListElement>("listOfCustomSorts");
-		if(el) { el.closeSlidingItems(); }
+	const [listOfCustomSorts, listOfCustomSortsRef] = useElement<HTMLIonListElement>();
+	const openEditor = useCallback((sorter: SortObject) => {
+		if(listOfCustomSorts) { listOfCustomSorts.closeSlidingItems(); }
 		setEditingCustomSort(sorter);
 		setEditModalOpen(true);
-	};
+	}, [listOfCustomSorts]);
 
 	const setLang = useCallback((e: SelectCustomEvent) => dispatch(setSortLanguageCustom(e.detail.value)), [dispatch]);
 	const setSens = useCallback((e: SelectCustomEvent) => dispatch(setSortSensitivity(e.detail.value)), [dispatch]);
@@ -164,8 +166,7 @@ const SortSettings: FC<PageData> = (props) => {
 			if(e > 0) { desc.push(t("equality", { count: e })); }
 		}
 		const maybeDeleteSort = (id: string, title: string) => {
-			const el = $i<HTMLIonListElement>("listOfCustomSorts");
-			if(el) { el.closeSlidingItems(); }
+			if(listOfCustomSorts) { listOfCustomSorts.closeSlidingItems(); }
 			const message = permanents[id];
 			if(message) {
 				return doAlert({
@@ -217,7 +218,7 @@ const SortSettings: FC<PageData> = (props) => {
 				</IonItem>
 			</IonItemSliding>
 		);
-	}), [customSorts, t, tc, doAlert, dispatch, tCustom, tDelete, tEdit, tOk, tYouSure]);
+	}), [customSorts, t, tc, doAlert, dispatch, tCustom, tDelete, tEdit, tOk, tYouSure, listOfCustomSorts, openEditor]);
 
 	const toggleUsingLang = useCallback(() => {
 		const newValue = !useLanguageSort;
@@ -237,79 +238,75 @@ const SortSettings: FC<PageData> = (props) => {
 
 	return (
 		<IonPage>
-			<AddCustomSort
-				{...modalPropsMaker(addModalOpen, setAddModalOpen)}
-				openECM={setIsOpenECM}
+			<ExCharContext value={openEx}>
+				<AddCustomSort
+					{...modalPropsMaker(addModalOpen, setAddModalOpen)}
 
-				langObj={langObj}
-				languages={languages}
+					langObj={langObj}
+					languages={languages}
 
-				addRelationModalInfo={addRelationModalInfo}
-				savedRelation={savedRelation}
-				setSavedRelation={setSavedRelation}
+					addRelationModalInfo={addRelationModalInfo}
+					savedRelation={savedRelation}
+					setSavedRelation={setSavedRelation}
 
-				editRelationModalInfo={editRelationModalInfo}
-				setIncomingRelation={setIncomingRelation}
-				outgoingRelation={outgoingRelation}
-				setOutgoingRelation={setOutgoingRelation}
+					editRelationModalInfo={editRelationModalInfo}
+					setIncomingRelation={setIncomingRelation}
+					outgoingRelation={outgoingRelation}
+					setOutgoingRelation={setOutgoingRelation}
 
-				addEqualityModalInfo={addEqualityModalInfo}
-				savedEquality={savedEquality}
-				setSavedEquality={setSavedEquality}
+					addEqualityModalInfo={addEqualityModalInfo}
+					savedEquality={savedEquality}
+					setSavedEquality={setSavedEquality}
 
-				editEqualityModalInfo={editEqualityModalInfo}
-				setIncomingEquality={setIncomingEquality}
-				outgoingEquality={outgoingEquality}
-				setOutgoingEquality={setOutgoingEquality}
-			/>
-			<AddCustomSortRelation
-				{...addRelationModalInfo}
-				openECM={setIsOpenECM}
-				setSavedRelation={setSavedRelation}
-			/>
-			<EditCustomSortRelation
-				{...editRelationModalInfo}
-				openECM={setIsOpenECM}
-				incomingRelation={incomingRelation}
-				setOutgoingRelation={setOutgoingRelation}
-			/>
-			<AddCustomSortEquality
-				{...addEqualityModalInfo}
-				openECM={setIsOpenECM}
-				setSavedEquality={setSavedEquality}
-			/>
-			<EditCustomSortEquality
-				{...editEqualityModalInfo}
-				openECM={setIsOpenECM}
-				incomingEquality={incomingEquality}
-				setOutgoingEquality={setOutgoingEquality}
-			/>
-			<EditCustomSort
-				{...modalPropsMaker(editModalOpen, setEditModalOpen)}
-				openECM={setIsOpenECM}
-				editingCustomSort={editingCustomSort}
+					editEqualityModalInfo={editEqualityModalInfo}
+					setIncomingEquality={setIncomingEquality}
+					outgoingEquality={outgoingEquality}
+					setOutgoingEquality={setOutgoingEquality}
+				/>
+				<AddCustomSortRelation
+					{...addRelationModalInfo}
+					setSavedRelation={setSavedRelation}
+				/>
+				<EditCustomSortRelation
+					{...editRelationModalInfo}
+					incomingRelation={incomingRelation}
+					setOutgoingRelation={setOutgoingRelation}
+				/>
+				<AddCustomSortEquality
+					{...addEqualityModalInfo}
+					setSavedEquality={setSavedEquality}
+				/>
+				<EditCustomSortEquality
+					{...editEqualityModalInfo}
+					incomingEquality={incomingEquality}
+					setOutgoingEquality={setOutgoingEquality}
+				/>
+				<EditCustomSort
+					{...modalPropsMaker(editModalOpen, setEditModalOpen)}
+					editingCustomSort={editingCustomSort}
 
-				langObj={langObj}
-				languages={languages}
+					langObj={langObj}
+					languages={languages}
 
-				addRelationModalInfo={addRelationModalInfo}
-				savedRelation={savedRelation}
-				setSavedRelation={setSavedRelation}
+					addRelationModalInfo={addRelationModalInfo}
+					savedRelation={savedRelation}
+					setSavedRelation={setSavedRelation}
 
-				editRelationModalInfo={editRelationModalInfo}
-				setIncomingRelation={setIncomingRelation}
-				outgoingRelation={outgoingRelation}
-				setOutgoingRelation={setOutgoingRelation}
+					editRelationModalInfo={editRelationModalInfo}
+					setIncomingRelation={setIncomingRelation}
+					outgoingRelation={outgoingRelation}
+					setOutgoingRelation={setOutgoingRelation}
 
-				addEqualityModalInfo={addEqualityModalInfo}
-				savedEquality={savedEquality}
-				setSavedEquality={setSavedEquality}
+					addEqualityModalInfo={addEqualityModalInfo}
+					savedEquality={savedEquality}
+					setSavedEquality={setSavedEquality}
 
-				editEqualityModalInfo={editEqualityModalInfo}
-				setIncomingEquality={setIncomingEquality}
-				outgoingEquality={outgoingEquality}
-				setOutgoingEquality={setOutgoingEquality}
-			/>
+					editEqualityModalInfo={editEqualityModalInfo}
+					setIncomingEquality={setIncomingEquality}
+					outgoingEquality={outgoingEquality}
+					setOutgoingEquality={setOutgoingEquality}
+				/>
+			</ExCharContext>
 			<ExtraCharactersModal {...modalPropsMaker(isOpenECM, setIsOpenECM)} />
 			<IonHeader>
 				<IonToolbar color="primary">
@@ -322,7 +319,7 @@ const SortSettings: FC<PageData> = (props) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>
-				<IonList lines="full" id="listOfCustomSorts" className="buttonFilled sortSettings hasSpecialLabels">
+				<IonList lines="full" id="listOfCustomSorts" ref={listOfCustomSortsRef} className="buttonFilled sortSettings hasSpecialLabels">
 					<IonItemDivider>{tBasicSort}</IonItemDivider>
 					<IonItem className="wrappableInnards">
 						<IonToggle

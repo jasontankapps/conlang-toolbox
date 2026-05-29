@@ -1,24 +1,12 @@
 import React, { useCallback, useMemo, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
 	IonLabel,
 	IonNote,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
-import {
-	closeCircleOutline
-} from 'ionicons/icons';
 import { useSelector } from "react-redux";
 
 import { LexiconState, ModalProperties, SetBooleanState, SetState, StateObject } from '../../store/types';
@@ -28,6 +16,7 @@ import { LexiconStorage } from '../../components/PersistentInfo';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
 interface SavedLexProperties extends ModalProperties {
 	lexInfo: [string, LexiconState][]
@@ -36,7 +25,7 @@ interface SavedLexProperties extends ModalProperties {
 }
 
 const commons = [
-	"deleteThisCannotUndo", "Cancel", "Close"
+	"deleteThisCannotUndo"
 ];
 const lexicons = [
 	"NoSavedLexicons", "DeleteStoredLexicon", "LexiconDeleted"
@@ -46,7 +35,7 @@ const DeleteLexiconModal: FC<SavedLexProperties> = (props) => {
 	const [ t ] = useTranslator('lexicon');
 	const [ tc ] = useTranslator('common');
 	const [tNoSaved, tDeleteLexicon, tLexiconDeleted] = useI18Memo(lexicons, 'lexicon');
-	const [ tYouSure, tCancel, tClose ] = useI18Memo(commons);
+	const [ tYouSure ] = useI18Memo(commons);
 
 	const { isOpen, setIsOpen, lexInfo, setLexInfo, setLoadingScreen } = props;
 	const disableConfirms = useSelector((state: StateObject) => state.appSettings.disableConfirms);
@@ -83,7 +72,10 @@ const DeleteLexiconModal: FC<SavedLexProperties> = (props) => {
 				doAlert
 			});
 		}
-	}, [disableConfirms, doAlert, setIsOpen, setLexInfo, setLoadingScreen, tYouSure, tc, toast, tLexiconDeleted]);
+	}, [
+		disableConfirms, doAlert, setIsOpen, setLexInfo,
+		setLoadingScreen, tYouSure, tc, toast, tLexiconDeleted
+	]);
 	const listOfLexicons = useMemo(() => data.map((pair: [string, LexiconState]) => {
 		const key = pair[0];
 		const lex = pair[1];
@@ -107,31 +99,18 @@ const DeleteLexiconModal: FC<SavedLexProperties> = (props) => {
 		);
 	}), [data, deleteThis, t, tc]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doClose}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tDeleteLexicon}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={doClose} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="none" className="buttonFilled">
-					{data.length > 0 ? listOfLexicons : <h1>{tNoSaved}</h1> }
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar className={data.length > 0 ? "" : "hide"}>
-					<IonButton color="warning" slot="end" onClick={doClose}>
-						<IonIcon icon={closeCircleOutline} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			title={tDeleteLexicon}
+			closeFunc={doClose}
+			isOpen={isOpen}
+			bottomEnd={[{button: "cancel"}]}
+			extraChars
+			footerToolbarClass={data.length > 0 ? "" : "hide"}
+		>
+			<IonList lines="none" className="buttonFilled">
+				{data.length > 0 ? listOfLexicons : <h1>{tNoSaved}</h1> }
+			</IonList>
+		</Modal>
 	);
 };
 

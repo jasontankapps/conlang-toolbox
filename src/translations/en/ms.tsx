@@ -25,7 +25,7 @@ const ms = {
 	UsuallyLangName: "Usually the language name.",
 	ShortDescriptionMsg: "A short description of this document.",
 	DeleteSavedMorphoSyntaxInfo: "Delete Saved MorphoSyntax Info",
-	SavedMorphoSyntaxInfoDeleted: "Saved MorphoSyntax info deleted.",
+	SavedMorphoSyntaxInfoDeleted: "The saved MorphoSyntax info has been deleted.",
 	ExportMorphoSyntaxInfo: "Export MorphoSyntax Info",
 	SaveMorphoSyntaxInfo: "Save MorphoSyntax Info",
 	LoadMorphoSyntaxInfo: "Load MorphoSyntax Info",

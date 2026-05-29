@@ -1,22 +1,9 @@
 import React, { MouseEvent, useCallback, useMemo, FC } from 'react';
 import {
 	IonItem,
-	IonIcon,
-	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	useIonToast
 } from '@ionic/react';
-import {
-	closeCircleOutline
-} from 'ionicons/icons';
 import { useDispatch, useSelector } from "react-redux";
 
 import { Lexicon, ModalProperties, SetBooleanState, StateObject } from '../../store/types';
@@ -25,6 +12,7 @@ import useTranslator from '../../store/translationHooks';
 import doExport from '../../components/ExportServices';
 import log from '../../components/Logging';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
 interface ExportModalProps extends ModalProperties {
 	setLoading: SetBooleanState
@@ -38,11 +26,11 @@ const translations = [
 	"exportTextTab", "fileXml", "TITLE"
 ];
 
-const commons = [ "Cancel", "Close", "Description" ];
+const commons = [ "Description" ];
 
 const ExportLexiconModal: FC<ExportModalProps> = (props) => {
 	const [ tc ] = useTranslator('common');
-	const [ tCancel, tClose, tDesc ] = useI18Memo(commons);
+	const [ tDesc ] = useI18Memo(commons);
 	const [ tCSV, tCSVNoTitle, tJSON, tTxNew, tTxSemi, tTxTab, tXML, tTITLE ] = useI18Memo(translations, "lexicon");
 	const tFormat = useMemo(() => tc("ChooseFormat", { context: "presentation" }), [tc]);
 
@@ -162,59 +150,44 @@ const ExportLexiconModal: FC<ExportModalProps> = (props) => {
 		doDownload(e, output, "xml");
 	}, [columnTitles, description, doDownload, lexicon, title]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={doClose}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tExportThing}</IonTitle>
-					<IonButtons slot="end">
-						<IonButton onClick={doClose} aria-label={tClose}>
-							<IonIcon icon={closeCircleOutline} />
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="none" className="buttonFilled multiLinePossible">
-					<IonItem>{tFormat}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doTabbed}
-					>{tTxTab}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doSemicolons}
-					>{tTxSemi}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doNewlines}
-					>{tTxNew}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doCSVall}
-					>{tCSV}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doCSV}
-					>{tCSVNoTitle}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doJSON}
-					>{tJSON}</IonItem>
-					<IonItem
-						button={true}
-						onClick={doXML}
-					>{tXML}</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar>
-					<IonButton color="warning" slot="end" onClick={doClose}>
-						<IonIcon icon={closeCircleOutline} slot="start" />
-						<IonLabel>{tCancel}</IonLabel>
-					</IonButton>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tExportThing}
+			closeFunc={doClose}
+			bottomEnd={[{ button: "cancel" }]}
+		>
+			<IonList lines="none" className="buttonFilled multiLinePossible">
+				<IonItem>{tFormat}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doTabbed}
+				>{tTxTab}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doSemicolons}
+				>{tTxSemi}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doNewlines}
+				>{tTxNew}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doCSVall}
+				>{tCSV}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doCSV}
+				>{tCSVNoTitle}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doJSON}
+				>{tJSON}</IonItem>
+				<IonItem
+					button={true}
+					onClick={doXML}
+				>{tXML}</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

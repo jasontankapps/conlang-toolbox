@@ -4,20 +4,11 @@ import {
 	IonIcon,
 	IonLabel,
 	IonList,
-	IonContent,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonModal,
-	IonFooter,
 	useIonAlert,
 	useIonToast
 } from '@ionic/react';
 import {
 	addCircleOutline,
-	checkmarkCircleOutline,
 	removeCircleOutline,
 	trashOutline,
 	saveOutline,
@@ -35,6 +26,7 @@ import { LexiconStorage } from '../../components/PersistentInfo';
 import yesNoAlert from '../../components/yesNoAlert';
 import toaster from '../../components/toaster';
 import useI18Memo from '../../components/useI18Memo';
+import Modal from '../../components/Modal';
 
 // load, delete, export
 interface StorageModalProps extends ModalProperties {
@@ -56,13 +48,13 @@ const translations = [
 	"LexiconSaved"
 ]
 
-const commons = [ "DeleteEverythingQ", "Done", "Ok", "SaveAsNew", "error" ];
+const commons = [ "DeleteEverythingQ", "Ok", "SaveAsNew", "error" ];
 
 
 const LexiconStorageModal: FC<StorageModalProps> = (props) => {
 	const [ tc ] = useTranslator('common');
 	const [
-		tDelEverything, tDone, tOk, tSaveNew, tError
+		tDelEverything, tOk, tSaveNew, tError
 	] = useI18Memo(commons);
 	const [
 		tLexStor, tLexClear, tNoClear, tLexNew,
@@ -81,9 +73,10 @@ const LexiconStorageModal: FC<StorageModalProps> = (props) => {
 		setLexInfo
 	} = props;
 	const dispatch = useDispatch();
-	const [disableConfirms, stateLexicon]: [boolean, LexiconState] = useSelector(
-		(state: StateObject) => [state.appSettings.disableConfirms, state.lexicon]
+	const disableConfirms: boolean = useSelector(
+		(state: StateObject) => state.appSettings.disableConfirms
 	);
+	const stateLexicon = useSelector((state: StateObject) => state.lexicon);
 	const {
 		id,
 		title,
@@ -208,7 +201,10 @@ const LexiconStorageModal: FC<StorageModalProps> = (props) => {
 				});
 			}
 		);
-	}, [dispatch, id, lexicon, lexiconSaveError, setIsOpen, setLoading, stateLexicon, tThingSaved, title, toast]);
+	}, [
+		dispatch, id, lexicon, lexiconSaveError, setIsOpen,
+		setLoading, stateLexicon, tThingSaved, title, toast
+	]);
 	const saveLexiconNew = useCallback(() => {
 		if(!title) {
 			return lexiconSaveError();
@@ -253,56 +249,39 @@ const LexiconStorageModal: FC<StorageModalProps> = (props) => {
 	const openDeleteModal = useCallback(() => openLexiconModal(openDelete), [openLexiconModal, openDelete]);
 	const saveBasic = useCallback(() => saveLexicon(), [saveLexicon]);
 	return (
-		<IonModal isOpen={isOpen} onDidDismiss={closer}>
-			<IonHeader>
-				<IonToolbar color="primary">
-					<IonTitle>{tLexStor}</IonTitle>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent>
-				<IonList lines="none">
-					<IonItem button={true} onClick={clearLexicon}>
-						<IonIcon icon={removeCircleOutline} className="ion-padding-end" />
-						<IonLabel>{tClearLex}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={openLoadModal}>
-						<IonIcon icon={addCircleOutline} className="ion-padding-end" />
-						<IonLabel>{tLoadThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={saveBasic}>
-						<IonIcon icon={saveOutline} className="ion-padding-end" />
-						<IonLabel>{tSaveThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={saveLexiconNew}>
-						<IonIcon icon={saveOutline} className="ion-padding-end" />
-						<IonLabel>{tSaveNew}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={maybeExportLexicon}>
-						<IonIcon icon={codeDownloadOutline} className="ion-padding-end" />
-						<IonLabel>{tExThing}</IonLabel>
-					</IonItem>
-					<IonItem button={true} onClick={openDeleteModal}>
-						<IonIcon icon={trashOutline} className="ion-padding-end" />
-						<IonLabel>{tDelThing}</IonLabel>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			<IonFooter>
-				<IonToolbar className="ion-text-wrap">
-					<IonButtons slot="end">
-						<IonButton
-							onClick={closer}
-							slot="end"
-							fill="solid"
-							color="success"
-						>
-							<IonIcon icon={checkmarkCircleOutline} slot="start" />
-							<IonLabel>{tDone}</IonLabel>
-						</IonButton>
-					</IonButtons>
-				</IonToolbar>
-			</IonFooter>
-		</IonModal>
+		<Modal
+			isOpen={isOpen}
+			title={tLexStor}
+			closeFunc={closer}
+			bottomEnd={[{button: "done"}]}
+		>
+			<IonList lines="none">
+				<IonItem button={true} onClick={clearLexicon}>
+					<IonIcon icon={removeCircleOutline} className="ion-padding-end" />
+					<IonLabel>{tClearLex}</IonLabel>
+				</IonItem>
+				<IonItem button={true} onClick={openLoadModal}>
+					<IonIcon icon={addCircleOutline} className="ion-padding-end" />
+					<IonLabel>{tLoadThing}</IonLabel>
+				</IonItem>
+				<IonItem button={true} onClick={saveBasic}>
+					<IonIcon icon={saveOutline} className="ion-padding-end" />
+					<IonLabel>{tSaveThing}</IonLabel>
+				</IonItem>
+				<IonItem button={true} onClick={saveLexiconNew}>
+					<IonIcon icon={saveOutline} className="ion-padding-end" />
+					<IonLabel>{tSaveNew}</IonLabel>
+				</IonItem>
+				<IonItem button={true} onClick={maybeExportLexicon}>
+					<IonIcon icon={codeDownloadOutline} className="ion-padding-end" />
+					<IonLabel>{tExThing}</IonLabel>
+				</IonItem>
+				<IonItem button={true} onClick={openDeleteModal}>
+					<IonIcon icon={trashOutline} className="ion-padding-end" />
+					<IonLabel>{tDelThing}</IonLabel>
+				</IonItem>
+			</IonList>
+		</Modal>
 	);
 };
 

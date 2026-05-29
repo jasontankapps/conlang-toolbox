@@ -1,5 +1,6 @@
 import i18n from "../i18n";
 
+/*
 export const $q =
 	<T extends HTMLElement>(query: string, doc: Document | HTMLElement = window.document): T | null =>
 		doc.querySelector(query) as T | null;
@@ -9,6 +10,7 @@ export const $a =
 export const $i =
 	<T extends object>(query: string, doc = window.document): T | null =>
 		doc.getElementById(query) as T | null;
+*/
 // Wrap setTimeout in a Promise
 type WrappedPromise = (ms: number) => Promise<ReturnType<typeof setTimeout>>
 export const $delay: WrappedPromise = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
