@@ -205,7 +205,7 @@ const AppInfo: FC = () => {
 									<IonCardTitle>{tCLog}</IonCardTitle>
 								</IonCardHeader>
 								<IonCardContent className="ion-padding-start changelog">
-									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.3</strong></h2>
+									<h2 className="ion-text-center" onClick={maybeDebug}><strong>v.0.13.4</strong></h2>
 									<Markdown>{tCL130}</Markdown>
 									<h2 className="ion-text-center"><strong>v.0.12.0</strong></h2>
 									<Markdown>{tCL120}</Markdown>

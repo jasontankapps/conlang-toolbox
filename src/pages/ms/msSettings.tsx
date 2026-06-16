@@ -242,7 +242,7 @@ const Syntax: FC = () => {
 	const closeLoading = useCallback(() => setIsLoading(false), [setIsLoading]);
 	const openLoad = useCallback(() => openMSModal(setIsOpenLoadMS), [openMSModal]);
 	const openDel = useCallback(() => openMSModal(setIsOpenDelMS), [openMSModal]);
-	const saveTitle = useCallback(() => (e: InputCustomEvent<InputChangeEventDetail>) => {
+	const saveTitle = useCallback((e: InputCustomEvent<InputChangeEventDetail>) => {
 			dispatch(setMorphoSyntaxText(["title", String(e.target.value)]));
 		}, [dispatch]);
 	const saveDescription = useCallback((e: TextareaCustomEvent<TextareaChangeEventDetail>) => {
